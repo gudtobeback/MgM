@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(npm install)",
+      "Bash(psql:*)",
+      "Bash(set PGPASSWORD=Cisco88!)",
+      "Bash(where:*)",
+      "Bash(\"C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe\" -U postgre -h localhost -p 5432 -c \"CREATE DATABASE merakiplatform;\")",
+      "Bash(PGPASSWORD=\"Cisco88!\" \"/c/Program Files/PostgreSQL/18/bin/psql.exe\":*)",
+      "Bash(node setup-db.js:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)",
+      "Bash(findstr:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(start /B npx ts-node --transpile-only server.ts)",
+      "Bash(npx ts-node:*)",
+      "Bash(timeout /t 3 /nobreak)",
+      "WebFetch(domain:www.pagerduty.com)"
+    ]
+  }
+}

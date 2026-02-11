@@ -1,0 +1,5 @@
+{
+  "name": "MerakiMigration-v1.0-Completed",
+  "description": "A workflow tool to migrate Meraki devices from a .com organization to a .in organization.",
+  "requestFramePermissions": []
+}
