@@ -19,7 +19,11 @@
       "Bash(start /B npx ts-node --transpile-only server.ts)",
       "Bash(npx ts-node:*)",
       "Bash(timeout /t 3 /nobreak)",
-      "WebFetch(domain:www.pagerduty.com)"
+      "WebFetch(domain:www.pagerduty.com)",
+      "Bash(powershell -Command \"Get-ChildItem -Recurse -Include *.tsx | Select-String -Pattern \"\"fontFamily: ''monospace''\"\" | ForEach-Object { \\(Get-Content $_Path\\) -replace \"\"fontFamily: ''monospace''\"\", \"\"fontFamily: \\\\\"\"''JetBrains Mono'', ui-monospace, Menlo, Consolas, monospace\\\\\"\"\"\" | Set-Content $_Path }\")",
+      "Bash(powershell -Command:*)",
+      "Bash(powershell -Command \"\\(Get-Content ''components\\\\cat9k\\\\steps\\\\ApplyStep.tsx''\\) -replace [regex]::Escape\\(\"\"fontFamily: ''monospace''\"\"\\), \"\"fontFamily: ''var\\(--font-mono\\)''\"\" | Set-Content ''components\\\\cat9k\\\\steps\\\\ApplyStep.tsx''\")",
+      "Bash(python:*)"
     ]
   }
 }

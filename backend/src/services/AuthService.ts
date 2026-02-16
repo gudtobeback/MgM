@@ -10,6 +10,8 @@ export interface UserPayload {
   id: string;
   email: string;
   subscriptionTier: string;
+  role: string;
+  companyId: number | null;
 }
 
 export interface AuthTokens {
@@ -32,12 +34,12 @@ export class AuthService {
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Insert user
+    // Insert user — assign to default company (id=1)
     const result = await query(
-      `INSERT INTO users (email, password_hash, full_name, subscription_tier, subscription_status)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, email, subscription_tier`,
-      [email, passwordHash, fullName || null, 'free', 'active']
+      `INSERT INTO users (email, password_hash, full_name, subscription_tier, subscription_status, role, company_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, email, subscription_tier, role, company_id`,
+      [email, passwordHash, fullName || null, 'free', 'active', 'user', 1]
     );
 
     const user = result.rows[0];
@@ -53,7 +55,9 @@ export class AuthService {
     return this.generateTokens({
       id: user.id,
       email: user.email,
-      subscriptionTier: user.subscription_tier
+      subscriptionTier: user.subscription_tier,
+      role: user.role,
+      companyId: user.company_id ?? null,
     });
   }
 
@@ -63,7 +67,7 @@ export class AuthService {
   static async login(email: string, password: string, ipAddress?: string, userAgent?: string): Promise<AuthTokens> {
     // Get user
     const result = await query(
-      'SELECT id, email, password_hash, subscription_tier FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, subscription_tier, role, company_id FROM users WHERE email = $1',
       [email]
     );
 
@@ -90,7 +94,9 @@ export class AuthService {
     return this.generateTokens({
       id: user.id,
       email: user.email,
-      subscriptionTier: user.subscription_tier
+      subscriptionTier: user.subscription_tier,
+      role: user.role ?? 'user',
+      companyId: user.company_id ?? null,
     });
   }
 
@@ -131,6 +137,8 @@ export class AuthService {
       id: decoded.id,
       email: decoded.email,
       subscriptionTier: decoded.subscriptionTier,
+      role: decoded.role ?? 'user',
+      companyId: decoded.companyId ?? null,
     };
     return this.generateTokens(payload);
   }

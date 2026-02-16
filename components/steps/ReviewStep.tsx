@@ -17,7 +17,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-full">
-                <Loader2 className="w-8 h-8 animate-spin text-[#048a24]" />
+                <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
                 <p className="mt-4 text-muted-foreground">Analyzing source organization and preparing migration plan...</p>
             </div>
         );
@@ -36,7 +36,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
         {/* Source */}
         <Card className="p-6">
             <div className="flex items-center gap-3 mb-4">
-                <Building className="w-6 h-6 text-[#048a24]" />
+                <Building className="w-6 h-6 text-[#2563eb]" />
                 <h3 className="font-semibold text-lg">Source</h3>
             </div>
             <div className="space-y-2 text-sm">

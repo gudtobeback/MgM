@@ -109,7 +109,7 @@ export function SourceOrganizationStep({ data, onUpdate }: SourceOrganizationSte
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-[#048a24]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
         <p className="mt-4 text-muted-foreground">Fetching source organizations...</p>
       </div>
     );
@@ -131,7 +131,7 @@ export function SourceOrganizationStep({ data, onUpdate }: SourceOrganizationSte
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Organization Selector */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-[#048a24]">
+          <div className="flex items-center gap-2 text-[#2563eb]">
             <Building2 className="w-5 h-5" />
             <Label>Source Organization (dashboard.meraki.com)</Label>
           </div>
@@ -152,7 +152,7 @@ export function SourceOrganizationStep({ data, onUpdate }: SourceOrganizationSte
         {/* Network Selector */}
         {data.sourceOrg && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#048a24]">
+            <div className="flex items-center gap-2 text-[#2563eb]">
               <NetworkIcon className="w-5 h-5" />
               <Label>Source Network</Label>
             </div>
@@ -179,7 +179,7 @@ export function SourceOrganizationStep({ data, onUpdate }: SourceOrganizationSte
         {data.sourceOrg && data.sourceNetwork && (
           <Card className="p-4 bg-[#e8f5eb] border-[#bbdfc4]">
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-[#048a24] mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-[#2563eb] mt-0.5" />
               <div className="flex-1">
                 <p className="text-[#025115]">
                   <strong>Organization:</strong> {data.sourceOrg.name}

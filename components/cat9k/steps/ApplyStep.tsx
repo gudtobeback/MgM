@@ -212,7 +212,7 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
   return (
     <div>
       <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Loader2 size={18} color="#048a24" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+        <Loader2 size={18} color="#2563eb" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
         <div>
           <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '2px' }}>
             Applying Configuration
@@ -232,7 +232,7 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
           backgroundColor: '#0f172a',
           borderRadius: '6px',
           padding: '16px',
-          fontFamily: 'monospace',
+          fontFamily: 'var(--font-mono)',
           fontSize: '12px',
           lineHeight: 1.6,
           color: '#e2e8f0',

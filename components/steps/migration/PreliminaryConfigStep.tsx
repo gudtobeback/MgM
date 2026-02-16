@@ -179,7 +179,7 @@ export function PreliminaryConfigStep({ data, onComplete }: PreliminaryConfigSte
       <div className="flex items-center justify-center gap-4">
         {isComplete && !error && <CheckCircle2 className="w-8 h-8 text-green-500" />}
         {error && <XCircle className="w-8 h-8 text-red-500" />}
-        {isRunning && <Loader2 className="w-8 h-8 animate-spin text-[#048a24]" />}
+        {isRunning && <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />}
         <h2 className="text-2xl font-bold">
           {isComplete ? 'Pre-Config Transfer Complete' : 'Transferring Foundational Configs'}
         </h2>

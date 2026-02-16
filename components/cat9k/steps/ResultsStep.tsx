@@ -34,7 +34,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
           backgroundColor: '#e8f5eb', border: '1px solid #bbdfc4',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <CheckCircle2 size={18} color="#048a24" />
+          <CheckCircle2 size={18} color="#2563eb" />
         </div>
         <div>
           <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '2px' }}>
@@ -94,7 +94,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
           maxHeight: '280px', overflowY: 'auto',
           backgroundColor: '#0f172a',
           padding: '14px 16px',
-          fontFamily: 'monospace', fontSize: '12px', lineHeight: 1.6,
+          fontFamily: 'var(--font-mono)', fontSize: '12px', lineHeight: 1.6,
         }}>
           {results.log.map((line, i) => (
             <div key={i} style={{

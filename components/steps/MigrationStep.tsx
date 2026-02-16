@@ -262,7 +262,7 @@ export function MigrationStep({ data, onUpdate, onComplete }: MigrationStepProps
       <div className="flex items-center justify-center gap-4">
         {isComplete && <CheckCircle2 className="w-8 h-8 text-green-500" />}
         {(error || rollbackDone) && !isComplete && <XCircle className="w-8 h-8 text-red-500" />}
-        {(isMigrating || isRollingBack) && <Loader2 className="w-8 h-8 animate-spin text-[#048a24]" />}
+        {(isMigrating || isRollingBack) && <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />}
         <h2 className="text-2xl font-bold">
           {isComplete
             ? 'Migration Phase Complete'

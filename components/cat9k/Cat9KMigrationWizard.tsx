@@ -124,8 +124,8 @@ export function Cat9KMigrationWizard() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '11px', fontWeight: 700, flexShrink: 0,
                     transition: 'background 200ms, border 200ms',
-                    backgroundColor: isCompleted ? '#048a24' : isActive ? '#048a24' : '#ffffff',
-                    border: isCompleted ? '2px solid #048a24' : isActive ? '2px solid #048a24' : '2px solid #d1d5db',
+                    backgroundColor: isCompleted ? '#2563eb' : isActive ? '#2563eb' : '#ffffff',
+                    border: isCompleted ? '2px solid #2563eb' : isActive ? '2px solid #2563eb' : '2px solid #d1d5db',
                     color: (isCompleted || isActive) ? '#ffffff' : '#9ca3af',
                   }}>
                     {isCompleted
@@ -135,7 +135,7 @@ export function Cat9KMigrationWizard() {
                   </div>
                   <span style={{
                     fontSize: '9.5px', fontWeight: isActive ? 700 : 500,
-                    color: isActive ? '#048a24' : isCompleted ? '#374151' : '#9ca3af',
+                    color: isActive ? '#2563eb' : isCompleted ? '#374151' : '#9ca3af',
                     marginTop: '5px', textAlign: 'center', lineHeight: 1.3,
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     maxWidth: '72px',
@@ -146,7 +146,7 @@ export function Cat9KMigrationWizard() {
                 {index < STEPS.length - 1 && (
                   <div style={{
                     flex: 1, height: '2px', marginTop: '14px',
-                    backgroundColor: currentStep > step.id ? '#048a24' : '#e5e7eb',
+                    backgroundColor: currentStep > step.id ? '#2563eb' : '#e5e7eb',
                     minWidth: '4px', transition: 'background 200ms',
                   }} />
                 )}

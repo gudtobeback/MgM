@@ -124,7 +124,7 @@ export const DashboardPage: React.FC = () => {
     return d.toISOString().split('T')[0];
   });
 
-  const activityMap = new Map(data.snapshotActivity.map(a => [a.day, a.count]));
+  const activityMap = new Map<string, number>(data.snapshotActivity.map(a => [a.day, a.count] as [string, number]));
   const chartValues = last30Days.map(d => activityMap.get(d) ?? 0);
 
   const formatDate = (iso: string | null) => {

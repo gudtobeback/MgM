@@ -98,7 +98,7 @@ export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
       <div className="flex items-center justify-center gap-4">
         {isComplete && !error && <CheckCircle2 className="w-8 h-8 text-green-500" />}
         {isComplete && error && <XCircle className="w-8 h-8 text-red-500" />}
-        {isRestoring && <Loader2 className="w-8 h-8 animate-spin text-[#048a24]" />}
+        {isRestoring && <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />}
         <h2 className="text-2xl font-bold">
             {isComplete ? 'Restore Phase Complete' : 'Restoring Configurations'}
         </h2>

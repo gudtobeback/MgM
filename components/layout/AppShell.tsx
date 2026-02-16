@@ -6,7 +6,7 @@ type ToolMode =
   | 'selection' | 'migration' | 'backup' | 'restore'
   | 'version-control' | 'organizations' | 'drift' | 'compliance'
   | 'bulk-ops' | 'dashboard' | 'security' | 'change-management'
-  | 'documentation' | 'scheduler' | 'cross-region' | 'profile';
+  | 'documentation' | 'scheduler' | 'cross-region' | 'profile' | 'cat9k' | 'team';
 
 interface AppShellProps {
   user: any;
@@ -33,9 +33,9 @@ export const AppShell: React.FC<AppShellProps> = ({
     <div
       className="flex flex-col"
       style={{
-        height: '100vh',        /* lock to viewport — prevents body scroll */
+        height: '100vh',
         overflow: 'hidden',
-        backgroundColor: 'var(--color-bg)',
+        background: 'transparent',
       }}
     >
       {/* Top Bar — full width, always at the top */}
@@ -50,7 +50,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         />
       </div>
 
-      {/* Body: Sidebar + Content — fills remaining height exactly (body height = 100vh - topbar) */}
+      {/* Body: Sidebar + Content */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 }}>
         <Sidebar
           activeMode={toolMode}
@@ -58,18 +58,20 @@ export const AppShell: React.FC<AppShellProps> = ({
           selectedOrgName={selectedOrgName}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(v => !v)}
+          userRole={user?.role}
         />
 
-        {/* Main content — only this area scrolls */}
+        {/* Main content — only this area scrolls, scrollbar hidden */}
         <main
+          className="no-scrollbar"
           style={{
             flex: 1,
             overflowY: 'auto',
-            backgroundColor: 'var(--color-bg)',
+            background: 'rgb(226, 238, 251)',
             minWidth: 0,
           }}
         >
-          <div className="p-7">
+          <div className="p-8">
             {children}
           </div>
         </main>

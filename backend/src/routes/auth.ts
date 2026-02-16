@@ -142,6 +142,8 @@ router.patch('/subscription', authMiddleware, async (req: Request, res: Response
       id: updatedUser.id,
       email: updatedUser.email,
       subscriptionTier: updatedUser.subscription_tier,
+      role: (req.user as any).role ?? 'user',
+      companyId: (req.user as any).companyId ?? null,
     });
 
     res.json({ ...tokens, message: `Subscription updated to ${tier}` });

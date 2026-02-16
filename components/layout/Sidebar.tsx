@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import {
   Home, Building2, ArrowRightLeft, HardDriveDownload, HardDriveUpload,
   GitBranch, Activity, Layers, FileText,
-  ShieldCheck, Lock, ClipboardList,
+  ShieldCheck, ClipboardList,
   CalendarClock, Globe2, BarChart3,
-  UserCircle, ChevronRight, ChevronLeft, ServerCog,
+  UserCircle, ChevronRight, ChevronLeft, ServerCog, Users, Settings2,
 } from 'lucide-react';
 
 type ToolMode =
   | 'selection' | 'migration' | 'backup' | 'restore'
   | 'version-control' | 'organizations' | 'drift' | 'compliance'
   | 'bulk-ops' | 'dashboard' | 'security' | 'change-management'
-  | 'documentation' | 'scheduler' | 'cross-region' | 'profile' | 'cat9k';
+  | 'documentation' | 'scheduler' | 'cross-region' | 'profile' | 'cat9k' | 'team';
 
 interface NavItem {
   id: ToolMode;
@@ -20,40 +20,45 @@ interface NavItem {
   children?: { id: ToolMode; label: string }[];
 }
 
-// Flat nav — matches Cisco Secure Client's simple sidebar pattern
 const NAV_ITEMS: NavItem[] = [
-  { id: 'selection', label: 'Home', icon: <Home size={17} /> },
-  { id: 'organizations', label: 'Organization', icon: <Building2 size={17} /> },
+  { id: 'selection',     label: 'Home',          icon: <Home      size={17} /> },
+  { id: 'organizations', label: 'Organizations',  icon: <Building2 size={17} /> },
   {
     id: 'migration',
     label: 'Migration',
     icon: <ArrowRightLeft size={17} />,
     children: [
       { id: 'migration', label: 'Full Migration' },
-      { id: 'cat9k', label: 'Cat9K → Meraki' },
-      { id: 'backup', label: 'Backup Config' },
-      { id: 'restore', label: 'Restore Backup' },
+      { id: 'cat9k',     label: 'Cat9K → Meraki' },
+    ],
+  },
+  {
+    id: 'backup',
+    label: 'Backup & Recovery',
+    icon: <HardDriveDownload size={17} />,
+    children: [
+      { id: 'backup',   label: 'Backup Config' },
+      { id: 'restore',  label: 'Restore Backup' },
     ],
   },
   {
     id: 'version-control',
-    label: 'Network Mgmt',
-    icon: <GitBranch size={17} />,
+    label: 'Configuration',
+    icon: <Settings2 size={17} />,
     children: [
-      { id: 'version-control', label: 'Version Control' },
-      { id: 'drift', label: 'Drift Detection' },
-      { id: 'bulk-ops', label: 'Bulk Operations' },
-      { id: 'documentation', label: 'Documentation' },
+      { id: 'version-control',   label: 'Version Control' },
+      { id: 'drift',             label: 'Drift Detection' },
+      { id: 'change-management', label: 'Change Management' },
+      { id: 'bulk-ops',          label: 'Bulk Operations' },
     ],
   },
   {
     id: 'compliance',
-    label: 'Security',
+    label: 'Compliance & Security',
     icon: <ShieldCheck size={17} />,
     children: [
-      { id: 'compliance', label: 'Compliance' },
-      { id: 'security', label: 'Security Posture' },
-      { id: 'change-management', label: 'Change Mgmt' },
+      { id: 'compliance', label: 'Compliance Audit' },
+      { id: 'security',   label: 'Security Posture' },
     ],
   },
   {
@@ -61,9 +66,10 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Operations',
     icon: <BarChart3 size={17} />,
     children: [
-      { id: 'scheduler', label: 'Scheduler' },
+      { id: 'dashboard',    label: 'Analytics' },
+      { id: 'scheduler',    label: 'Scheduler' },
       { id: 'cross-region', label: 'Cross-Region Sync' },
-      { id: 'dashboard', label: 'Analytics' },
+      { id: 'documentation',label: 'Documentation' },
     ],
   },
 ];
@@ -74,6 +80,7 @@ interface SidebarProps {
   selectedOrgName?: string;
   collapsed: boolean;
   onToggleCollapse: () => void;
+  userRole?: string;
 }
 
 const BASE = {
@@ -99,10 +106,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
   selectedOrgName,
   collapsed,
   onToggleCollapse,
+  userRole,
 }) => {
+  const isCompanyAdmin = userRole === 'company_admin';
+
+  // Build nav items dynamically based on role
+  const navItems: NavItem[] = [
+    ...NAV_ITEMS,
+    ...(isCompanyAdmin ? [{
+      id: 'team' as ToolMode,
+      label: 'Team',
+      icon: <Users size={17} />,
+      children: [{ id: 'team' as ToolMode, label: 'Team Management' }],
+    }] : []),
+  ];
   // Track which top-level group is expanded
   const getDefaultExpanded = (): ToolMode | null => {
-    for (const item of NAV_ITEMS) {
+    for (const item of navItems) {
       if (item.children?.some(c => c.id === activeMode)) return item.id;
     }
     return null;
@@ -123,8 +143,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         width,
         minWidth: width,
         maxWidth: width,
-        backgroundColor: 'var(--sidebar-bg)',
-        borderRight: '1px solid var(--sidebar-border)',
+        background: 'var(--sidebar-bg)',
+        backdropFilter: 'blur(40px) saturate(220%) brightness(1.06)',
+        WebkitBackdropFilter: 'blur(40px) saturate(220%) brightness(1.06)',
+        borderRight: '1px solid rgba(255,255,255,0.60)',
+        boxShadow: '2px 0 24px rgba(0,30,100,0.12), inset -1px 0 0 rgba(255,255,255,0.50)',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -135,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     >
       {/* Nav items — scrollable */}
       <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingTop: '8px' }}>
-        {NAV_ITEMS.map(item => {
+        {navItems.map(item => {
           const groupActive = isGroupActive(item);
           const isExpanded = expandedGroup === item.id;
           const hasChildren = item.children && item.children.length > 0;

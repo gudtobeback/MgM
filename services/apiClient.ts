@@ -8,6 +8,8 @@ interface AuthTokens {
     id: string;
     email: string;
     subscriptionTier: string;
+    role: string;
+    companyId: number | null;
   };
 }
 
@@ -198,6 +200,132 @@ class ApiClient {
     return userStr ? JSON.parse(userStr) : null;
   }
 
+  getCurrentRole(): string {
+    return this.getUser()?.role ?? 'user';
+  }
+
+  getCurrentCompanyId(): number | null {
+    return this.getUser()?.companyId ?? null;
+  }
+
+  // ============ Admin (super_admin only) ============
+
+  async listAdminCompanies() {
+    const response = await this.request('/admin/companies');
+    if (!response.ok) throw new Error('Failed to list companies');
+    return response.json();
+  }
+
+  async createAdminCompany(name: string) {
+    const response = await this.request('/admin/companies', {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to create company');
+    }
+    return response.json();
+  }
+
+  async getAdminCompany(id: number) {
+    const response = await this.request(`/admin/companies/${id}`);
+    if (!response.ok) throw new Error('Failed to get company');
+    return response.json();
+  }
+
+  async updateAdminCompany(id: number, name: string) {
+    const response = await this.request(`/admin/companies/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ name }),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to update company');
+    }
+    return response.json();
+  }
+
+  async deleteAdminCompany(id: number) {
+    const response = await this.request(`/admin/companies/${id}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to delete company');
+    }
+  }
+
+  async listAdminUsers() {
+    const response = await this.request('/admin/users');
+    if (!response.ok) throw new Error('Failed to list users');
+    return response.json();
+  }
+
+  async updateAdminUser(id: number, data: { role?: string; companyId?: number; subscriptionTier?: string }) {
+    const response = await this.request(`/admin/users/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to update user');
+    }
+    return response.json();
+  }
+
+  async deleteAdminUser(id: number) {
+    const response = await this.request(`/admin/users/${id}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to delete user');
+    }
+  }
+
+  async getAuditLog(limit = 100, offset = 0) {
+    const response = await this.request(`/admin/audit?limit=${limit}&offset=${offset}`);
+    if (!response.ok) throw new Error('Failed to fetch audit log');
+    return response.json();
+  }
+
+  // ============ Company Team Management (company_admin+) ============
+
+  async listCompanyUsers() {
+    const response = await this.request('/company/users');
+    if (!response.ok) throw new Error('Failed to list team members');
+    return response.json();
+  }
+
+  async createCompanyUser(data: { email: string; password: string; fullName?: string; role?: string; companyId?: number }) {
+    const response = await this.request('/company/users', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to create user');
+    }
+    return response.json();
+  }
+
+  async updateUserPermissions(userId: number, permissions: Record<string, boolean>) {
+    const response = await this.request(`/company/users/${userId}/permissions`, {
+      method: 'PATCH',
+      body: JSON.stringify({ permissions }),
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to update permissions');
+    }
+    return response.json();
+  }
+
+  async deleteCompanyUser(userId: number) {
+    const response = await this.request(`/company/users/${userId}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Failed to delete user');
+    }
+  }
+
   // ============ Organizations ============
 
   async createOrganization(data: {
@@ -235,6 +363,12 @@ class ApiClient {
       const error = await response.json();
       throw new Error(error.error || 'Failed to remove organization');
     }
+  }
+
+  async refreshOrganization(orgId: string) {
+    const response = await this.request(`/organizations/${orgId}/refresh`, { method: 'POST' });
+    if (!response.ok) throw new Error('Failed to refresh organization');
+    return response.json();
   }
 
   // ============ Drift Detection ============

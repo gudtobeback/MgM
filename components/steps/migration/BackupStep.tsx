@@ -78,7 +78,7 @@ export function BackupStep({ data, onComplete, onUpdate }: BackupStepProps) {
       <div className="flex items-center justify-center gap-4">
         {isComplete && !error && <CheckCircle2 className="w-8 h-8 text-green-500" />}
         {isComplete && error && <XCircle className="w-8 h-8 text-red-500" />}
-        {isBackingUp && <Loader2 className="w-8 h-8 animate-spin text-[#048a24]" />}
+        {isBackingUp && <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />}
         <h2 className="text-2xl font-bold">
           {isComplete ? 'Backup Phase Complete' : 'Creating Pre-Migration Backup'}
         </h2>

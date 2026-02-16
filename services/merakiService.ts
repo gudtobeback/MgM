@@ -207,6 +207,7 @@ export const getVpnFirewallRules = (apiKey: string, r: string, oid: string): Pro
 export const updateVpnFirewallRules = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/appliance/vpn/vpnFirewallRules`, 'PUT', body);
 
 // --- Network-Level ---
+export const updateNetworkSettings = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}`, 'PUT', body);
 export const getNetworkWebhooks = (apiKey: string, r: string, nid: string): Promise<WebhookHttpServer[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/webhooks/httpServers`);
 export const createNetworkWebhook = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/webhooks/httpServers`, 'POST', body);
 export const getNetworkSnmp = (apiKey: string, r: string, nid: string): Promise<NetworkSnmpSettings> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/snmp`);

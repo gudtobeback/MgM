@@ -41,7 +41,7 @@ export function SourceConnectionStep({ data, onUpdate }: SourceConnectionStepPro
       <Card className="p-6 space-y-5 border-2 max-w-2xl mx-auto">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-lg bg-[#e8f5eb] flex items-center justify-center flex-shrink-0">
-            <Globe className="w-6 h-6 text-[#048a24]" />
+            <Globe className="w-6 h-6 text-[#2563eb]" />
           </div>
           <div>
             <h3>Source Dashboard</h3>

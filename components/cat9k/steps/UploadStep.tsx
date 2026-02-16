@@ -68,7 +68,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
         style={{
-          border: `2px dashed ${dragging ? '#048a24' : 'var(--color-border-primary)'}`,
+          border: `2px dashed ${dragging ? '#2563eb' : 'var(--color-border-primary)'}`,
           borderRadius: '8px',
           padding: '28px',
           textAlign: 'center',
@@ -92,7 +92,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
             border: '1px solid var(--color-border-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Upload size={18} color={dragging ? '#048a24' : 'var(--color-text-tertiary)'} />
+            <Upload size={18} color={dragging ? '#2563eb' : 'var(--color-text-tertiary)'} />
           </div>
           <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
             {data.rawConfig ? 'File loaded — click to replace' : 'Drop file here or click to browse'}
@@ -116,7 +116,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
           style={{
             width: '100%',
             padding: '12px',
-            fontFamily: 'monospace',
+            fontFamily: 'var(--font-mono)',
             fontSize: '12px',
             lineHeight: 1.5,
             border: '1px solid var(--color-border-primary)',
@@ -137,9 +137,9 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
           disabled={!data.rawConfig.trim()}
           style={{
             padding: '9px 20px',
-            backgroundColor: data.rawConfig.trim() ? '#048a24' : 'var(--color-bg-secondary)',
+            backgroundColor: data.rawConfig.trim() ? '#2563eb' : 'var(--color-bg-secondary)',
             color: data.rawConfig.trim() ? '#ffffff' : 'var(--color-text-tertiary)',
-            border: `1px solid ${data.rawConfig.trim() ? '#048a24' : 'var(--color-border-primary)'}`,
+            border: `1px solid ${data.rawConfig.trim() ? '#2563eb' : 'var(--color-border-primary)'}`,
             borderRadius: '5px',
             fontSize: '13px',
             fontWeight: 600,
@@ -174,11 +174,11 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
           alignItems: 'flex-start',
           gap: '10px',
         }}>
-          <CheckCircle2 size={16} color="#048a24" style={{ flexShrink: 0, marginTop: '1px' }} />
+          <CheckCircle2 size={16} color="#2563eb" style={{ flexShrink: 0, marginTop: '1px' }} />
           <div>
             <div style={{ fontSize: '13px', fontWeight: 600, color: '#025115', marginBottom: '6px' }}>
               Configuration parsed successfully
-              {parsed.hostname && <span style={{ fontWeight: 400, marginLeft: '6px', color: '#048a24' }}>— {parsed.hostname}</span>}
+              {parsed.hostname && <span style={{ fontWeight: 400, marginLeft: '6px', color: '#2563eb' }}>— {parsed.hostname}</span>}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {[

@@ -12,6 +12,12 @@ import securityRoutes from './src/routes/security';
 import docsRoutes from './src/routes/docs';
 import schedulesRoutes from './src/routes/schedules';
 import crossRegionRoutes from './src/routes/crossregion';
+import adminRoutes from './src/routes/admin';
+import companyRoutes from './src/routes/company';
+import { authMiddleware } from './src/middleware/auth';
+import { requireRole } from './src/middleware/role';
+import { SchedulerService } from './src/services/SchedulerService';
+import { query as dbQuery } from './src/config/database';
 
 // Load environment variables
 dotenv.config();
@@ -57,6 +63,8 @@ app.use('/api/organizations', docsRoutes);
 app.use('/api/organizations', schedulesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/cross-region', crossRegionRoutes);
+app.use('/api/admin', authMiddleware, requireRole('super_admin'), adminRoutes);
+app.use('/api/company', authMiddleware, requireRole('company_admin', 'super_admin'), companyRoutes);
 
 // Existing Meraki proxy endpoint
 app.post('/api/proxy', async (req, res) => {
@@ -114,3 +122,55 @@ app.post('/api/proxy', async (req, res) => {
 app.listen(port, () => {
     console.log(`Meraki API proxy server listening on http://127.0.0.1:${port}`);
 });
+
+// ── Background Scheduler ────────────────────────────────────────────────────
+// Runs every hour; takes snapshots for any org whose schedule is due.
+const SCHED_BASES: Record<string, string> = {
+  com: 'https://api.meraki.com/api/v1',
+  in:  'https://api.meraki.in/api/v1',
+};
+
+async function runScheduledSnapshots(): Promise<void> {
+  try {
+    const due = await SchedulerService.getDueOrganizations();
+    if (due.length === 0) return;
+    console.log(`[Scheduler] ${due.length} org(s) due for snapshot`);
+
+    for (const org of due) {
+      try {
+        const baseUrl = SCHED_BASES[org.region] ?? SCHED_BASES.com;
+        const headers = { 'X-Cisco-Meraki-API-Key': org.apiKey };
+
+        const [networksRes, devicesRes] = await Promise.allSettled([
+          fetch(`${baseUrl}/organizations/${org.merakiOrgId}/networks`, { headers }),
+          fetch(`${baseUrl}/organizations/${org.merakiOrgId}/devices`,  { headers }),
+        ]);
+
+        const networks = networksRes.status === 'fulfilled' && networksRes.value.ok
+          ? await networksRes.value.json() : [];
+        const devices  = devicesRes.status  === 'fulfilled' && devicesRes.value.ok
+          ? await devicesRes.value.json()  : [];
+
+        const snapshotData = { networks, devices, vlans: [], ssids: [], l3FirewallRules: [] };
+        const sizeBytes    = JSON.stringify(snapshotData).length;
+
+        await dbQuery(
+          `INSERT INTO config_snapshots (organization_id, snapshot_type, snapshot_data, size_bytes, notes)
+           VALUES ($1, 'scheduled', $2, $3, $4)`,
+          [org.id, JSON.stringify(snapshotData), sizeBytes, `Auto snapshot — ${org.config.frequency}`]
+        );
+
+        await SchedulerService.pruneOldSnapshots(org.id, org.config.retainCount);
+        console.log(`[Scheduler] Snapshot saved for "${org.name}"`);
+      } catch (err: any) {
+        console.error(`[Scheduler] Failed for "${org.name}":`, err.message);
+      }
+    }
+  } catch (err: any) {
+    console.error('[Scheduler] Cron error:', err.message);
+  }
+}
+
+// Run immediately on startup, then every hour
+runScheduledSnapshots();
+setInterval(runScheduledSnapshots, 60 * 60 * 1000);

@@ -146,7 +146,7 @@ export const SecurityPage: React.FC<SecurityPageProps> = ({ organizationId, orga
                 </p>
                 {/* Category breakdown */}
                 <div className="flex flex-wrap gap-3 mt-3">
-                  {Object.entries(report.byCategory).map(([cat, counts]) => (
+                  {(Object.entries(report.byCategory) as [string, { count: number; criticalCount: number }][]).map(([cat, counts]) => (
                     <div key={cat} className="flex items-center gap-1.5 text-sm">
                       <span>{CATEGORY_ICONS[cat] ?? '⚙️'}</span>
                       <span className={RISK_CONFIG[report.overallRisk].text}>

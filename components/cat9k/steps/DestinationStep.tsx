@@ -159,9 +159,9 @@ export function DestinationStep({ data, onUpdate }: DestinationStepProps) {
               disabled={!data.destinationApiKey.trim() || orgState === 'loading'}
               style={{
                 padding: '9px 16px', flexShrink: 0,
-                backgroundColor: data.destinationApiKey.trim() ? '#048a24' : 'var(--color-bg-secondary)',
+                backgroundColor: data.destinationApiKey.trim() ? '#2563eb' : 'var(--color-bg-secondary)',
                 color: data.destinationApiKey.trim() ? '#ffffff' : 'var(--color-text-tertiary)',
-                border: `1px solid ${data.destinationApiKey.trim() ? '#048a24' : 'var(--color-border-primary)'}`,
+                border: `1px solid ${data.destinationApiKey.trim() ? '#2563eb' : 'var(--color-border-primary)'}`,
                 borderRadius: '5px', fontSize: '13px', fontWeight: 600,
                 cursor: data.destinationApiKey.trim() ? 'pointer' : 'not-allowed',
                 display: 'flex', alignItems: 'center', gap: '5px',
@@ -242,7 +242,7 @@ export function DestinationStep({ data, onUpdate }: DestinationStepProps) {
             fontSize: '13px', color: '#025115',
           }}>
             <div style={{ fontWeight: 600, marginBottom: '4px' }}>{data.destinationNetwork.name}</div>
-            <div style={{ fontSize: '12px', color: '#048a24' }}>
+            <div style={{ fontSize: '12px', color: '#2563eb' }}>
               {data.destinationOrg?.name}
               {data.destinationDevices.length > 0 && (
                 <span> &middot; {data.destinationDevices.filter(d => d.model?.startsWith('MS')).length} MS switch(es) found</span>

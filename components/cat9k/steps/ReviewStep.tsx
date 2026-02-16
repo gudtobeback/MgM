@@ -26,7 +26,7 @@ function Toggle({ checked, disabled, onChange, label, subtitle }: ToggleProps) {
         checked={checked}
         disabled={disabled}
         onChange={e => onChange(e.target.checked)}
-        style={{ marginTop: '2px', accentColor: '#048a24', cursor: disabled ? 'not-allowed' : 'pointer' }}
+        style={{ marginTop: '2px', accentColor: '#2563eb', cursor: disabled ? 'not-allowed' : 'pointer' }}
       />
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{label}</div>
@@ -71,7 +71,7 @@ const TD: React.CSSProperties = {
 };
 
 const CODE: React.CSSProperties = {
-  fontFamily: 'monospace', fontSize: '11px',
+  fontFamily: 'var(--font-mono)', fontSize: '11px',
   backgroundColor: 'var(--color-bg-secondary)',
   padding: '1px 5px', borderRadius: '3px',
   color: 'var(--color-text-secondary)',
@@ -186,7 +186,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
                         {iface.mode}
                       </span>
                     </td>
-                    <td style={{ ...TD, fontFamily: 'monospace', fontSize: '11px', color: 'var(--color-text-secondary)' }}>
+                    <td style={{ ...TD, fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--color-text-secondary)' }}>
                       {iface.mode === 'access' && iface.accessVlan != null ? iface.accessVlan
                         : iface.mode === 'trunk' && iface.trunkAllowedVlans ? iface.trunkAllowedVlans
                         : '—'}
@@ -219,9 +219,9 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
               {parsed.radiusServers.map(srv => (
                 <tr key={srv.name}>
                   <td style={TD}><span style={CODE}>{srv.name}</span></td>
-                  <td style={{ ...TD, fontFamily: 'monospace', fontSize: '12px' }}>{srv.ip}</td>
+                  <td style={{ ...TD, fontFamily: 'var(--font-mono)', fontSize: '12px' }}>{srv.ip}</td>
                   <td style={TD}>{srv.authPort}</td>
-                  <td style={{ ...TD, fontFamily: 'monospace', fontSize: '12px', color: 'var(--color-text-tertiary)' }}>
+                  <td style={{ ...TD, fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--color-text-tertiary)' }}>
                     {srv.key ? '••••••••' : <span style={{ color: 'var(--color-text-tertiary)' }}>not set</span>}
                   </td>
                 </tr>
