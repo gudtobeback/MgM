@@ -37,98 +37,51 @@ export const TopBar: React.FC<TopBarProps> = ({
   const displayName = email.split('@')[0] || email;
   const tier = user?.subscriptionTier || 'free';
 
-  const iconBtn = (onClick: () => void, title: string, children: React.ReactNode) => (
+  const IconBtn = ({ onClick, title, children }: { onClick: () => void; title: string; children: React.ReactNode }) => (
     <button
       onClick={onClick}
       title={title}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '7px',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        background: 'none',
-        border: 'none',
-        color: 'var(--topbar-text-muted)',
-        transition: 'background 120ms, color 120ms',
-      }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.background = 'var(--topbar-hover)';
-        (e.currentTarget as HTMLElement).style.color = 'var(--topbar-text)';
-      }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.background = 'none';
-        (e.currentTarget as HTMLElement).style.color = 'var(--topbar-text-muted)';
-      }}
+      className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:bg-white/40 hover:text-foreground transition-all duration-200"
     >
       {children}
     </button>
   );
 
   return (
-    <header
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: 'var(--topbar-height)',
-        background: 'var(--topbar-bg)',
-        backdropFilter: 'blur(40px) saturate(220%) brightness(1.06)',
-        WebkitBackdropFilter: 'blur(40px) saturate(220%) brightness(1.06)',
-        borderBottom: '1px solid rgba(255,255,255,0.55)',
-        boxShadow: '0 2px 16px rgba(0,30,100,0.14), inset 0 1px 0 rgba(255,255,255,0.65)',
-        padding: '0 16px',
-        flexShrink: 0,
-        gap: '8px',
-      }}
-    >
+    <header className="flex items-center justify-between h-[var(--topbar-height)] px-4 glass z-50 relative">
       {/* Left: logo + product name + hamburger */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {iconBtn(onToggleSidebar, 'Toggle sidebar', <Menu size={19} />)}
+      <div className="flex items-center gap-3">
+        <IconBtn onClick={onToggleSidebar} title="Toggle sidebar">
+          <Menu size={19} />
+        </IconBtn>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Cisco bridge logo — keep Cisco cyan for brand identity */}
-          <svg width="40" height="20" viewBox="0 0 60 30" fill="none">
-            <rect x="0" y="12" width="6" height="6" rx="1" fill="#00bceb" />
-            <rect x="9" y="6" width="6" height="12" rx="1" fill="#00bceb" />
-            <rect x="18" y="0" width="6" height="18" rx="1" fill="#00bceb" />
-            <rect x="27" y="6" width="6" height="12" rx="1" fill="#00bceb" />
-            <rect x="36" y="12" width="6" height="6" rx="1" fill="#00bceb" />
+        <div className="flex items-center gap-2.5">
+          {/* Logo - kept as requested */}
+          <svg width="32" height="16" viewBox="0 0 60 30" fill="none" className="opacity-90">
+            <rect x="0" y="12" width="6" height="6" rx="1" fill="#007AFF" />
+            <rect x="9" y="6" width="6" height="12" rx="1" fill="#007AFF" />
+            <rect x="18" y="0" width="6" height="18" rx="1" fill="#007AFF" />
+            <rect x="27" y="6" width="6" height="12" rx="1" fill="#007AFF" />
+            <rect x="36" y="12" width="6" height="6" rx="1" fill="#007AFF" />
           </svg>
-          <span style={{ color: 'var(--topbar-text)', fontWeight: 600, fontSize: '16px', letterSpacing: '-0.01em' }}>
+          <span className="font-semibold text-lg tracking-tight text-foreground">
             Meraki Management
           </span>
         </div>
       </div>
 
       {/* Right: org pill + help + user + logout */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+      <div className="flex items-center gap-1.5">
 
         {/* Org pill */}
         {selectedOrgName && (
           <button
             onClick={() => onNavigate('organizations')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '5px 11px',
-              borderRadius: '6px',
-              background: '#f3f4f6',
-              border: '1px solid var(--topbar-border)',
-              color: '#4b5563',
-              fontSize: '13px',
-              cursor: 'pointer',
-              transition: 'background 120ms',
-              maxWidth: '200px',
-            }}
             title="Switch organization"
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--topbar-hover)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#f3f4f6'; }}
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 border border-white/20 text-sm text-foreground hover:bg-white/70 transition-all duration-200 max-w-[200px]"
           >
-            <Building2 size={12} color="#6b7280" />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '150px' }}>
+            <Building2 size={13} className="text-muted-foreground" />
+            <span className="truncate max-w-[140px] font-medium opacity-90">
               {selectedOrgName}
             </span>
           </button>
@@ -136,67 +89,45 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* Divider */}
         {selectedOrgName && (
-          <div style={{ width: '1px', height: '20px', background: 'var(--topbar-border)', margin: '0 4px' }} />
+          <div className="w-px h-5 bg-border mx-2 hidden md:block" />
         )}
 
         {/* Help */}
-        {iconBtn(() => {}, 'Help', <HelpCircle size={18} />)}
+        <IconBtn onClick={() => { }} title="Help">
+          <HelpCircle size={18} />
+        </IconBtn>
 
         {/* User */}
         <button
           onClick={() => onNavigate('profile')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '4px 8px',
-            borderRadius: '6px',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background 120ms',
-          }}
           title="Profile & Settings"
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--topbar-hover)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+          className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full hover:bg-white/40 transition-all duration-200 group"
         >
           {/* Avatar */}
-          <div
-            style={{
-              width: '30px',
-              height: '30px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--color-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              fontSize: '13px',
-              fontWeight: 700,
-              flexShrink: 0,
-            }}
-          >
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm group-hover:shadow transition-all">
             {initial}
           </div>
           {/* Name + tier */}
-          <div style={{ textAlign: 'left' }} className="hidden md:block">
-            <div style={{ color: 'var(--topbar-text)', fontSize: '14px', fontWeight: 500, lineHeight: 1.2, maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div className="hidden md:block text-left">
+            <div className="text-sm font-medium leading-none text-foreground truncate max-w-[150px]">
               {displayName}
             </div>
             {tier && (
-              <div style={{ color: 'var(--topbar-text-muted)', fontSize: '12px', lineHeight: 1.2 }}>
+              <div className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mt-0.5">
                 {TIER_LABELS[tier] || tier}
               </div>
             )}
           </div>
-          <ChevronDown size={13} color="#9ca3af" className="hidden md:block" />
+          <ChevronDown size={13} className="text-muted-foreground hidden md:block group-hover:text-foreground transition-colors" />
         </button>
 
         {/* Divider */}
-        <div style={{ width: '1px', height: '20px', background: 'var(--topbar-border)', margin: '0 4px' }} />
+        <div className="w-px h-5 bg-border mx-2" />
 
         {/* Sign out */}
-        {iconBtn(onLogout, 'Sign out', <LogOut size={17} />)}
+        <IconBtn onClick={onLogout} title="Sign out">
+          <LogOut size={17} />
+        </IconBtn>
       </div>
     </header>
   );

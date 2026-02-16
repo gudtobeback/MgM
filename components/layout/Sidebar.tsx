@@ -6,6 +6,7 @@ import {
   CalendarClock, Globe2, BarChart3,
   UserCircle, ChevronRight, ChevronLeft, ServerCog, Users, Settings2,
 } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
 type ToolMode =
   | 'selection' | 'migration' | 'backup' | 'restore'
@@ -21,55 +22,55 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'selection',     label: 'Home',          icon: <Home      size={17} /> },
-  { id: 'organizations', label: 'Organizations',  icon: <Building2 size={17} /> },
+  { id: 'selection', label: 'Home', icon: <Home size={18} /> },
+  { id: 'organizations', label: 'Organizations', icon: <Building2 size={18} /> },
   {
     id: 'migration',
     label: 'Migration',
-    icon: <ArrowRightLeft size={17} />,
+    icon: <ArrowRightLeft size={18} />,
     children: [
       { id: 'migration', label: 'Full Migration' },
-      { id: 'cat9k',     label: 'Cat9K → Meraki' },
+      { id: 'cat9k', label: 'Cat9K → Meraki' },
     ],
   },
   {
     id: 'backup',
     label: 'Backup & Recovery',
-    icon: <HardDriveDownload size={17} />,
+    icon: <HardDriveDownload size={18} />,
     children: [
-      { id: 'backup',   label: 'Backup Config' },
-      { id: 'restore',  label: 'Restore Backup' },
+      { id: 'backup', label: 'Backup Config' },
+      { id: 'restore', label: 'Restore Backup' },
     ],
   },
   {
     id: 'version-control',
     label: 'Configuration',
-    icon: <Settings2 size={17} />,
+    icon: <Settings2 size={18} />,
     children: [
-      { id: 'version-control',   label: 'Version Control' },
-      { id: 'drift',             label: 'Drift Detection' },
+      { id: 'version-control', label: 'Version Control' },
+      { id: 'drift', label: 'Drift Detection' },
       { id: 'change-management', label: 'Change Management' },
-      { id: 'bulk-ops',          label: 'Bulk Operations' },
+      { id: 'bulk-ops', label: 'Bulk Operations' },
     ],
   },
   {
     id: 'compliance',
     label: 'Compliance & Security',
-    icon: <ShieldCheck size={17} />,
+    icon: <ShieldCheck size={18} />,
     children: [
       { id: 'compliance', label: 'Compliance Audit' },
-      { id: 'security',   label: 'Security Posture' },
+      { id: 'security', label: 'Security Posture' },
     ],
   },
   {
     id: 'dashboard',
     label: 'Operations',
-    icon: <BarChart3 size={17} />,
+    icon: <BarChart3 size={18} />,
     children: [
-      { id: 'dashboard',    label: 'Analytics' },
-      { id: 'scheduler',    label: 'Scheduler' },
+      { id: 'dashboard', label: 'Analytics' },
+      { id: 'scheduler', label: 'Scheduler' },
       { id: 'cross-region', label: 'Cross-Region Sync' },
-      { id: 'documentation',label: 'Documentation' },
+      { id: 'documentation', label: 'Documentation' },
     ],
   },
 ];
@@ -82,23 +83,6 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   userRole?: string;
 }
-
-const BASE = {
-  item: {
-    display: 'flex' as const,
-    alignItems: 'center' as const,
-    gap: '10px',
-    width: '100%',
-    padding: '10px 16px',
-    fontSize: '14px',
-    cursor: 'pointer' as const,
-    background: 'none',
-    border: 'none',
-    borderLeft: '3px solid transparent',
-    textAlign: 'left' as const,
-    transition: 'background 100ms',
-  },
-};
 
 export const Sidebar: React.FC<SidebarProps> = ({
   activeMode,
@@ -116,7 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     ...(isCompanyAdmin ? [{
       id: 'team' as ToolMode,
       label: 'Team',
-      icon: <Users size={17} />,
+      icon: <Users size={18} />,
       children: [{ id: 'team' as ToolMode, label: 'Team Management' }],
     }] : []),
   ];
@@ -128,9 +112,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return null;
   };
   const [expandedGroup, setExpandedGroup] = useState<ToolMode | null>(getDefaultExpanded);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  const width = collapsed ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width)';
 
   const isGroupActive = (item: NavItem): boolean => {
     if (item.id === activeMode) return true;
@@ -139,25 +120,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      style={{
-        width,
-        minWidth: width,
-        maxWidth: width,
-        background: 'var(--sidebar-bg)',
-        backdropFilter: 'blur(40px) saturate(220%) brightness(1.06)',
-        WebkitBackdropFilter: 'blur(40px) saturate(220%) brightness(1.06)',
-        borderRight: '1px solid rgba(255,255,255,0.60)',
-        boxShadow: '2px 0 24px rgba(0,30,100,0.12), inset -1px 0 0 rgba(255,255,255,0.50)',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        overflow: 'hidden',
-        transition: 'width 180ms ease, min-width 180ms ease, max-width 180ms ease',
-        flexShrink: 0,
-      }}
+      className={cn(
+        "glass flex flex-col h-full border-r border-white/20 transition-all duration-300 ease-in-out shrink-0 z-40 relative",
+        collapsed ? "w-[var(--sidebar-width-collapsed)]" : "w-[var(--sidebar-width)]"
+      )}
     >
       {/* Nav items — scrollable */}
-      <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingTop: '8px' }}>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden pt-4 px-3 space-y-1 no-scrollbar">
         {navItems.map(item => {
           const groupActive = isGroupActive(item);
           const isExpanded = expandedGroup === item.id;
@@ -166,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           const handleItemClick = () => {
             if (hasChildren) {
               setExpandedGroup(isExpanded ? null : item.id);
-              // Navigate to the first child
+              // Navigate to the first child if opening
               if (!isExpanded && item.children) {
                 onNavigate(item.children[0].id);
               }
@@ -176,48 +145,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
           };
 
           return (
-            <div key={item.id}>
+            <div key={item.id} className="w-full">
               {/* Top-level item */}
               <button
                 onClick={handleItemClick}
                 title={collapsed ? item.label : undefined}
-                style={{
-                  ...BASE.item,
-                  justifyContent: collapsed ? 'center' : 'flex-start',
-                  padding: collapsed ? '11px 0' : '10px 16px',
-                  borderLeft: groupActive ? '3px solid var(--sidebar-accent)' : '3px solid transparent',
-                  backgroundColor: hoveredId === item.id
-                    ? 'var(--sidebar-bg-hover)'
-                    : groupActive
-                    ? 'var(--sidebar-bg-active)'
-                    : 'transparent',
-                  color: groupActive ? 'var(--sidebar-text-active)' : 'var(--sidebar-text)',
-                  fontWeight: groupActive ? 600 : 400,
-                }}
-                onMouseEnter={() => setHoveredId(item.id)}
-                onMouseLeave={() => setHoveredId(null)}
+                className={cn(
+                  "flex items-center w-full p-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
+                  collapsed ? "justify-center" : "justify-start gap-3",
+                  groupActive
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
+                )}
               >
-                <span style={{
-                  flexShrink: 0,
-                  display: 'flex',
-                  color: groupActive ? 'var(--sidebar-accent)' : 'var(--sidebar-text-muted)',
-                }}>
+                <span className={cn(
+                  "shrink-0 flex items-center justify-center transition-colors",
+                  groupActive ? "text-white" : "text-muted-foreground group-hover:text-foreground"
+                )}>
                   {item.icon}
                 </span>
+
                 {!collapsed && (
                   <>
-                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <span className="flex-1 truncate text-left">
                       {item.label}
                     </span>
                     {hasChildren && (
                       <ChevronRight
-                        size={13}
-                        style={{
-                          flexShrink: 0,
-                          color: 'var(--sidebar-text-muted)',
-                          transform: isExpanded ? 'rotate(90deg)' : 'none',
-                          transition: 'transform 150ms',
-                        }}
+                        size={14}
+                        className={cn(
+                          "shrink-0 transition-transform duration-200",
+                          groupActive ? "text-white/70" : "text-muted-foreground",
+                          isExpanded ? "rotate-90" : ""
+                        )}
                       />
                     )}
                   </>
@@ -225,74 +185,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
 
               {/* Sub-items — only when expanded and not collapsed */}
-              {!collapsed && isExpanded && item.children?.map(child => {
-                const childActive = activeMode === child.id;
-                return (
-                  <button
-                    key={child.id}
-                    onClick={() => onNavigate(child.id)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      width: '100%',
-                      padding: '8px 16px 8px 44px',
-                      fontSize: '13.5px',
-                      cursor: 'pointer',
-                      background: hoveredId === child.id
-                        ? 'var(--sidebar-bg-hover)'
-                        : childActive
-                        ? 'var(--sidebar-bg-active)'
-                        : 'transparent',
-                      border: 'none',
-                      borderLeft: childActive ? '3px solid var(--sidebar-accent)' : '3px solid transparent',
-                      color: childActive ? 'var(--sidebar-text-active)' : 'var(--sidebar-text)',
-                      fontWeight: childActive ? 600 : 400,
-                      textAlign: 'left',
-                      transition: 'background 100ms',
-                    }}
-                    onMouseEnter={() => setHoveredId(child.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                  >
-                    {childActive && (
-                      <span
-                        style={{
-                          width: '5px',
-                          height: '5px',
-                          borderRadius: '50%',
-                          backgroundColor: 'var(--sidebar-accent)',
-                          marginRight: '8px',
-                          flexShrink: 0,
-                        }}
-                      />
-                    )}
-                    {child.label}
-                  </button>
-                );
-              })}
+              {!collapsed && isExpanded && item.children && (
+                <div className="mt-1 ml-4 space-y-0.5 border-l border-border pl-2 animate-fade-slide-up">
+                  {item.children.map(child => {
+                    const childActive = activeMode === child.id;
+                    return (
+                      <button
+                        key={child.id}
+                        onClick={() => onNavigate(child.id)}
+                        className={cn(
+                          "flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left",
+                          childActive
+                            ? "bg-white/60 text-primary font-medium shadow-sm"
+                            : "text-muted-foreground hover:bg-white/40 hover:text-foreground"
+                        )}
+                      >
+                        {childActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2 shrink-0" />
+                        )}
+                        <span className="truncate">{child.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
       </nav>
 
-      {/* Bottom: Profile + org name + collapse */}
-      <div style={{ borderTop: '1px solid var(--sidebar-border)', flexShrink: 0 }}>
+      {/* Bottom: Sidebar Footer */}
+      <div className="border-t border-white/20 p-3 space-y-2 bg-white/10 backdrop-blur-sm">
         {/* Org name strip */}
         {!collapsed && selectedOrgName && (
           <div
-            style={{
-              padding: '8px 16px',
-              fontSize: '12.5px',
-              color: 'var(--color-primary)',
-              backgroundColor: 'var(--color-primary-light)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-            }}
             onClick={() => onNavigate('organizations')}
             title={selectedOrgName}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50/50 border border-blue-100/50 text-xs font-medium text-primary cursor-pointer hover:bg-blue-50 transition-colors truncate"
           >
-            {selectedOrgName}
+            <Building2 size={14} className="shrink-0" />
+            <span className="truncate">{selectedOrgName}</span>
           </div>
         )}
 
@@ -300,25 +232,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={() => onNavigate('profile')}
           title={collapsed ? 'Profile' : undefined}
-          style={{
-            ...BASE.item,
-            justifyContent: collapsed ? 'center' : 'flex-start',
-            padding: collapsed ? '11px 0' : '10px 16px',
-            borderLeft: activeMode === 'profile' ? '3px solid var(--sidebar-accent)' : '3px solid transparent',
-            backgroundColor: activeMode === 'profile' ? 'var(--sidebar-bg-active)' : 'transparent',
-            color: activeMode === 'profile' ? 'var(--sidebar-text-active)' : 'var(--sidebar-text)',
-            fontWeight: activeMode === 'profile' ? 600 : 400,
-          }}
-          onMouseEnter={e => { if (activeMode !== 'profile') (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--sidebar-bg-hover)'; }}
-          onMouseLeave={e => { if (activeMode !== 'profile') (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
+          className={cn(
+            "flex items-center w-full p-2.5 rounded-lg transition-all duration-200 group",
+            collapsed ? "justify-center" : "justify-start gap-3",
+            activeMode === 'profile'
+              ? "bg-white/60 text-primary font-medium shadow-sm"
+              : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
+          )}
         >
-          <span style={{ flexShrink: 0, display: 'flex', color: activeMode === 'profile' ? 'var(--sidebar-accent)' : 'var(--sidebar-text-muted)' }}>
-            <UserCircle size={17} />
+          <span className={cn(
+            "shrink-0",
+            activeMode === 'profile' ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+          )}>
+            <UserCircle size={20} />
           </span>
           {!collapsed && (
-            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '14px' }}>
-              Administration
-            </span>
+            <span className="truncate text-sm">Administration</span>
           )}
         </button>
 
@@ -326,23 +255,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={onToggleCollapse}
           title={collapsed ? 'Expand' : 'Collapse'}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            padding: '8px',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--sidebar-text-muted)',
-            transition: 'color 100ms',
-            borderTop: '1px solid var(--sidebar-border)',
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--sidebar-text-active)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--sidebar-text-muted)'; }}
+          className="flex items-center justify-center w-full py-2 text-muted-foreground hover:text-foreground hover:bg-white/40 rounded-md transition-all"
         >
-          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
     </aside>

@@ -1,10 +1,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2, Shield, Database, Globe, BarChart3, Zap, GitBranch } from 'lucide-react';
-
-const SHADOW_MD  = '0 6px 20px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06)';
-const SHADOW_LG  = '0 12px 36px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.07)';
-const SHADOW_XL  = '0 20px 60px rgba(0,0,0,0.15), 0 6px 16px rgba(0,0,0,0.08)';
-const GLASS      = { background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.04)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.04)', border: '1px solid rgba(255,255,255,0.85)' } as const;
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
 
 interface HeroProps {
   setIsHome: (val: boolean) => void;
@@ -12,144 +9,90 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ setIsHome }) => {
   return (
-    <section style={{ backgroundColor: 'rgb(226, 238, 251)' }}>
+    <section className="relative overflow-hidden bg-gradient-to-b from-blue-50/50 to-white">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-200/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-indigo-200/30 rounded-full blur-[100px]" />
+      </div>
+
       {/* Nav */}
-      <nav style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        maxWidth: '1200px', margin: '0 auto', padding: '0 40px',
-        height: '64px',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <svg width="32" height="16" viewBox="0 0 60 30" fill="none">
-            <rect x="0" y="12" width="6" height="6" rx="1" fill="#00bceb" />
-            <rect x="9" y="6" width="6" height="12" rx="1" fill="#00bceb" />
-            <rect x="18" y="0" width="6" height="18" rx="1" fill="#00bceb" />
-            <rect x="27" y="6" width="6" height="12" rx="1" fill="#00bceb" />
-            <rect x="36" y="12" width="6" height="6" rx="1" fill="#00bceb" />
-          </svg>
-          <span style={{ fontWeight: 700, fontSize: '15px', color: '#111827', letterSpacing: '-0.01em' }}>
-            Meraki Management
+      <nav className="relative z-10 max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="relative w-8 h-8 flex items-center justify-center">
+            <div className="absolute inset-0 bg-blue-600 rounded-lg opacity-20 rotate-45" />
+            <div className="absolute inset-0.5 bg-blue-600 rounded-lg opacity-40 rotate-12" />
+            <div className="relative z-10 bg-blue-600 w-full h-full rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+            </div>
+          </div>
+          <span className="font-bold text-lg text-foreground tracking-tight">
+            Meraki<span className="text-blue-600">Migrate</span>
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <a href="#features" style={{ fontSize: '13px', color: '#4b5563', fontWeight: 500, textDecoration: 'none' }}>Features</a>
-          <a href="#how" style={{ fontSize: '13px', color: '#4b5563', fontWeight: 500, textDecoration: 'none' }}>How it works</a>
-          <a href="#pricing" style={{ fontSize: '13px', color: '#4b5563', fontWeight: 500, textDecoration: 'none' }}>Pricing</a>
+        <div className="hidden md:flex items-center gap-8">
+          <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors">Features</a>
+          <a href="#how" className="text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors">How it works</a>
+          <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors">Pricing</a>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button onClick={() => setIsHome(false)} style={{
-            padding: '7px 16px',
-            ...GLASS,
-            borderRadius: '8px',
-            color: '#374151',
-            fontSize: '13px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            boxShadow: SHADOW_MD,
-          }}>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" onClick={() => setIsHome(false)} className="hidden sm:inline-flex text-muted-foreground hover:text-foreground">
             Sign in
-          </button>
-          <button onClick={() => setIsHome(false)} style={{
-            padding: '7px 16px',
-            border: 'none',
-            borderRadius: '8px',
-            background: '#2563eb',
-            color: '#ffffff',
-            fontSize: '13px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(4,138,36,0.35)',
-          }}>
+          </Button>
+          <Button onClick={() => setIsHome(false)} className="shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all hover:scale-105">
             Get started
-          </button>
+          </Button>
         </div>
       </nav>
 
       {/* Hero body */}
-      <div style={{
-        maxWidth: '1200px', margin: '0 auto', padding: '64px 40px 72px',
-        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'start',
-      }}>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24 grid lg:grid-cols-2 gap-16 items-center">
+
         {/* Left */}
-        <div>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            padding: '4px 12px',
-            backgroundColor: '#e8f5eb',
-            border: '1px solid #bbdfc4',
-            borderRadius: '100px',
-            fontSize: '11px', fontWeight: 600, color: '#025115',
-            letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '24px',
-          }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#2563eb', flexShrink: 0 }} />
+        <div className="animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 border border-blue-200 text-blue-700 text-[11px] font-bold uppercase tracking-wider mb-6">
+            <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse"></span>
             Cisco Meraki Enterprise Platform
           </div>
 
-          <h1 style={{
-            fontSize: '42px', fontWeight: 800, color: '#0f172a',
-            lineHeight: 1.15, marginBottom: '18px', letterSpacing: '-0.03em',
-          }}>
-            Migrate, manage, and audit
-            <br />
-            <span style={{ color: '#2563eb' }}>Meraki networks at scale.</span>
+          <h1 className="text-5xl sm:text-6xl font-extrabold text-foreground leading-[1.1] mb-6 tracking-tight">
+            Migrate, manage, and audit <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+              Meraki networks at scale.
+            </span>
           </h1>
 
-          <p style={{
-            fontSize: '16px', color: '#4b5563', lineHeight: 1.75,
-            marginBottom: '32px', maxWidth: '480px',
-          }}>
+          <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-lg">
             A purpose-built operations platform for Cisco Meraki administrators.
             Cross-region migration, automated backup, configuration drift detection,
             and bulk operations — from one dashboard.
           </p>
 
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '48px' }}>
-            <button onClick={() => setIsHome(false)} style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '11px 22px',
-              backgroundColor: '#2563eb', color: '#ffffff',
-              border: 'none', borderRadius: '10px',
-              fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(4,138,36,0.40)',
-            }}>
-              Start migration <ArrowRight size={14} />
-            </button>
-            <button onClick={() => setIsHome(false)} style={{
-              padding: '11px 22px',
-              ...GLASS,
-              color: '#374151',
-              borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-              boxShadow: SHADOW_MD,
-            }}>
+          <div className="flex items-center gap-4 mb-12">
+            <Button size="lg" onClick={() => setIsHome(false)} className="h-12 px-8 text-base shadow-xl shadow-blue-500/20 hover:scale-105 transition-all">
+              Start migration <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => setIsHome(false)} className="h-12 px-8 text-base bg-white/50 backdrop-blur-sm hover:bg-white/80 border-white/60">
               Request demo
-            </button>
+            </Button>
           </div>
 
           {/* Stats row */}
-          <div style={{
-            display: 'flex', gap: '0',
-            ...GLASS,
-            borderRadius: '14px',
-            boxShadow: SHADOW_LG,
-            overflow: 'hidden',
-          }}>
+          <div className="glass-card p-0 overflow-hidden flex divide-x divide-border/50">
             {[
-              { value: '99.9%',   label: 'Migration success' },
+              { value: '99.9%', label: 'Migration success' },
               { value: '~10 min', label: 'Average time' },
-              { value: '50+',     label: 'Config categories' },
+              { value: '50+', label: 'Config categories' },
             ].map((s, i) => (
-              <div key={s.label} style={{
-                flex: 1,
-                padding: '18px 20px',
-                borderRight: i < 2 ? '1px solid #f0f1f3' : 'none',
-                textAlign: 'center',
-              }}>
-                <div style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
+              <div key={s.label} className="flex-1 p-5 text-center bg-white/40 hover:bg-white/60 transition-colors">
+                <div className="text-2xl font-bold text-foreground tracking-tight">
                   {s.value}
                 </div>
-                <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '3px', fontWeight: 500 }}>
+                <div className="text-[10px] uppercase font-bold text-muted-foreground mt-1 tracking-wider">
                   {s.label}
                 </div>
               </div>
@@ -158,61 +101,41 @@ export const Hero: React.FC<HeroProps> = ({ setIsHome }) => {
         </div>
 
         {/* Right — Platform capabilities card */}
-        <div style={{
-          ...GLASS,
-          borderRadius: '20px',
-          boxShadow: SHADOW_XL,
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            padding: '16px 20px',
-            backgroundColor: '#f9fafb',
-            borderBottom: '1px solid #f0f1f3',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}>
-            <span style={{
-              fontSize: '12px', fontWeight: 700, color: '#374151',
-              textTransform: 'uppercase', letterSpacing: '0.06em',
-            }}>
-              Platform Capabilities
-            </span>
-            <span style={{
-              padding: '3px 10px',
-              backgroundColor: '#e8f5eb', border: '1px solid #bbdfc4',
-              borderRadius: '100px', fontSize: '11px', fontWeight: 700, color: '#025115',
-            }}>
-              v1.0
-            </span>
-          </div>
+        <div className="glass-card p-0 overflow-hidden shadow-2xl animate-fade-in-up relative group">
+          {/* Glow effect behind card */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
 
-          {[
-            { icon: <Globe size={15} color="#2563eb" />, iconBg: '#eff6ff', title: 'Cross-region migration', desc: 'Global → India, China, Canada and more' },
-            { icon: <Shield size={15} color="#7c3aed" />, iconBg: '#f5f3ff', title: 'Pre-migration backup', desc: 'Full org snapshot saved as ZIP before any change' },
-            { icon: <Database size={15} color="#0891b2" />, iconBg: '#ecfeff', title: 'Configuration restore', desc: 'Auto-restores VLANs, firewall rules, SSIDs, RADIUS' },
-            { icon: <BarChart3 size={15} color="#d97706" />, iconBg: '#fffbeb', title: 'Drift detection', desc: 'Compares live config against saved baseline' },
-            { icon: <Zap size={15} color="#2563eb" />, iconBg: '#eff6ff', title: 'Bulk operations', desc: 'Push changes across multiple networks at once' },
-            { icon: <GitBranch size={15} color="#dc2626" />, iconBg: '#fef2f2', title: 'Rollback on failure', desc: 'Smart stage-by-stage rollback if migration fails' },
-          ].map((cap, i) => (
-            <div key={cap.title} style={{
-              display: 'flex', alignItems: 'flex-start', gap: '14px',
-              padding: '14px 20px',
-              borderBottom: i < 5 ? '1px solid #f8f9fb' : 'none',
-              backgroundColor: '#ffffff',
-            }}>
-              <div style={{
-                width: '30px', height: '30px', borderRadius: '8px',
-                backgroundColor: cap.iconBg,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, marginTop: '1px',
-              }}>
-                {cap.icon}
-              </div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>{cap.title}</div>
-                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '2px' }}>{cap.desc}</div>
-              </div>
+          <div className="relative bg-white/80 backdrop-blur-xl h-full rounded-2xl">
+            <div className="px-6 py-4 bg-muted/30 border-b border-border/50 flex items-center justify-between">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                Platform Capabilities
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold border border-green-200">
+                v1.0 LIVE
+              </span>
             </div>
-          ))}
+
+            <div className="divide-y divide-border/40">
+              {[
+                { icon: <Globe size={16} className="text-blue-600" />, iconBg: 'bg-blue-50', title: 'Cross-region migration', desc: 'Global → India, China, Canada and more' },
+                { icon: <Shield size={16} className="text-purple-600" />, iconBg: 'bg-purple-50', title: 'Pre-migration backup', desc: 'Full org snapshot saved as ZIP before any change' },
+                { icon: <Database size={16} className="text-cyan-600" />, iconBg: 'bg-cyan-50', title: 'Configuration restore', desc: 'Auto-restores VLANs, firewall rules, SSIDs, RADIUS' },
+                { icon: <BarChart3 size={16} className="text-amber-600" />, iconBg: 'bg-amber-50', title: 'Drift detection', desc: 'Compares live config against saved baseline' },
+                { icon: <Zap size={16} className="text-indigo-600" />, iconBg: 'bg-indigo-50', title: 'Bulk operations', desc: 'Push changes across multiple networks at once' },
+                { icon: <GitBranch size={16} className="text-red-600" />, iconBg: 'bg-red-50', title: 'Rollback on failure', desc: 'Smart stage-by-stage rollback if migration fails' },
+              ].map((cap, i) => (
+                <div key={cap.title} className="flex items-start gap-4 p-5 hover:bg-white/60 transition-colors cursor-default">
+                  <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-black/5", cap.iconBg)}>
+                    {cap.icon}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">{cap.title}</div>
+                    <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{cap.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

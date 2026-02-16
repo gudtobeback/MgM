@@ -65,7 +65,7 @@ export class SchedulerService {
     const currentHour = now.getHours();
     const currentDow = now.getDay();
 
-    const due: Array<{ id: string; name: string; apiKey: string; region: string; config: ScheduleConfig }> = [];
+    const due: Array<{ id: string; merakiOrgId: string; name: string; apiKey: string; region: string; config: ScheduleConfig }> = [];
 
     for (const row of result.rows) {
       const cfg: ScheduleConfig = row.schedule_config;

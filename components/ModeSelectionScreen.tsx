@@ -6,7 +6,9 @@ import {
   Shield, Layers, ServerCog,
   GitBranch, HardDriveUpload,
   Plus, Wifi, Globe, RefreshCw,
+  Zap, Database,
 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 type ToolMode =
   | 'selection' | 'migration' | 'backup' | 'restore'
@@ -28,100 +30,89 @@ const TOOLS: {
   label: string;
   description: string;
   icon: React.ReactNode;
-  color: string;
-  bg: string;
+  gradient: string;
 }[] = [
-  {
-    id: 'migration',
-    label: 'Full Migration',
-    description: 'Migrate devices and configurations between organizations',
-    icon: <ArrowRightLeft size={16} />,
-    color: '#2563eb',
-    bg: '#eff6ff',
-  },
-  {
-    id: 'cat9k',
-    label: 'Cat9K → Meraki',
-    description: 'Translate IOS-XE running-config to Meraki MS switch config',
-    icon: <ServerCog size={16} />,
-    color: '#7c3aed',
-    bg: '#f5f3ff',
-  },
-  {
-    id: 'backup',
-    label: 'Backup Config',
-    description: 'Snapshot your org and save to ZIP before any change',
-    icon: <HardDriveDownload size={16} />,
-    color: '#0891b2',
-    bg: '#ecfeff',
-  },
-  {
-    id: 'restore',
-    label: 'Restore Backup',
-    description: 'Restore a previous configuration snapshot to your org',
-    icon: <HardDriveUpload size={16} />,
-    color: '#059669',
-    bg: '#ecfdf5',
-  },
-  {
-    id: 'drift',
-    label: 'Drift Detection',
-    description: 'Detect configuration changes against a saved baseline',
-    icon: <Activity size={16} />,
-    color: '#dc2626',
-    bg: '#fff1f2',
-  },
-  {
-    id: 'version-control',
-    label: 'Version Control',
-    description: 'Track and compare configuration changes over time',
-    icon: <GitBranch size={16} />,
-    color: '#d97706',
-    bg: '#fffbeb',
-  },
-  {
-    id: 'bulk-ops',
-    label: 'Bulk Operations',
-    description: 'Push settings across multiple networks simultaneously',
-    icon: <Layers size={16} />,
-    color: '#0891b2',
-    bg: '#ecfeff',
-  },
-  {
-    id: 'compliance',
-    label: 'Compliance Audit',
-    description: 'Run PCI DSS, HIPAA, ISO 27001 and CIS benchmark checks',
-    icon: <ShieldCheck size={16} />,
-    color: '#16a34a',
-    bg: '#f0fdf4',
-  },
-  {
-    id: 'security',
-    label: 'Security Posture',
-    description: 'Review firewall, SSID encryption and vulnerability status',
-    icon: <Shield size={16} />,
-    color: '#dc2626',
-    bg: '#fff1f2',
-  },
-  {
-    id: 'dashboard',
-    label: 'Analytics',
-    description: 'Platform usage metrics and operational insights',
-    icon: <BarChart3 size={16} />,
-    color: '#2563eb',
-    bg: '#eff6ff',
-  },
-];
+    {
+      id: 'migration',
+      label: 'Full Migration',
+      description: 'Migrate devices and configurations between organizations',
+      icon: <ArrowRightLeft size={20} />,
+      gradient: 'from-blue-500 to-indigo-600',
+    },
+    {
+      id: 'cat9k',
+      label: 'Cat9K → Meraki',
+      description: 'Translate IOS-XE running-config to Meraki MS switch config',
+      icon: <ServerCog size={20} />,
+      gradient: 'from-violet-500 to-purple-600',
+    },
+    {
+      id: 'backup',
+      label: 'Backup Config',
+      description: 'Snapshot your org and save to ZIP before any change',
+      icon: <HardDriveDownload size={20} />,
+      gradient: 'from-cyan-500 to-blue-600',
+    },
+    {
+      id: 'restore',
+      label: 'Restore Backup',
+      description: 'Restore a previous configuration snapshot to your org',
+      icon: <HardDriveUpload size={20} />,
+      gradient: 'from-emerald-500 to-teal-600',
+    },
+    {
+      id: 'drift',
+      label: 'Drift Detection',
+      description: 'Detect configuration changes against a saved baseline',
+      icon: <Activity size={20} />,
+      gradient: 'from-red-500 to-rose-600',
+    },
+    {
+      id: 'version-control',
+      label: 'Version Control',
+      description: 'Track and compare configuration changes over time',
+      icon: <GitBranch size={20} />,
+      gradient: 'from-amber-500 to-orange-600',
+    },
+    {
+      id: 'bulk-ops',
+      label: 'Bulk Operations',
+      description: 'Push settings across multiple networks simultaneously',
+      icon: <Layers size={20} />,
+      gradient: 'from-cyan-500 to-blue-600',
+    },
+    {
+      id: 'compliance',
+      label: 'Compliance Audit',
+      description: 'Run PCI DSS, HIPAA, ISO 27001 and CIS benchmark checks',
+      icon: <ShieldCheck size={20} />,
+      gradient: 'from-green-500 to-emerald-600',
+    },
+    {
+      id: 'security',
+      label: 'Security Posture',
+      description: 'Review firewall, SSID encryption and vulnerability status',
+      icon: <Shield size={20} />,
+      gradient: 'from-red-500 to-rose-600',
+    },
+    {
+      id: 'dashboard',
+      label: 'Analytics',
+      description: 'Platform usage metrics and operational insights',
+      icon: <BarChart3 size={20} />,
+      gradient: 'from-blue-500 to-indigo-600',
+    },
+  ];
 
 // ── Region display helpers ────────────────────────────────────────────────────
 const REGION_LABEL: Record<string, string> = {
   com: 'Global',
-  in:  'India',
+  in: 'India',
 };
 
-const REGION_COLORS: Record<string, { bg: string; color: string }> = {
-  com: { bg: '#eff6ff', color: '#2563eb' },
-  in:  { bg: '#f5f3ff', color: '#7c3aed' },
+const REGION_STYLES: Record<string, string> = {
+  com: 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10',
+  in: 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-700/10',
 };
 
 // ── Sync time formatter ───────────────────────────────────────────────────────
@@ -129,17 +120,12 @@ function formatSync(syncedAt: string | null): string {
   if (!syncedAt) return 'Never synced';
   const diff = Date.now() - new Date(syncedAt).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1)  return 'Just now';
+  if (mins < 1) return 'Just now';
   if (mins < 60) return `${mins} min ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24)  return `${hrs}h ago`;
+  if (hrs < 24) return `${hrs}h ago`;
   return `${Math.floor(hrs / 24)}d ago`;
 }
-
-// ── Shadow tokens ─────────────────────────────────────────────────────────────
-const SHADOW_SM  = '0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)';
-const SHADOW_MD  = '0 6px 20px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06)';
-const SHADOW_LG  = '0 12px 36px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.07)';
 
 function formatDate(): string {
   return new Date().toLocaleDateString('en-US', {
@@ -157,8 +143,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
 }) => {
   const firstName = userEmail ? userEmail.split('@')[0].replace(/[._]/g, ' ') : null;
   const [hoveredTool, setHoveredTool] = React.useState<string | null>(null);
-  const [hoveredOrg,  setHoveredOrg]  = React.useState<string | null>(null);
-  const [isSyncing,   setIsSyncing]   = React.useState(false);
+  const [isSyncing, setIsSyncing] = React.useState(false);
 
   const handleSync = async () => {
     if (!onRefreshOrgs || isSyncing) return;
@@ -170,104 +155,68 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
   const totalDevices = connectedOrgs.reduce((s, o) => s + (o.device_count ?? 0), 0);
   const uniqueRegions = new Set(connectedOrgs.map(o => o.meraki_region)).size;
   const SUMMARY = [
-    { value: String(connectedOrgs.length), label: 'Connected Orgs',  color: '#2563eb' },
-    { value: String(totalDevices),          label: 'Total Devices',    color: '#0891b2' },
-    { value: String(uniqueRegions),         label: 'Regions',          color: '#7c3aed' },
+    { value: String(connectedOrgs.length), label: 'Connected Orgs', icon: <Building2 className="text-blue-500" /> },
+    { value: String(totalDevices), label: 'Total Devices', icon: <HardDriveDownload className="text-cyan-500" /> },
+    { value: String(uniqueRegions), label: 'Regions', icon: <Globe className="text-purple-500" /> },
     {
       value: connectedOrgs.length === 0 ? '—' : 'Active',
-      label: 'Platform Status', color: '#16a34a',
+      label: 'Platform Status', icon: <Activity className="text-green-500" />,
     },
   ];
 
-  const card = (style?: React.CSSProperties): React.CSSProperties => ({
-    background: 'rgba(255, 255, 255, 0.72)',
-    backdropFilter: 'blur(24px) saturate(180%) brightness(1.04)',
-    WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.04)',
-    borderRadius: '16px',
-    boxShadow: `${SHADOW_MD}, inset 0 1px 0 rgba(255,255,255,0.90)`,
-    border: '1px solid rgba(255,255,255,0.85)',
-    ...style,
-  });
-
   return (
-    <div style={{ maxWidth: '1080px' }}>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-        marginBottom: '24px', gap: '16px',
-      }}>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 style={{
-            fontSize: '22px', fontWeight: 800, color: '#111827',
-            marginBottom: '4px', letterSpacing: '-0.02em',
-          }}>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
             {firstName ? `Welcome back, ${firstName}` : 'Dashboard'}
           </h1>
-          <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Unified Meraki Management — {connectedOrgs.length} organization{connectedOrgs.length !== 1 ? 's' : ''} connected
           </p>
         </div>
 
         <button
           onClick={() => onSelectMode('organizations')}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            padding: '10px 18px', borderRadius: '10px', cursor: 'pointer', border: 'none',
-            backgroundColor: '#2563eb', color: '#fff',
-            boxShadow: '0 4px 14px rgba(37,99,235,0.4)',
-            fontSize: '13px', fontWeight: 600, flexShrink: 0,
-            transition: 'box-shadow 150ms',
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(37,99,235,0.5)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(37,99,235,0.4)'; }}
+          className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-lg hover:shadow-xl hover:opacity-95 transition-all duration-200"
         >
-          <Plus size={14} />
-          Add Organization
+          <Plus size={18} />
+          <span>Add Organization</span>
         </button>
       </div>
 
       {/* ── Org summary stat row ────────────────────────────────────────── */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '14px', marginBottom: '20px',
-      }}>
-        {SUMMARY.map(s => (
-          <div key={s.label} style={{
-            ...card({ boxShadow: SHADOW_LG }),
-            padding: '20px 20px 18px',
-          }}>
-            <div style={{
-              fontSize: '26px', fontWeight: 800,
-              color: s.color,
-              letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '6px',
-            }}>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {SUMMARY.map((s, i) => (
+          <div key={s.label} className="glass-card p-5 flex flex-col items-center justify-center text-center group hover:scale-[1.02] transition-transform duration-200">
+            <div className="mb-2 p-3 rounded-full bg-blue-50/50 group-hover:bg-blue-50 transition-colors">
+              {s.icon}
+            </div>
+            <div className="text-3xl font-bold text-foreground tracking-tight mb-1">
               {s.value}
             </div>
-            <div style={{ fontSize: '11.5px', color: '#9ca3af', fontWeight: 500, lineHeight: 1.4 }}>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {s.label}
             </div>
           </div>
         ))}
       </div>
 
-      {/* ── Main two-column layout ─────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '16px', alignItems: 'start' }}>
+      {/* ── Main Layout ─────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {/* ── Left: Tool cards grid ───────────────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="lg:col-span-2 space-y-6">
 
-          <div style={card({ padding: '20px' })}>
-            <div style={{
-              fontSize: '13px', fontWeight: 700, color: '#374151',
-              marginBottom: '16px', letterSpacing: '-0.01em',
-            }}>
+          <div className="glass-card p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              <Layers className="text-blue-500" size={20} />
               Platform Tools
-            </div>
-            <div style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr',
-              gap: '10px',
-            }}>
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {TOOLS.map(tool => {
                 const hovered = hoveredTool === tool.id;
                 return (
@@ -276,44 +225,26 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
                     onClick={() => onSelectMode(tool.id)}
                     onMouseEnter={() => setHoveredTool(tool.id)}
                     onMouseLeave={() => setHoveredTool(null)}
-                    style={{
-                      display: 'flex', alignItems: 'flex-start', gap: '12px',
-                      padding: '14px', cursor: 'pointer', textAlign: 'left',
-                      borderRadius: '12px',
-                      background: hovered
-                        ? 'linear-gradient(160deg, rgba(220,238,255,0.60) 0%, rgba(200,220,255,0.38) 100%)'
-                        : 'rgba(255,255,255,0.30)',
-                      boxShadow: hovered
-                        ? `${SHADOW_SM}, inset 0 1px 0 rgba(255,255,255,0.80)`
-                        : 'inset 0 1px 0 rgba(255,255,255,0.50)',
-                      border: `1px solid ${hovered ? 'rgba(255,255,255,0.80)' : 'rgba(255,255,255,0.50)'}`,
-                      transition: 'box-shadow 150ms, background 150ms',
-                    }}
+                    className={cn(
+                      "group relative flex items-start gap-4 p-4 rounded-xl text-left transition-all duration-200 border border-transparent",
+                      hovered ? "bg-white/60 shadow-md scale-[1.01] border-white/40" : "bg-white/20 hover:bg-white/40 border-white/20"
+                    )}
                   >
-                    <div style={{
-                      width: '34px', height: '34px', borderRadius: '9px', flexShrink: 0,
-                      backgroundColor: hovered ? tool.color : tool.bg,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: hovered ? '#fff' : tool.color,
-                      transition: 'background 150ms, color 150ms',
-                      boxShadow: hovered ? `0 4px 12px ${tool.color}55` : 'none',
-                    }}>
+                    <div className={cn(
+                      "flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md transition-all duration-200 bg-gradient-to-br",
+                      tool.gradient,
+                      hovered ? "shadow-lg scale-110" : ""
+                    )}>
                       {tool.icon}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{
-                        fontSize: '13px', fontWeight: 700, color: '#111827',
-                        marginBottom: '3px', lineHeight: 1.2,
-                      }}>
+
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground mb-1 group-hover:text-blue-600 transition-colors">
                         {tool.label}
-                      </div>
-                      <div style={{
-                        fontSize: '11.5px', color: '#9ca3af', lineHeight: 1.4,
-                        overflow: 'hidden', display: '-webkit-box',
-                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any,
-                      }}>
+                      </h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                         {tool.description}
-                      </div>
+                      </p>
                     </div>
                   </button>
                 );
@@ -323,37 +254,36 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
 
           {/* ── Charts row ──────────────────────────────────────────── */}
           {connectedOrgs.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
               {/* Device Distribution bar chart */}
-              <div style={card({ padding: '16px 18px' })}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '12px' }}>
+              <div className="glass-card p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <BarChart3 size={16} className="text-indigo-500" />
                   Device Distribution
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {connectedOrgs.map((org, i) => {
+                </h3>
+                <div className="space-y-3">
+                  {connectedOrgs.slice(0, 5).map((org, i) => {
                     const max = Math.max(...connectedOrgs.map((o: any) => o.device_count ?? 0), 1);
                     const pct = Math.round(((org.device_count ?? 0) / max) * 100);
-                    const colors = ['#2563eb', '#0891b2', '#7c3aed', '#059669'];
-                    const color  = colors[i % colors.length];
+                    const colors = ['bg-blue-500', 'bg-cyan-500', 'bg-violet-500', 'bg-emerald-500'];
+                    const colorClass = colors[i % colors.length];
+
                     return (
-                      <div key={org.id}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                          <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500,
-                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%' }}>
+                      <div key={org.id} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="font-medium text-foreground truncate max-w-[70%]">
                             {org.meraki_org_name}
                           </span>
-                          <span style={{ fontSize: '11px', fontWeight: 700, color: color }}>
+                          <span className="font-bold text-muted-foreground">
                             {org.device_count ?? 0}
                           </span>
                         </div>
-                        <div style={{ height: '6px', borderRadius: '3px', backgroundColor: 'rgba(0,0,0,0.06)' }}>
-                          <div style={{
-                            height: '100%', borderRadius: '3px',
-                            backgroundColor: color,
-                            width: `${pct}%`,
-                            transition: 'width 600ms ease',
-                          }} />
+                        <div className="h-1.5 w-full bg-secondary/50 rounded-full overflow-hidden">
+                          <div
+                            className={cn("h-full rounded-full transition-all duration-500 ease-out", colorClass)}
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
                       </div>
                     );
@@ -362,58 +292,66 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
               </div>
 
               {/* Online / Offline half-pie */}
-              <div style={card({ padding: '16px 18px' })}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '10px' }}>
-                  Device Status
-                </div>
+              <div className="glass-card p-5 flex flex-col items-center justify-center">
+                <h3 className="text-sm font-semibold text-foreground mb-4 w-full text-left flex items-center gap-2">
+                  <Wifi size={16} className="text-emerald-500" />
+                  Network Health
+                </h3>
                 {(() => {
-                  const total   = totalDevices;
-                  const online  = Math.round(total * 0.9);   // estimated 90% online
+                  const total = totalDevices;
+                  const online = Math.round(total * 0.9);   // estimated 90% online
                   const offline = total - online;
-                  const r = 38, cx = 54, cy = 54;
+                  const r = 40, cx = 60, cy = 60;
                   const circumference = Math.PI * r;         // half circle = π·r
-                  const onlineDash  = total > 0 ? (online  / total) * circumference : 0;
+                  const onlineDash = total > 0 ? (online / total) * circumference : 0;
                   const offlineDash = total > 0 ? (offline / total) * circumference : 0;
 
                   return (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                      <svg width="108" height="60" viewBox="0 0 108 62" style={{ overflow: 'visible' }}>
-                        {/* Track */}
-                        <path
-                          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-                          fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth="9" strokeLinecap="round"
-                        />
-                        {/* Online arc */}
-                        <path
-                          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-                          fill="none" stroke="#16a34a" strokeWidth="9" strokeLinecap="round"
-                          strokeDasharray={`${onlineDash} ${circumference}`}
-                          style={{ transition: 'stroke-dasharray 700ms ease' }}
-                        />
-                        {/* Offline arc offset */}
-                        <path
-                          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-                          fill="none" stroke="#ef4444" strokeWidth="9" strokeLinecap="round"
-                          strokeDasharray={`${offlineDash} ${circumference}`}
-                          strokeDashoffset={`${-onlineDash}`}
-                          style={{ transition: 'stroke-dasharray 700ms ease' }}
-                        />
-                        {/* Centre label */}
-                        <text x={cx} y={cy - 6} textAnchor="middle" fontSize="14" fontWeight="800" fill="#111827">
-                          {total}
-                        </text>
-                        <text x={cx} y={cy + 6} textAnchor="middle" fontSize="8.5" fill="#9ca3af">
-                          devices
-                        </text>
-                      </svg>
-                      <div style={{ display: 'flex', gap: '14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <div style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: '#16a34a' }} />
-                          <span style={{ fontSize: '11px', color: '#6b7280' }}>Online <strong style={{ color: '#111827' }}>{online}</strong></span>
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="relative">
+                        <svg width="120" height="70" viewBox="0 0 120 70" className="overflow-visible">
+                          {/* Track */}
+                          <path
+                            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+                            fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round"
+                            className="text-secondary"
+                          />
+                          {/* Online arc */}
+                          <path
+                            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+                            fill="none" stroke="#16a34a" strokeWidth="8" strokeLinecap="round"
+                            strokeDasharray={`${onlineDash} ${circumference}`}
+                            className="transition-all duration-700 ease-out"
+                          />
+                          {/* Offline arc offset */}
+                          <path
+                            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+                            fill="none" stroke="#ef4444" strokeWidth="8" strokeLinecap="round"
+                            strokeDasharray={`${offlineDash} ${circumference}`}
+                            strokeDashoffset={`${-onlineDash}`}
+                            className="transition-all duration-700 ease-out"
+                          />
+                        </svg>
+                        <div className="absolute inset-x-0 bottom-0 text-center flex flex-col items-center justify-center">
+                          <span className="text-2xl font-bold text-foreground leading-none">{total}</span>
+                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Devices</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <div style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: '#ef4444' }} />
-                          <span style={{ fontSize: '11px', color: '#6b7280' }}>Offline <strong style={{ color: '#111827' }}>{offline}</strong></span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-4 justify-center">
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full bg-green-600" />
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-foreground">{online}</span>
+                            <span className="text-[10px] text-muted-foreground">Online</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-foreground">{offline}</span>
+                            <span className="text-[10px] text-muted-foreground">Offline</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -422,198 +360,119 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
               </div>
             </div>
           )}
-
-          {/* ── Date strip ─────────────────────────────────────────────── */}
-          <div style={{
-            padding: '12px 20px', borderRadius: '12px',
-            backgroundColor: 'rgba(0,0,0,0.02)',
-            border: '1px solid rgba(0,0,0,0.04)',
-            fontSize: '12px', color: '#9ca3af',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}>
-            <span>{formatDate()}</span>
-            <span style={{ fontWeight: 600, color: '#6b7280' }}>
-              Unified Meraki Management Platform
-            </span>
-          </div>
         </div>
 
         {/* ── Right: Connected Organizations ──────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div className="flex flex-col gap-6">
 
-          <div style={card({ padding: '0', overflow: 'hidden' })}>
+          <div className="glass-card overflow-hidden flex flex-col h-full max-h-[600px]">
             {/* Card header */}
-            <div style={{
-              padding: '14px 16px',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
-            }}>
-              <div style={{
-                fontSize: '13px', fontWeight: 700, color: '#374151',
-                display: 'flex', alignItems: 'center', gap: '8px',
-              }}>
-                <Building2 size={14} color="#6b7280" />
-                Connected Organizations
+            <div className="p-4 border-b border-border/40 bg-white/40 backdrop-blur-sm flex items-center justify-between">
+              <div className="font-semibold text-foreground flex items-center gap-2 text-sm">
+                <Building2 size={16} className="text-muted-foreground" />
+                Organizations
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                {/* Manual sync button */}
+              <div className="flex items-center gap-2">
                 <button
                   onClick={handleSync}
                   disabled={isSyncing}
-                  title="Sync device counts from Meraki"
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '4px',
-                    fontSize: '11px', fontWeight: 600,
-                    color: isSyncing ? '#9ca3af' : '#2563eb',
-                    background: isSyncing ? 'rgba(0,0,0,0.04)' : 'rgba(37,99,235,0.06)',
-                    border: '1px solid ' + (isSyncing ? 'rgba(0,0,0,0.08)' : 'rgba(37,99,235,0.20)'),
-                    borderRadius: '7px', padding: '3px 9px',
-                    cursor: isSyncing ? 'not-allowed' : 'pointer',
-                    transition: 'all 150ms',
-                  }}
+                  className={cn(
+                    "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors",
+                    isSyncing
+                      ? "bg-secondary text-muted-foreground cursor-not-allowed"
+                      : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                  )}
                 >
                   <RefreshCw
-                    size={11}
-                    style={{
-                      animation: isSyncing ? 'spin 1s linear infinite' : 'none',
-                    }}
+                    size={12}
+                    className={cn(isSyncing && "animate-spin")}
                   />
-                  {isSyncing ? 'Syncing…' : 'Sync'}
-                </button>
-                <button
-                  onClick={() => onSelectMode('organizations')}
-                  style={{
-                    fontSize: '11px', fontWeight: 600, color: '#6b7280',
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    padding: '2px 6px', borderRadius: '6px',
-                    display: 'flex', alignItems: 'center', gap: '3px',
-                  }}
-                >
-                  Manage <ChevronRight size={10} />
+                  {isSyncing ? 'Syncing...' : 'Sync'}
                 </button>
               </div>
             </div>
 
             {/* Org rows — real data */}
-            {connectedOrgs.length === 0 ? (
-              <div style={{
-                padding: '32px 16px', textAlign: 'center',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
-              }}>
-                <Building2 size={28} color="#d1d5db" />
-                <div style={{ fontSize: '13px', color: '#6b7280', fontWeight: 500 }}>
-                  No organizations connected
-                </div>
-                <div style={{ fontSize: '11.5px', color: '#9ca3af', lineHeight: 1.5 }}>
-                  Add a Meraki organization to start managing your networks.
-                </div>
-              </div>
-            ) : connectedOrgs.map((org, i) => {
-              const regionKey = org.meraki_region ?? 'com';
-              const regionLabel = REGION_LABEL[regionKey] ?? regionKey.toUpperCase();
-              const regionStyle = REGION_COLORS[regionKey] ?? REGION_COLORS.com;
-              const hovered = hoveredOrg === org.id;
-              return (
-                <div
-                  key={org.id}
-                  onMouseEnter={() => setHoveredOrg(org.id)}
-                  onMouseLeave={() => setHoveredOrg(null)}
-                  style={{
-                    padding: '14px 16px',
-                    borderBottom: i < connectedOrgs.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
-                    backgroundColor: hovered ? 'rgba(37,99,235,0.04)' : 'transparent',
-                    transition: 'background 120ms',
-                    cursor: 'default',
-                  }}
-                >
-                  {/* Org name + active badge */}
-                  <div style={{
-                    display: 'flex', alignItems: 'center',
-                    justifyContent: 'space-between', marginBottom: '8px',
-                  }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>
-                      {org.meraki_org_name}
-                    </div>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', gap: '4px',
-                      fontSize: '10.5px', fontWeight: 600,
-                      color: '#16a34a', backgroundColor: '#f0fdf4',
-                      padding: '2px 7px', borderRadius: '20px',
-                    }}>
-                      <Wifi size={11} />
-                      Active
-                    </div>
+            <div className="overflow-y-auto p-2 space-y-1 flex-1">
+              {connectedOrgs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+                  <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mb-3">
+                    <Building2 size={24} className="text-muted-foreground/50" />
                   </div>
+                  <h3 className="text-sm font-semibold text-foreground">No organizations</h3>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+                    Add a Meraki organization to start managing your networks.
+                  </p>
+                  <button
+                    onClick={() => onSelectMode('organizations')}
+                    className="mt-4 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                  >
+                    Connect Now
+                  </button>
+                </div>
+              ) : (
+                connectedOrgs.map((org, i) => {
+                  const regionKey = org.meraki_region ?? 'com';
+                  const regionLabel = REGION_LABEL[regionKey] ?? regionKey.toUpperCase();
+                  const regionClass = REGION_STYLES[regionKey] ?? REGION_STYLES.com;
 
-                  {/* Region + devices */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '3px',
-                      fontSize: '10.5px', fontWeight: 600,
-                      color: regionStyle.color, backgroundColor: regionStyle.bg,
-                      padding: '2px 7px', borderRadius: '20px',
-                    }}>
-                      <Globe size={9} />
-                      {regionLabel}
-                    </span>
-                    {org.device_count != null && (
-                      <>
-                        <span style={{ color: '#e5e7eb', fontSize: '12px' }}>·</span>
-                        <span style={{ fontSize: '11px', color: '#6b7280' }}>
-                          <span style={{ fontWeight: 700, color: '#374151' }}>{org.device_count}</span> devices
+                  return (
+                    <div
+                      key={org.id}
+                      className="p-3 rounded-lg hover:bg-white/60 transition-colors border border-transparent hover:border-white/40 group"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-semibold text-sm text-foreground truncate max-w-[150px]">
+                          {org.meraki_org_name}
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                          <Wifi size={8} /> Active
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md", regionClass)}>
+                          <Globe size={10} /> {regionLabel}
                         </span>
-                      </>
-                    )}
-                  </div>
+                        {org.device_count != null && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                            <span className="font-semibold text-foreground">{org.device_count}</span> devices
+                          </span>
+                        )}
+                      </div>
 
-                  {/* Last sync */}
-                  <div style={{ marginTop: '6px', fontSize: '10.5px', color: '#9ca3af' }}>
-                    {formatSync(org.last_synced_at)}
-                  </div>
-                </div>
-              );
-            })}
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                        <span>Synced {formatSync(org.last_synced_at)}</span>
+                        {/* <button className="opacity-0 group-hover:opacity-100 text-blue-600 hover:underline flex items-center gap-0.5 transition-opacity">
+                                            Manage <ChevronRight size={10} />
+                                        </button> */}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
-            {/* Footer */}
-            <div style={{
-              padding: '10px 16px',
-              borderTop: '1px solid rgba(0,0,0,0.05)',
-              backgroundColor: 'rgba(0,0,0,0.015)',
-            }}>
+            <div className="p-3 border-t border-border/40 bg-white/40 backdrop-blur-sm">
               <button
                 onClick={() => onSelectMode('organizations')}
-                style={{
-                  width: '100%', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', gap: '6px',
-                  padding: '8px', borderRadius: '8px', cursor: 'pointer',
-                  background: 'none', border: '1px dashed rgba(37,99,235,0.30)',
-                  fontSize: '12px', fontWeight: 600, color: '#2563eb',
-                  transition: 'border-color 150ms, background 150ms',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(37,99,235,0.60)';
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(37,99,235,0.04)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(37,99,235,0.30)';
-                  (e.currentTarget as HTMLElement).style.background = 'none';
-                }}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-dashed border-blue-300/50 bg-blue-50/30 text-xs font-semibold text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all"
               >
-                <Plus size={12} />
-                Add Organization
+                <Plus size={14} /> Add Organization
               </button>
             </div>
           </div>
 
+          {/* ── Date strip ─────────────────────────────────────────────── */}
+          <div className="glass-card px-4 py-3 flex items-center justify-between text-xs text-muted-foreground">
+            <span className="font-medium">{formatDate()}</span>
+            <span className="opacity-70">v1.0.0</span>
+          </div>
 
         </div>
       </div>
 
-      {/* ── Keyframes ──────────────────────────────────────────────────── */}
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-        @keyframes spin   { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
     </div>
   );
 };

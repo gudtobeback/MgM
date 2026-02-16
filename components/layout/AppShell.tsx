@@ -30,16 +30,9 @@ export const AppShell: React.FC<AppShellProps> = ({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div
-      className="flex flex-col"
-      style={{
-        height: '100vh',
-        overflow: 'hidden',
-        background: 'transparent',
-      }}
-    >
+    <div className="flex flex-col h-screen overflow-hidden bg-transparent">
       {/* Top Bar — full width, always at the top */}
-      <div style={{ flexShrink: 0 }}>
+      <div className="shrink-0 z-50">
         <TopBar
           user={user}
           toolMode={toolMode}
@@ -51,7 +44,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       </div>
 
       {/* Body: Sidebar + Content */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 }}>
+      <div className="flex flex-1 overflow-hidden min-h-0">
         <Sidebar
           activeMode={toolMode}
           onNavigate={onNavigate}
@@ -62,16 +55,8 @@ export const AppShell: React.FC<AppShellProps> = ({
         />
 
         {/* Main content — only this area scrolls, scrollbar hidden */}
-        <main
-          className="no-scrollbar"
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            background: 'rgb(226, 238, 251)',
-            minWidth: 0,
-          }}
-        >
-          <div className="p-8">
+        <main className="flex-1 overflow-y-auto no-scrollbar bg-transparent min-w-0 p-6">
+          <div className="glass-panel min-h-full p-6">
             {children}
           </div>
         </main>

@@ -57,178 +57,53 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-      :root {
-        /* ── PagerDuty-Inspired Design Tokens ── */
-
-        /* ── TOP BAR (Aero glass — white) ── */
-        --topbar-bg: rgba(255, 255, 255, 0.72);
-        --topbar-text: #111827;
-        --topbar-text-muted: #4b5563;
-        --topbar-hover: rgba(255, 255, 255, 0.88);
-        --topbar-border: rgba(255, 255, 255, 0.90);
-        --topbar-height: 56px;
-
-        /* ── SIDEBAR (Aero glass — white) ── */
-        --sidebar-bg: rgba(255, 255, 255, 0.68);
-        --sidebar-bg-hover: rgba(255, 255, 255, 0.85);
-        --sidebar-bg-active: rgba(239, 246, 255, 0.90);
-        --sidebar-text: #1e293b;
-        --sidebar-text-active: #2563eb;
-        --sidebar-text-muted: #64748b;
-        --sidebar-accent: #2563eb;
-        --sidebar-border: #e2e8f0;
-        --sidebar-width: 220px;
-        --sidebar-width-collapsed: 52px;
-
-        /* ── TYPOGRAPHY SCALE ── */
-        --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
-        --font-xs: 11.5px;
-        --font-sm: 13px;
-        --font-base: 14px;
-        --font-md: 15px;
-        --font-lg: 16px;
-        --font-xl: 18px;
-        --font-2xl: 22px;
-        --font-3xl: 26px;
-
-        /* ── PRIMARY — Blue ── */
-        --color-primary: #2563eb;
-        --color-primary-hover: #1d4ed8;
-        --color-primary-dark: #1e40af;
-        --color-primary-light: #eff6ff;
-
-        /* Secondary — Meraki Teal */
-        --meraki-teal: #00856a;
-        --meraki-teal-hover: #006a54;
-        --meraki-teal-light: #e0f5f1;
-
-        /* Orange accent */
-        --cisco-orange: #d97706;
-        --cisco-orange-hover: #b45309;
-        --cisco-orange-light: #fef3c7;
-
-        /* Status */
-        --color-success: #16a34a;
-        --color-success-light: #f0fdf4;
-        --color-warning: #d97706;
-        --color-warning-light: #fef3c7;
-        --color-error: #dc2626;
-        --color-error-light: #fef2f2;
-        --color-info: #2563eb;
-        --color-info-light: #eff6ff;
-
-        /* ── BACKGROUNDS ── */
-        --color-bg: #e2eefb;
-        --color-surface: #ffffff;
-        --color-surface-subtle: #f9fafb;
-        --color-surface-raised: #ffffff;
-
-        /* ── COMPONENT BACKGROUNDS (used throughout all pages) ── */
-        --color-bg-primary: #ffffff;
-        --color-bg-secondary: #f9fafb;
-        --color-bg-tertiary: #f3f4f6;
-
-        /* ── TEXT ── */
-        --color-text-primary: #0f172a;
-        --color-text-secondary: #4b5563;
-        --color-text-tertiary: #6b7280;
-        --color-text-muted: #9ca3af;
-        --color-text-inverse: #ffffff;
-
-        /* ── BORDERS ── */
-        --color-border-primary: #e5e7eb;
-        --color-border-subtle: #f0f1f3;
-        --color-border-strong: #d1d5db;
-
-        /* ── STRUCTURAL ── */
-        --radius-sm: 0.125rem;
-        --radius-md: 0.375rem;
-        --radius-lg: 0.5rem;
-        --radius-xl: 0.625rem;
-        --radius-2xl: 0.75rem;
-
-        /* Deep shadows */
-        --shadow-sm: 0 2px 8px 0 rgb(0 0 0 / 0.08), 0 1px 3px 0 rgb(0 0 0 / 0.05);
-        --shadow-md: 0 6px 20px 0 rgb(0 0 0 / 0.10), 0 2px 6px 0 rgb(0 0 0 / 0.06);
-        --shadow-lg: 0 12px 36px 0 rgb(0 0 0 / 0.13), 0 4px 10px 0 rgb(0 0 0 / 0.07);
-        --shadow-xl: 0 20px 60px 0 rgb(0 0 0 / 0.16), 0 6px 16px 0 rgb(0 0 0 / 0.08);
-
-        --duration-fast: 100ms;
-        --duration-normal: 180ms;
-        --ease-out: cubic-bezier(0.2, 0, 0, 1);
-
-        --color-user-message-bg: #e8f5eb;
-      }
-
-      html, body {
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
-        font-size: var(--font-base);
-        line-height: 1.6;
-        font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-      }
-      body {
-        background:
-          radial-gradient(ellipse at 8%  28%, rgba(37, 99, 235, 0.20) 0%, transparent 52%),
-          radial-gradient(ellipse at 92% 10%, rgba(4, 138, 36, 0.14) 0%, transparent 48%),
-          radial-gradient(ellipse at 52% 90%, rgba(124, 58, 237, 0.16) 0%, transparent 48%),
-          radial-gradient(ellipse at 78% 58%, rgba(0, 188, 235, 0.12) 0%, transparent 44%),
-          radial-gradient(ellipse at 30% 70%, rgba(217, 119, 6, 0.09) 0%, transparent 42%),
-          linear-gradient(160deg, #dde9f8 0%, #e2eefb 45%, #dae6f6 100%);
-        color: var(--color-text-primary);
-        position: relative;
-        min-height: 100vh;
-      }
-      code, pre, kbd, samp, .font-mono {
-        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-        font-size: 0.875em;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      input, textarea, select, button {
-        font-family: inherit;
-        font-size: inherit;
-      }
+      /* Removed inline styles in favor of index.css */
       
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      
-      @keyframes fadeSlideUp {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      @keyframes scaleIn {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
-      }
-      
-      .animate-fade-in { animation: fadeIn var(--duration-normal) var(--ease-out) forwards; }
-      .animate-fade-slide-up { animation: fadeSlideUp var(--duration-normal) var(--ease-out) forwards; }
-      .animate-scale-in { animation: scaleIn var(--duration-fast) var(--ease-out) forwards; }
-
-      /* Hide scrollbar everywhere while keeping scroll functionality */
-      .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-
-      /* ── AERO GLASS UTILITY ── */
-      .glass {
-        background: linear-gradient(160deg, rgba(220, 238, 255, 0.55) 0%, rgba(200, 220, 255, 0.32) 100%) !important;
-        backdrop-filter: blur(40px) saturate(220%) brightness(1.06);
-        -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.06);
-        border: 1px solid rgba(255, 255, 255, 0.75) !important;
-        box-shadow: 0 8px 32px rgba(0, 30, 100, 0.18), 0 2px 6px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.70);
-      }
-      .glass-dark {
-        background: rgba(15, 23, 42, 0.78) !important;
-        backdrop-filter: blur(40px) saturate(180%);
-        -webkit-backdrop-filter: blur(40px) saturate(180%);
-        border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              border: "var(--border)",
+              input: "var(--input)",
+              ring: "var(--ring)",
+              background: "var(--background)",
+              foreground: "var(--foreground)",
+              primary: {
+                DEFAULT: "var(--primary)",
+                foreground: "var(--primary-foreground)",
+              },
+              secondary: {
+                DEFAULT: "var(--secondary)",
+                foreground: "var(--secondary-foreground)",
+              },
+              destructive: {
+                DEFAULT: "var(--destructive)",
+                foreground: "var(--destructive-foreground)",
+              },
+              muted: {
+                DEFAULT: "var(--muted)",
+                foreground: "var(--muted-foreground)",
+              },
+              accent: {
+                DEFAULT: "var(--accent)",
+                foreground: "var(--accent-foreground)",
+              },
+              popover: {
+                DEFAULT: "var(--popover)",
+                foreground: "var(--popover-foreground)",
+              },
+              card: {
+                DEFAULT: "var(--card)",
+                foreground: "var(--card-foreground)",
+              },
+            },
+            borderRadius: {
+              lg: "var(--radius)",
+              md: "calc(var(--radius) - 2px)",
+              sm: "calc(var(--radius) - 4px)",
+            },
+          },
+        },
       }
 
     </style>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { cn } from '../lib/utils';
 import { SourceConnectionStep } from './steps/migration/SourceConnectionStep';
 import { SourceOrganizationStep } from './steps/migration/SourceOrganizationStep';
 import { DestinationSetupStep } from './steps/migration/DestinationSetupStep';
@@ -16,16 +17,16 @@ import { getNetworkDevices } from '../services/merakiService';
 import { MerakiDeviceDetails, MerakiNetwork, MerakiOrganization, BackupFile } from '../types';
 
 const steps = [
-  { id: 1,  name: 'Source',       description: 'Connect .com dashboard' },
-  { id: 2,  name: 'Source Org',   description: 'Select source org & network' },
-  { id: 3,  name: 'Destination',  description: 'Connect .in dashboard' },
-  { id: 4,  name: 'Dest Org',     description: 'Select destination' },
-  { id: 5,  name: 'Review',       description: 'Review migration plan' },
-  { id: 6,  name: 'Backup',       description: 'Automatic backup' },
-  { id: 7,  name: 'Pre-Config',   description: 'Transfer foundational configs' },
-  { id: 8,  name: 'Migrate',      description: 'Execute migration' },
-  { id: 9,  name: 'Restore',      description: 'Restore configurations' },
-  { id: 10, name: 'Results',      description: 'View results' },
+  { id: 1, name: 'Source', description: 'Connect .com dashboard' },
+  { id: 2, name: 'Source Org', description: 'Select source org & network' },
+  { id: 3, name: 'Destination', description: 'Connect .in dashboard' },
+  { id: 4, name: 'Dest Org', description: 'Select destination' },
+  { id: 5, name: 'Review', description: 'Review migration plan' },
+  { id: 6, name: 'Backup', description: 'Automatic backup' },
+  { id: 7, name: 'Pre-Config', description: 'Transfer foundational configs' },
+  { id: 8, name: 'Migrate', description: 'Execute migration' },
+  { id: 9, name: 'Restore', description: 'Restore configurations' },
+  { id: 10, name: 'Results', description: 'View results' },
 ];
 
 export interface MigrationData {
@@ -134,15 +135,15 @@ export function MigrationWizard() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1:  return <SourceConnectionStep data={migrationData} onUpdate={updateMigrationData} />;
-      case 2:  return <SourceOrganizationStep data={migrationData} onUpdate={updateMigrationData} />;
-      case 3:  return <DestinationSetupStep data={migrationData} onUpdate={updateMigrationData} />;
-      case 4:  return <DestinationOrganizationStep data={migrationData} onUpdate={updateMigrationData} />;
-      case 5:  return <ReviewStep data={migrationData} onUpdate={updateMigrationData} isLoading={isFetchingReviewData} />;
-      case 6:  return <BackupStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
-      case 7:  return <PreliminaryConfigStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
-      case 8:  return <MigrationStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
-      case 9:  return <RestoreStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
+      case 1: return <SourceConnectionStep data={migrationData} onUpdate={updateMigrationData} />;
+      case 2: return <SourceOrganizationStep data={migrationData} onUpdate={updateMigrationData} />;
+      case 3: return <DestinationSetupStep data={migrationData} onUpdate={updateMigrationData} />;
+      case 4: return <DestinationOrganizationStep data={migrationData} onUpdate={updateMigrationData} />;
+      case 5: return <ReviewStep data={migrationData} onUpdate={updateMigrationData} isLoading={isFetchingReviewData} />;
+      case 6: return <BackupStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
+      case 7: return <PreliminaryConfigStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
+      case 8: return <MigrationStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
+      case 9: return <RestoreStep data={migrationData} onUpdate={updateMigrationData} onComplete={handleNext} />;
       case 10: return <ResultsStep data={migrationData} onReset={handleReset} />;
       default: return null;
     }
@@ -163,64 +164,48 @@ export function MigrationWizard() {
   const isAutoStep = currentStep >= 6;
 
   return (
-    <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto', padding: '24px 24px 32px' }}>
+    <div className="w-full max-w-5xl mx-auto p-6 md:p-8 animate-fade-in">
 
-      {/* Step indicator */}
-      <nav aria-label="Migration steps" style={{ marginBottom: '28px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+      {/* ── Step indicator ─────────────────────────────────────────────── */}
+      <nav aria-label="Migration steps" className="mb-8 overflow-x-auto pb-4 hide-scrollbar">
+        <div className="flex items-start justify-between min-w-[760px] md:min-w-0 md:justify-center relative px-4">
+          {/* Background line for large screens */}
+          <div className="absolute top-[14px] left-0 w-full h-0.5 bg-border -z-10 hidden md:block max-w-[90%] mx-auto left-0 right-0" />
+
           {steps.map((step, index) => {
             const isCompleted = currentStep > step.id;
             const isActive = currentStep === step.id;
+
             return (
               <React.Fragment key={step.id}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '60px', maxWidth: '68px' }}>
+                <div className="flex flex-col items-center relative group z-0">
                   {/* Circle */}
-                  <div style={{
-                    width: '30px',
-                    height: '30px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    flexShrink: 0,
-                    transition: 'background 200ms, border 200ms',
-                    backgroundColor: isCompleted ? '#2563eb' : isActive ? '#2563eb' : '#ffffff',
-                    border: isCompleted ? '2px solid #2563eb' : isActive ? '2px solid #2563eb' : '2px solid #d1d5db',
-                    color: isCompleted || isActive ? '#ffffff' : '#9ca3af',
-                  }}>
-                    {isCompleted
-                      ? <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      : step.id
-                    }
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 border-2",
+                    isCompleted ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200" :
+                      isActive ? "bg-white border-blue-600 text-blue-600 shadow-md scale-110 ring-4 ring-blue-50" :
+                        "bg-white border-border text-muted-foreground"
+                  )}>
+                    {isCompleted ? <Check size={14} className="stroke-[3]" /> : step.id}
                   </div>
+
                   {/* Label */}
-                  <span style={{
-                    fontSize: '9.5px',
-                    fontWeight: isActive ? 700 : 500,
-                    color: isActive ? '#2563eb' : isCompleted ? '#374151' : '#9ca3af',
-                    marginTop: '5px',
-                    textAlign: 'center',
-                    lineHeight: 1.3,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '60px',
-                  }}>
-                    {step.name}
-                  </span>
+                  <div className="mt-2 text-center w-20">
+                    <span className={cn(
+                      "block text-[10px] font-bold uppercase tracking-wider transition-colors duration-200",
+                      isActive ? "text-blue-600" : isCompleted ? "text-foreground" : "text-muted-foreground"
+                    )}>
+                      {step.name}
+                    </span>
+                  </div>
                 </div>
-                {/* Connector line */}
+
+                {/* Mobile connector line */}
                 {index < steps.length - 1 && (
-                  <div style={{
-                    flex: 1,
-                    height: '2px',
-                    marginTop: '14px',
-                    backgroundColor: currentStep > step.id ? '#2563eb' : '#e5e7eb',
-                    minWidth: '4px',
-                    transition: 'background 200ms',
-                  }} />
+                  <div className={cn(
+                    "flex-1 h-0.5 mx-2 mt-[14px] transition-colors duration-300 md:hidden",
+                    isCompleted ? "bg-blue-600" : "bg-border"
+                  )} />
                 )}
               </React.Fragment>
             );
@@ -228,30 +213,31 @@ export function MigrationWizard() {
         </div>
       </nav>
 
-      {/* Step content */}
-      <div style={{
-        backgroundColor: 'var(--color-surface)',
-        padding: '32px',
-        borderRadius: '8px',
-        border: '1px solid var(--color-border-primary)',
-        minHeight: '480px',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-      }}>
+      {/* ── Step content ─────────────────────────────────────────────── */}
+      <div className="glass-card min-h-[480px] p-8 shadow-xl border-white/50 relative overflow-hidden">
         {renderStep()}
       </div>
 
-      {/* Navigation */}
+      {/* ── Navigation ───────────────────────────────────────────────── */}
       {!isAutoStep && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '20px' }}>
+        <div className="flex justify-between pt-6">
           <Button
             variant="outline"
             onClick={handleBack}
             disabled={currentStep === 1}
+            className="pl-2.5"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <Button onClick={handleNext} disabled={!canProceedToNext()}>
+          <Button
+            onClick={handleNext}
+            disabled={!canProceedToNext()}
+            className={cn(
+              "pr-2.5 shadow-lg shadow-blue-200/50 transition-all",
+              canProceedToNext() ? "hover:scale-105" : ""
+            )}
+          >
             Next
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
