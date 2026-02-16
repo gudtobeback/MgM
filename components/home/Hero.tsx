@@ -82,7 +82,7 @@ export const Hero: React.FC<HeroProps> = ({ setIsHome }) => {
           </div>
 
           {/* Stats row */}
-          <div className="glass-card p-0 overflow-hidden flex divide-x divide-border/50">
+          <div className="glass-card p-0 overflow-hidden flex divide-x divide-border/50 animate-float">
             {[
               { value: '99.9%', label: 'Migration success' },
               { value: '~10 min', label: 'Average time' },
@@ -101,7 +101,7 @@ export const Hero: React.FC<HeroProps> = ({ setIsHome }) => {
         </div>
 
         {/* Right — Platform capabilities card */}
-        <div className="glass-card p-0 overflow-hidden shadow-2xl animate-fade-in-up relative group">
+        <div className="glass-card p-0 overflow-hidden shadow-2xl animate-fade-in-up delay-300 relative group" style={{ animationFillMode: 'both' }}>
           {/* Glow effect behind card */}
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
 

@@ -217,8 +217,9 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {TOOLS.map(tool => {
+              {TOOLS.map((tool, index) => {
                 const hovered = hoveredTool === tool.id;
+                const delayClass = index < 5 ? `delay-${(index + 1) * 100}` : '';
                 return (
                   <button
                     key={tool.id}
@@ -226,9 +227,11 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
                     onMouseEnter={() => setHoveredTool(tool.id)}
                     onMouseLeave={() => setHoveredTool(null)}
                     className={cn(
-                      "group relative flex items-start gap-4 p-4 rounded-xl text-left transition-all duration-200 border border-transparent",
-                      hovered ? "bg-white/60 shadow-md scale-[1.01] border-white/40" : "bg-white/20 hover:bg-white/40 border-white/20"
+                      "group relative flex items-start gap-4 p-4 rounded-xl text-left transition-all duration-300 border border-transparent animate-fade-in-up backwards",
+                      delayClass,
+                      hovered ? "bg-white/60 shadow-md scale-[1.02] border-white/40" : "bg-white/20 hover:bg-white/40 border-white/20"
                     )}
+                    style={{ animationFillMode: 'both' }}
                   >
                     <div className={cn(
                       "flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md transition-all duration-200 bg-gradient-to-br",
