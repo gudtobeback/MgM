@@ -123,6 +123,28 @@ router.patch('/profile', authMiddleware, async (req: Request, res: Response) => 
 });
 
 /**
+ * GET /api/auth/permissions
+ * Get current user's feature permissions
+ * Returns { featureKey: boolean } — absent keys default to true (opt-out model)
+ */
+router.get('/permissions', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const result = await query(
+      'SELECT feature, enabled FROM user_permissions WHERE user_id = $1',
+      [req.user!.id]
+    );
+    const permissions: Record<string, boolean> = {};
+    result.rows.forEach((row: { feature: string; enabled: boolean }) => {
+      permissions[row.feature] = row.enabled;
+    });
+    res.json(permissions);
+  } catch (error) {
+    console.error('Get permissions error:', error);
+    res.status(500).json({ error: 'Failed to fetch permissions' });
+  }
+});
+
+/**
  * PATCH /api/auth/subscription
  * Update subscription tier (admin / demo use)
  */

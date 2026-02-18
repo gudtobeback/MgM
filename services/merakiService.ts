@@ -226,8 +226,10 @@ export const getNetworkSettings = (apiKey: string, r: string, nid: string): Prom
 export const getNetworkApplianceSettings = (apiKey: string, r: string, nid: string): Promise<ApplianceSettings> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/settings`);
 export const updateNetworkApplianceSettings = (apiKey: string, r: string, nid: string, body: ApplianceSettings): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/settings`, 'PUT', body);
 export const getNetworkApplianceVlans = (apiKey: string, r: string, nid: string): Promise<ApplianceVlan[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans`);
-export const createNetworkApplianceVlan = (apiKey: string, r: string, nid: string, body: Omit<ApplianceVlan, 'id'>): Promise<ApplianceVlan> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans`, 'POST', body);
+export const createNetworkApplianceVlan = (apiKey: string, r: string, nid: string, body: Omit<ApplianceVlan, 'networkId'>): Promise<ApplianceVlan> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans`, 'POST', body);
+export const updateNetworkApplianceVlan = (apiKey: string, r: string, nid: string, vlanId: string | number, body: Partial<ApplianceVlan>): Promise<ApplianceVlan> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans/${vlanId}`, 'PUT', body);
 export const getNetworkApplianceVlan = (apiKey: string, r: string, nid: string, vlanId: string): Promise<ApplianceVlan> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans/${vlanId}`);
+export const getNetworkApplianceVlansSettings = (apiKey: string, r: string, nid: string): Promise<{ vlansEnabled: boolean }> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans/settings`);
 export const updateNetworkApplianceVlansSettings = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/vlans/settings`, 'PUT', body);
 export const getNetworkApplianceStaticRoutes = (apiKey: string, r: string, nid: string): Promise<ApplianceStaticRoute[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/staticRoutes`);
 export const getNetworkApplianceStaticRoute = (apiKey: string, r: string, nid: string, routeId: string): Promise<ApplianceStaticRoute> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/staticRoutes/${routeId}`);
@@ -258,6 +260,10 @@ export const getNetworkSwitchQosRules = (apiKey: string, r: string, nid: string)
 export const updateNetworkSwitchQosRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/qosRules`, 'PUT', body);
 export const getNetworkSwitchAccessPolicies = (apiKey: string, r: string, nid: string): Promise<AccessPolicy[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/accessPolicies`);
 export const createNetworkSwitchAccessPolicy = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/accessPolicies`, 'POST', body);
+// Claim devices to a network using Cloud IDs (Cat9K Meraki-managed onboarding)
+export const claimNetworkDevices = (apiKey: string, r: string, networkId: string, serials: string[]): Promise<any> =>
+  fetchWithMerakiApi(apiKey, r, `/networks/${networkId}/devices/claim`, 'POST', { serials });
+
 export const getSwitchPorts = (apiKey: string, r: string, serial: string): Promise<SwitchPortSettings[]> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/ports`);
 export const getSwitchPort = (apiKey: string, r: string, serial: string, portId: string): Promise<SwitchPortSettings> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/ports/${portId}`);
 export const updateSwitchPort = (apiKey: string, r: string, serial: string, portId: string, body: Omit<SwitchPortSettings, 'portId'>): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/ports/${portId}`, 'PUT', body);
@@ -276,8 +282,10 @@ export const createNetworkSwitchLinkAggregation = (apiKey: string, r: string, ni
 export const getNetworkSwitchOspf = (apiKey: string, r: string, nid: string): Promise<OspfSettings> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/ospf`);
 export const updateNetworkSwitchOspf = (apiKey: string, r: string, nid: string, body: OspfSettings): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/ospf`, 'PUT', body);
 export const getDeviceSwitchRoutingStaticRoutes = (apiKey: string, r: string, serial: string): Promise<SwitchStaticRoute[]> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/staticRoutes`);
+export const createDeviceSwitchRoutingStaticRoute = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/staticRoutes`, 'POST', body);
 export const updateDeviceSwitchRoutingStaticRoute = (apiKey: string, r: string, serial: string, routeId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/staticRoutes/${routeId}`, 'PUT', body);
 export const getDeviceSwitchRoutingInterfaces = (apiKey: string, r: string, serial: string): Promise<SwitchRoutingInterface[]> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/interfaces`);
+export const createDeviceSwitchRoutingInterface = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/interfaces`, 'POST', body);
 export const updateDeviceSwitchRoutingInterface = (apiKey: string, r: string, serial: string, interfaceId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/interfaces/${interfaceId}`, 'PUT', body);
 export const getNetworkSwitchSettings = (apiKey: string, r: string, nid: string): Promise<SwitchSettings> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/settings`);
 export const updateNetworkSwitchSettings = (apiKey: string, r: string, nid: string, body: SwitchSettings): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/settings`, 'PUT', body);
@@ -340,16 +348,57 @@ export const createSelectiveBackup = async (
     for (const networkId of networkIds) {
         logCallback(`--- Backing up Network ID: ${networkId} ---`);
         try {
-            // Fetch a subset of network configs
-            const [groupPolicies, ssids, applianceVlans, l3FirewallRules, siteToSiteVpn] = await Promise.all([
-                getNetworkGroupPolicies(apiKey, region, networkId as string).catch(() => null),
-                getNetworkWirelessSsids(apiKey, region, networkId as string).catch(() => null),
-                getNetworkApplianceVlans(apiKey, region, networkId as string).catch(() => null),
-                getNetworkApplianceFirewallL3FirewallRules(apiKey, region, networkId as string).catch(() => null),
-                getNetworkApplianceVpnSiteToSiteVpn(apiKey, region, networkId as string).catch(() => null)
+            const nid = networkId as string;
+            // Fetch all network-level configs in parallel
+            const [
+                groupPolicies, ssids, applianceVlansSettings, applianceVlans,
+                l3FirewallRules, l7FirewallRules,
+                siteToSiteVpn, contentFiltering, intrusionSettings, malwareSettings,
+                applianceStaticRoutes, trafficShapingRules, uplinkSelection, bgpSettings,
+                applianceSettings, switchSettings, switchAcls, portSchedules, syslogServers,
+            ] = await Promise.all([
+                getNetworkGroupPolicies(apiKey, region, nid).catch(() => null),
+                getNetworkWirelessSsids(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceVlansSettings(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceVlans(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceFirewallL3FirewallRules(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceFirewallL7FirewallRules(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceVpnSiteToSiteVpn(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceContentFiltering(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceSecurityIntrusion(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceSecurityMalware(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceStaticRoutes(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceTrafficShapingRules(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceUplinkSelection(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceVpnBgp(apiKey, region, nid).catch(() => null),
+                getNetworkApplianceSettings(apiKey, region, nid).catch(() => null),
+                getNetworkSwitchSettings(apiKey, region, nid).catch(() => null),
+                getNetworkSwitchAccessControlLists(apiKey, region, nid).catch(() => null),
+                getNetworkSwitchPortSchedules(apiKey, region, nid).catch(() => null),
+                getNetworkSyslogServers(apiKey, region, nid).catch(() => null),
             ]);
-            backupFile.networkConfigs![networkId as string] = { groupPolicies, ssids, applianceVlans, applianceL3FirewallRules: l3FirewallRules, siteToSiteVpnSettings: siteToSiteVpn };
-            logCallback(`  - ✅ Network ${networkId} configs backed up.`);
+            backupFile.networkConfigs![nid] = {
+                groupPolicies,
+                ssids,
+                applianceVlansSettings,
+                applianceVlans,
+                applianceL3FirewallRules: l3FirewallRules,
+                applianceL7FirewallRules: l7FirewallRules,
+                siteToSiteVpnSettings: siteToSiteVpn,
+                contentFiltering,
+                intrusionSettings,
+                malwareSettings,
+                staticRoutes: applianceStaticRoutes,
+                trafficShapingRules,
+                uplinkSelection,
+                bgpSettings,
+                applianceSettings,
+                switchSettings,
+                switchAcls,
+                portSchedules,
+                syslogServers,
+            };
+            logCallback(`  - ✅ Network ${nid} configs backed up.`);
         } catch (e) {
             logCallback(`  - ❌ FAILED to back up network ${networkId}: ${getErrorMessage(e)}`);
         }
@@ -434,6 +483,10 @@ export const createExhaustiveBackup = async (
         { path: `/organizations/${orgId}/appliance/security/intrusion`, name: 'appliance_security_intrusion'},
         { path: `/organizations/${orgId}/earlyAccess/features`, name: 'earlyAccess_features'},
         { path: `/organizations/${orgId}/webhooks/alertTypes`, name: 'webhooks_alertTypes'},
+        { path: `/organizations/${orgId}/webhooks/httpServers`, name: 'webhooks_httpServers'},
+        { path: `/organizations/${orgId}/summary/top/devices/byUsage`, name: 'summary_topDevices'},
+        { path: `/organizations/${orgId}/appliance/uplink/statuses`, name: 'appliance_uplink_statuses'},
+        { path: `/organizations/${orgId}/devices/statuses`, name: 'devices_statuses'},
     ];
     await Promise.all(orgEndpoints.map(endpoint => 
         getAndZip(`organization/${endpoint.name}.json`, () => fetchWithMerakiApi(apiKey, region, endpoint.path))
@@ -557,10 +610,12 @@ export const createExhaustiveBackup = async (
 
     // --- Device Level ---
     for (const device of devices) {
-        logCallback(`\n--- Backing up Device: ${device.name} (${device.serial}) ---`);
-        const deviceFolder = `devices/${safeFilename(device.name)}_${device.serial}`;
-        
+        logCallback(`\n--- Backing up Device: ${device.name || device.serial} (${device.serial}) ---`);
+        const deviceFolder = `devices/${safeFilename(device.name || device.serial)}_${device.serial}`;
+
         await getAndZip(`${deviceFolder}/details.json`, () => Promise.resolve(device));
+        // Management interface is common to all device types
+        await getAndZip(`${deviceFolder}/management_interface.json`, () => fetchWithMerakiApi(apiKey, region, `/devices/${device.serial}/managementInterface`));
 
         if (device.model.startsWith("MS")) {
             const switchDeviceEndpoints = [
@@ -568,14 +623,28 @@ export const createExhaustiveBackup = async (
                 { path: `/switch/ports/statuses`, name: 'switch_ports_statuses' },
                 { path: `/switch/routing/interfaces`, name: 'switch_routing_interfaces' },
                 { path: `/switch/routing/staticRoutes`, name: 'switch_routing_staticRoutes' },
+                { path: `/switch/routing/ospf`, name: 'switch_routing_ospf' },
             ];
             await Promise.all(switchDeviceEndpoints.map(endpoint =>
                 getAndZip(`${deviceFolder}/${endpoint.name}.json`, () => fetchWithMerakiApi(apiKey, region, `/devices/${device.serial}${endpoint.path}`))
             ));
         } else if (device.model.startsWith("MR")) {
-            await getAndZip(`${deviceFolder}/wireless_radio_settings.json`, () => fetchWithMerakiApi(apiKey, region, `/devices/${device.serial}/wireless/radio/settings`));
+            const mrEndpoints = [
+                { path: `/wireless/radio/settings`, name: 'wireless_radio_settings' },
+                { path: `/wireless/status`, name: 'wireless_status' },
+            ];
+            await Promise.all(mrEndpoints.map(endpoint =>
+                getAndZip(`${deviceFolder}/${endpoint.name}.json`, () => fetchWithMerakiApi(apiKey, region, `/devices/${device.serial}${endpoint.path}`))
+            ));
         } else if (device.model.startsWith("MX") || device.model.startsWith("Z")) {
-            await getAndZip(`${deviceFolder}/appliance_uplink_settings.json`, () => fetchWithMerakiApi(apiKey, region, `/devices/${device.serial}/appliance/uplink/settings`));
+            const mxEndpoints = [
+                { path: `/appliance/uplink/settings`, name: 'appliance_uplink_settings' },
+                { path: `/appliance/dhcp/subnets`, name: 'appliance_dhcp_subnets' },
+                { path: `/appliance/performance`, name: 'appliance_performance' },
+            ];
+            await Promise.all(mxEndpoints.map(endpoint =>
+                getAndZip(`${deviceFolder}/${endpoint.name}.json`, () => fetchWithMerakiApi(apiKey, region, `/devices/${device.serial}${endpoint.path}`))
+            ));
         }
     }
     
@@ -596,23 +665,68 @@ export const restoreDeviceConfiguration = async (
     log: (msg: string) => void
 ): Promise<boolean> => {
     try {
-        log(`  - Restoring general settings for ${serial} (Name: ${deviceConfig.general.name})...`);
+        // Restore device name / tags / notes (skip if name is null/empty)
         const { name, tags, notes } = deviceConfig.general;
-        await updateDevice(apiKey, region, serial, { name, tags, notes });
-        log(`    ✅ General settings restored.`);
+        if (name) {
+            log(`  - Restoring general settings for ${serial} (Name: ${name})...`);
+            await updateDevice(apiKey, region, serial, { name, tags, notes });
+            log(`    ✅ General settings restored.`);
+        } else {
+            log(`  - ⏩ Skipping name restore for ${serial} (no name in backup).`);
+        }
 
+        // Restore switch ports
         if (deviceConfig.switchPorts && deviceConfig.switchPorts.length > 0) {
-            log(`  - Found ${deviceConfig.switchPorts.length} switch port configurations to restore...`);
+            log(`  - Restoring ${deviceConfig.switchPorts.length} switch port configuration(s)...`);
             for (const port of deviceConfig.switchPorts) {
                 try {
                     const { portId, ...portConfig } = port;
                     await updateSwitchPort(apiKey, region, serial, portId, portConfig);
-                    log(`    ✅ Port ${portId} configuration restored.`);
+                    log(`    ✅ Port ${portId} restored.`);
                 } catch (portError) {
                     log(`    ❌ FAILED to restore port ${port.portId}: ${portError instanceof Error ? portError.message : String(portError)}`);
                 }
             }
         }
+
+        // Restore switch routing interfaces (SVIs)
+        if (deviceConfig.routingInterfaces && deviceConfig.routingInterfaces.length > 0) {
+            log(`  - Restoring ${deviceConfig.routingInterfaces.length} routing interface(s) (SVIs)...`);
+            // Fetch existing interfaces so we can decide create vs update
+            const existingInterfaces = await getDeviceSwitchRoutingInterfaces(apiKey, region, serial).catch(() => [] as SwitchRoutingInterface[]);
+            const existingByVlan = new Map(existingInterfaces.map(i => [i.vlanId, i.interfaceId]));
+
+            for (const iface of deviceConfig.routingInterfaces) {
+                try {
+                    const { interfaceId, ...ifaceBody } = iface;
+                    const existingId = iface.vlanId != null ? existingByVlan.get(iface.vlanId) : undefined;
+                    if (existingId) {
+                        await updateDeviceSwitchRoutingInterface(apiKey, region, serial, existingId, ifaceBody);
+                        log(`    ✅ Routing interface (VLAN ${iface.vlanId}) updated.`);
+                    } else {
+                        await createDeviceSwitchRoutingInterface(apiKey, region, serial, ifaceBody);
+                        log(`    ✅ Routing interface (VLAN ${iface.vlanId}) created.`);
+                    }
+                } catch (ifaceError) {
+                    log(`    ❌ FAILED to restore routing interface ${iface.name}: ${ifaceError instanceof Error ? ifaceError.message : String(ifaceError)}`);
+                }
+            }
+        }
+
+        // Restore switch static routes
+        if (deviceConfig.staticRoutes && deviceConfig.staticRoutes.length > 0) {
+            log(`  - Restoring ${deviceConfig.staticRoutes.length} static route(s)...`);
+            for (const route of deviceConfig.staticRoutes) {
+                try {
+                    const { staticRouteId, ...routeBody } = route as any;
+                    await createDeviceSwitchRoutingStaticRoute(apiKey, region, serial, routeBody);
+                    log(`    ✅ Static route ${route.subnet} → ${route.nextHopIp} created.`);
+                } catch (routeError) {
+                    log(`    ❌ FAILED to restore static route ${route.subnet}: ${routeError instanceof Error ? routeError.message : String(routeError)}`);
+                }
+            }
+        }
+
         return true;
     } catch (e) {
         log(`  - ❌ FAILED to restore device configuration for ${serial}: ${e instanceof Error ? e.message : String(e)}`);
@@ -646,15 +760,48 @@ export const restoreNetworkConfiguration = async (
         }
     };
 
-    // --- Restore Network-level settings ---
-    await runRestore('VLANs', networkConfig.applianceVlans, async () => {
+    // --- Appliance (MX) settings ---
+
+    // Enable VLAN mode on the destination MX before attempting any VLAN operations.
+    // Without this, the Meraki API rejects all VLAN create/update calls with a 400 error.
+    let vlanModeReady = true;
+    if (networkConfig.applianceVlansSettings?.vlansEnabled) {
+        log(`  - Enabling VLAN mode on destination MX...`);
+        try {
+            await updateNetworkApplianceVlansSettings(apiKey, region, networkId, { vlansEnabled: true });
+            log(`    ✅ VLAN mode enabled.`);
+        } catch (e) {
+            log(`    ❌ FAILED to enable VLAN mode: ${e instanceof Error ? e.message : String(e)}`);
+            log(`    ⚠️  Skipping VLAN restore — VLAN mode must be enabled first.`);
+            vlanModeReady = false;
+        }
+    }
+
+    // VLANs: upsert — try CREATE, fall back to UPDATE if the VLAN already exists
+    await runRestore('VLANs', vlanModeReady ? networkConfig.applianceVlans : undefined, async () => {
         if (networkConfig.applianceVlans) {
             for (const vlan of networkConfig.applianceVlans) {
-                // Destructure to remove properties that can't be in the POST body
-                const { id, networkId: sourceNetId, ...vlanData } = vlan;
-                // Don't try to create VLAN 1, it always exists
-                if (String(id) !== "1") {
-                    await createNetworkApplianceVlan(apiKey, region, networkId, vlanData);
+                // Strip server-assigned fields that the API won't accept in the body.
+                // 'id' is the VLAN number and MUST be in the POST body for create,
+                // but must NOT be in the PUT body (it goes in the URL instead).
+                const { networkId: _srcNetId, mask: _mask, ...vlanWithId } = vlan as any;
+                const { id, ...vlanWithoutId } = vlanWithId;
+
+                if (String(id) === "1") {
+                    // VLAN 1 always exists — update only (id goes in URL, not body)
+                    await updateNetworkApplianceVlan(apiKey, region, networkId, id, vlanWithoutId);
+                    continue;
+                }
+                try {
+                    // id is required in the POST body
+                    await createNetworkApplianceVlan(apiKey, region, networkId, { id, ...vlanWithoutId });
+                } catch (createErr: any) {
+                    // VLAN already exists — update it instead (id goes in URL, not body)
+                    if (createErr?.message?.toLowerCase().includes('already') || createErr?.message?.toLowerCase().includes('exist')) {
+                        await updateNetworkApplianceVlan(apiKey, region, networkId, id, vlanWithoutId);
+                    } else {
+                        throw createErr;
+                    }
                 }
             }
         }
@@ -664,47 +811,109 @@ export const restoreNetworkConfiguration = async (
         updateNetworkApplianceFirewallL3FirewallRules(apiKey, region, networkId, networkConfig.applianceL3FirewallRules!)
     );
 
+    await runRestore('L7 Firewall Rules', networkConfig.applianceL7FirewallRules, () =>
+        updateNetworkApplianceFirewallL7FirewallRules(apiKey, region, networkId, networkConfig.applianceL7FirewallRules!)
+    );
+
+    await runRestore('Content Filtering', networkConfig.contentFiltering, () =>
+        updateNetworkApplianceContentFiltering(apiKey, region, networkId, networkConfig.contentFiltering!)
+    );
+
+    await runRestore('Intrusion Settings', networkConfig.intrusionSettings, () =>
+        updateNetworkApplianceSecurityIntrusion(apiKey, region, networkId, networkConfig.intrusionSettings!)
+    );
+
+    await runRestore('Malware Settings', networkConfig.malwareSettings, () =>
+        updateNetworkApplianceSecurityMalware(apiKey, region, networkId, networkConfig.malwareSettings!)
+    );
+
+    await runRestore('Appliance Traffic Shaping Rules', networkConfig.trafficShapingRules, () =>
+        updateNetworkApplianceTrafficShapingRules(apiKey, region, networkId, networkConfig.trafficShapingRules!)
+    );
+
+    await runRestore('Uplink Selection', networkConfig.uplinkSelection, () =>
+        updateNetworkApplianceUplinkSelection(apiKey, region, networkId, networkConfig.uplinkSelection!)
+    );
+
+    await runRestore('BGP Settings', networkConfig.bgpSettings, () =>
+        updateNetworkApplianceVpnBgp(apiKey, region, networkId, networkConfig.bgpSettings!)
+    );
+
     await runRestore('Site-to-Site VPN', networkConfig.siteToSiteVpnSettings, () =>
         updateNetworkApplianceVpnSiteToSiteVpn(apiKey, region, networkId, networkConfig.siteToSiteVpnSettings!)
     );
-    
-    // Restore Group Policies
+
+    // Appliance static routes (create each individually)
+    if (networkConfig.staticRoutes && networkConfig.staticRoutes.length > 0) {
+        log(`  - Restoring ${networkConfig.staticRoutes.length} appliance static route(s)...`);
+        for (const route of networkConfig.staticRoutes as ApplianceStaticRoute[]) {
+            try {
+                // Strip server-assigned read-only fields before POST
+                const { id: _id, networkId: _rNetId, ...routeBody } = route as any;
+                await createNetworkApplianceStaticRoute(apiKey, region, networkId, routeBody);
+                log(`    ✅ Static route ${route.subnet} restored.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to restore static route ${route.subnet}: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else {
+        log(`  - ⏩ Skipping Appliance Static Routes (no backup data).`);
+    }
+
+    // --- Switch (MS) network settings ---
+
+    await runRestore('Switch Settings', networkConfig.switchSettings, () =>
+        updateNetworkSwitchSettings(apiKey, region, networkId, networkConfig.switchSettings!)
+    );
+
+    await runRestore('Switch ACLs', networkConfig.switchAcls, () =>
+        updateNetworkSwitchAccessControlLists(apiKey, region, networkId, networkConfig.switchAcls!)
+    );
+
+    // --- Network-wide settings ---
+
+    await runRestore('Syslog Servers', networkConfig.syslogServers, () =>
+        updateNetworkSyslogServers(apiKey, region, networkId, networkConfig.syslogServers!)
+    );
+
+    // Group Policies (create each individually — IDs will differ in destination)
     if (networkConfig.groupPolicies && networkConfig.groupPolicies.length > 0) {
         log(`  - Restoring ${networkConfig.groupPolicies.length} Group Policies...`);
         for (const policy of networkConfig.groupPolicies) {
             try {
-                // Remove the ID as we need to create a new one
                 const { groupPolicyId, ...policyData } = policy;
                 await createNetworkGroupPolicy(apiKey, region, networkId, policyData);
                 log(`    ✅ Group Policy "${policy.name}" restored.`);
                 successCount++;
             } catch(e) {
-                 log(`    ❌ FAILED to restore Group Policy "${policy.name}": ${e instanceof Error ? e.message : String(e)}`);
+                log(`    ❌ FAILED to restore Group Policy "${policy.name}": ${e instanceof Error ? e.message : String(e)}`);
             }
         }
+    } else {
+        log(`  - ⏩ Skipping Group Policies (no backup data).`);
     }
-    
-    // Restore SSIDs
-    if (networkConfig.ssids && networkConfig.ssids.length > 0) {
-        log(`  - Restoring ${networkConfig.ssids.length} SSIDs...`);
-        // First, fetch existing SSIDs in the destination to see which ones we can update
-        const destSsids = await getNetworkWirelessSsids(apiKey, region, networkId);
 
+    // SSIDs (update by SSID number)
+    if (networkConfig.ssids && networkConfig.ssids.length > 0) {
+        log(`  - Restoring ${networkConfig.ssids.length} SSID(s)...`);
+        const destSsids = await getNetworkWirelessSsids(apiKey, region, networkId).catch(() => [] as WirelessSsid[]);
         for (const ssid of networkConfig.ssids) {
             try {
-                // Find a matching SSID number in the destination
                 const destSsid = destSsids.find(ds => ds.number === ssid.number);
-                if (destSsid) {
+                if (destSsid !== undefined) {
                     await updateNetworkWirelessSsid(apiKey, region, networkId, ssid.number, ssid);
-                    log(`    ✅ SSID "${ssid.name}" (Number: ${ssid.number}) updated successfully.`);
+                    log(`    ✅ SSID "${ssid.name}" (${ssid.number}) restored.`);
                     successCount++;
                 } else {
-                    log(`    ⚠️ Could not find a destination SSID with number ${ssid.number} to update.`);
+                    log(`    ⚠️ No matching SSID slot ${ssid.number} in destination — skipped.`);
                 }
             } catch(e) {
                 log(`    ❌ FAILED to restore SSID "${ssid.name}": ${e instanceof Error ? e.message : String(e)}`);
             }
         }
+    } else {
+        log(`  - ⏩ Skipping SSIDs (no backup data).`);
     }
 
     return successCount;

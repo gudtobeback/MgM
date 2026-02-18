@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { SchedulerService } from '../services/SchedulerService';
+import { SnapshotService } from '../services/SnapshotService';
 import { query } from '../config/database';
 
 const router = Router();
@@ -111,38 +112,22 @@ router.post('/:orgId/schedule/trigger', async (req: Request, res: Response) => {
     const { orgId } = req.params;
 
     const org = await query(
-      `SELECT id, meraki_org_id, meraki_api_key_encrypted, meraki_region, schedule_config
-       FROM organizations WHERE id = $1 AND user_id = $2 AND is_active = true`,
+      `SELECT id, schedule_config FROM organizations WHERE id = $1 AND user_id = $2 AND is_active = true`,
       [orgId, req.user!.id]
     );
     if (org.rows.length === 0) {
       return res.status(404).json({ error: 'Organization not found' });
     }
 
-    const { meraki_api_key_encrypted, meraki_org_id, meraki_region, schedule_config } = org.rows[0];
+    const { schedule_config } = org.rows[0];
 
-    // Fetch current config from Meraki
-    const baseUrl = meraki_region === 'in' ? 'https://api.meraki.in/api/v1' : 'https://api.meraki.com/api/v1';
-    const headers = { 'X-Cisco-Meraki-API-Key': meraki_api_key_encrypted, 'Content-Type': 'application/json' };
-
-    const [networksRes, devicesRes] = await Promise.allSettled([
-      fetch(`${baseUrl}/organizations/${meraki_org_id}/networks`, { headers }),
-      fetch(`${baseUrl}/organizations/${meraki_org_id}/devices`, { headers }),
-    ]);
-
-    const networks = networksRes.status === 'fulfilled' && networksRes.value.ok
-      ? await networksRes.value.json() : [];
-    const devices = devicesRes.status === 'fulfilled' && devicesRes.value.ok
-      ? await devicesRes.value.json() : [];
-
-    const snapshotData = { networks, devices, vlans: [], ssids: [], l3FirewallRules: [] };
-    const sizeBytes = JSON.stringify(snapshotData).length;
-
-    const snap = await query(
-      `INSERT INTO config_snapshots (organization_id, snapshot_type, snapshot_data, size_bytes, created_by, notes)
-       VALUES ($1, 'scheduled', $2, $3, $4, $5)
-       RETURNING id, created_at`,
-      [orgId, JSON.stringify(snapshotData), sizeBytes, req.user!.id, 'Manually triggered scheduled snapshot']
+    // Use SnapshotService so triggered snapshots contain the same full
+    // configuration data as manual snapshots and can be compared/diffed.
+    const newSnapshot = await SnapshotService.createSnapshot(
+      orgId,
+      'scheduled',
+      req.user!.id,
+      'Manually triggered scheduled snapshot'
     );
 
     // Prune old snapshots
@@ -151,8 +136,8 @@ router.post('/:orgId/schedule/trigger', async (req: Request, res: Response) => {
 
     res.json({
       message: 'Snapshot created',
-      snapshotId: snap.rows[0].id,
-      createdAt: snap.rows[0].created_at,
+      snapshotId: newSnapshot.id,
+      createdAt: newSnapshot.createdAt,
       pruned,
     });
   } catch (error: any) {

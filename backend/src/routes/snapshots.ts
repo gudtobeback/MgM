@@ -8,6 +8,48 @@ const router = Router();
 router.use(authMiddleware);
 
 /**
+ * GET /api/organizations/:orgId/snapshots/stream
+ * Create a snapshot while streaming progress events via Server-Sent Events.
+ * Query params: type, notes
+ * Must be registered BEFORE /:orgId/snapshots/:snapshotId to avoid route conflict.
+ */
+router.get('/:orgId/snapshots/stream', requireSubscription(['essentials', 'professional', 'enterprise', 'msp']), async (req: Request, res: Response) => {
+  const { orgId } = req.params;
+  const type = (req.query.type as string) || 'manual';
+  const notes = (req.query.notes as string) || undefined;
+
+  if (!['manual', 'scheduled', 'pre-change', 'post-change'].includes(type)) {
+    return res.status(400).json({ error: 'Invalid snapshot type' });
+  }
+
+  // Set SSE headers
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders();
+
+  const send = (data: object) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+    // Flush if supported (e.g. compression middleware)
+    if (typeof (res as any).flush === 'function') (res as any).flush();
+  };
+
+  try {
+    const snapshot = await SnapshotService.createSnapshot(
+      orgId, type as any, req.user?.id, notes,
+      (event) => send(event)
+    );
+    send({ step: 'result', status: 'done', snapshot });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to create snapshot';
+    send({ step: 'result', status: 'error', error: message });
+  } finally {
+    res.end();
+  }
+});
+
+/**
  * POST /api/organizations/:orgId/snapshots
  * Create a new snapshot
  */
@@ -53,6 +95,30 @@ router.get('/:orgId/snapshots', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/organizations/:orgId/snapshots/compare
+ * Compare two snapshots
+ * NOTE: must be registered BEFORE /:snapshotId to prevent "compare" being
+ *       captured as a snapshot ID parameter.
+ */
+router.get('/:orgId/snapshots/compare', async (req: Request, res: Response) => {
+  try {
+    const { snapshot1, snapshot2 } = req.query;
+
+    if (!snapshot1 || !snapshot2) {
+      return res.status(400).json({ error: 'Both snapshot1 and snapshot2 are required' });
+    }
+
+    const diff = await SnapshotService.compareSnapshots(snapshot1 as string, snapshot2 as string);
+
+    res.json(diff);
+  } catch (error) {
+    console.error('Compare snapshots error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to compare snapshots';
+    res.status(500).json({ error: message });
+  }
+});
+
+/**
  * GET /api/organizations/:orgId/snapshots/:snapshotId
  * Get a specific snapshot
  */
@@ -70,28 +136,6 @@ router.get('/:orgId/snapshots/:snapshotId', async (req: Request, res: Response) 
   } catch (error) {
     console.error('Get snapshot error:', error);
     res.status(500).json({ error: 'Failed to get snapshot' });
-  }
-});
-
-/**
- * GET /api/organizations/:orgId/snapshots/compare
- * Compare two snapshots
- */
-router.get('/:orgId/snapshots/compare', async (req: Request, res: Response) => {
-  try {
-    const { snapshot1, snapshot2 } = req.query;
-
-    if (!snapshot1 || !snapshot2) {
-      return res.status(400).json({ error: 'Both snapshot1 and snapshot2 are required' });
-    }
-
-    const diff = await SnapshotService.compareSnapshots(snapshot1 as string, snapshot2 as string);
-
-    res.json(diff);
-  } catch (error) {
-    console.error('Compare snapshots error:', error);
-    const message = error instanceof Error ? error.message : 'Failed to compare snapshots';
-    res.status(500).json({ error: message });
   }
 });
 

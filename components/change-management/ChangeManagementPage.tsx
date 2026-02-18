@@ -303,9 +303,9 @@ export const ChangeManagementPage: React.FC<ChangeManagementPageProps> = ({ orga
     <div style={{ maxWidth: '960px', margin: '0 auto' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '6px' }}>Change Management</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '6px', letterSpacing: '-0.02em' }}>Change Management</h1>
           <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
             {organizationName ? `${organizationName} — ` : ''}Track, review, and approve network configuration changes with full audit trail.
           </p>

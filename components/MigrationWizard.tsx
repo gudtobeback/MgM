@@ -167,45 +167,42 @@ export function MigrationWizard() {
     <div className="w-full max-w-5xl mx-auto p-6 md:p-8 animate-fade-in">
 
       {/* ── Step indicator ─────────────────────────────────────────────── */}
-      <nav aria-label="Migration steps" className="mb-8 overflow-x-auto pb-4 hide-scrollbar">
-        <div className="flex items-start justify-between min-w-[760px] md:min-w-0 md:justify-center relative px-4">
-          {/* Background line for large screens */}
-          <div className="absolute top-[14px] left-0 w-full h-0.5 bg-border -z-10 hidden md:block max-w-[90%] mx-auto left-0 right-0" />
-
+      <nav aria-label="Migration steps" className="mb-8 overflow-x-auto pb-1 no-scrollbar">
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', minWidth: '600px' }}>
           {steps.map((step, index) => {
             const isCompleted = currentStep > step.id;
             const isActive = currentStep === step.id;
-
             return (
               <React.Fragment key={step.id}>
-                <div className="flex flex-col items-center relative group z-0">
-                  {/* Circle */}
-                  <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 border-2",
-                    isCompleted ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200" :
-                      isActive ? "bg-white border-blue-600 text-blue-600 shadow-md scale-110 ring-4 ring-blue-50" :
-                        "bg-white border-border text-muted-foreground"
-                  )}>
-                    {isCompleted ? <Check size={14} className="stroke-[3]" /> : step.id}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '60px', maxWidth: '72px' }}>
+                  <div style={{
+                    width: isActive ? '12px' : '10px', height: isActive ? '12px' : '10px',
+                    borderRadius: '50%', flexShrink: 0,
+                    backgroundColor: (isCompleted || isActive) ? '#2563eb' : '#e5e7eb',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 200ms', marginTop: isActive ? 0 : '1px',
+                  }}>
+                    {isCompleted && (
+                      <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
+                        <path d="M1 3l1.5 1.5 2.5-2.5" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
                   </div>
-
-                  {/* Label */}
-                  <div className="mt-2 text-center w-20">
-                    <span className={cn(
-                      "block text-[10px] font-bold uppercase tracking-wider transition-colors duration-200",
-                      isActive ? "text-blue-600" : isCompleted ? "text-foreground" : "text-muted-foreground"
-                    )}>
-                      {step.name}
-                    </span>
-                  </div>
+                  <span style={{
+                    fontSize: '9.5px', fontWeight: isActive ? 700 : 500, marginTop: '5px',
+                    color: isActive ? '#2563eb' : isCompleted ? '#374151' : '#9ca3af',
+                    textAlign: 'center', lineHeight: 1.3, whiteSpace: 'nowrap',
+                    overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '60px',
+                  }}>
+                    {step.name}
+                  </span>
                 </div>
-
-                {/* Mobile connector line */}
                 {index < steps.length - 1 && (
-                  <div className={cn(
-                    "flex-1 h-0.5 mx-2 mt-[14px] transition-colors duration-300 md:hidden",
-                    isCompleted ? "bg-blue-600" : "bg-border"
-                  )} />
+                  <div style={{
+                    flex: 1, height: '1.5px', marginTop: '4px',
+                    backgroundColor: currentStep > step.id ? '#2563eb' : '#e5e7eb',
+                    minWidth: '4px', transition: 'background 200ms',
+                  }} />
                 )}
               </React.Fragment>
             );

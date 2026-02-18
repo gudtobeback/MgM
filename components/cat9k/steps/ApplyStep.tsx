@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Loader2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Loader2, PauseCircle, CheckCircle2 } from 'lucide-react';
 import { getSwitchPorts, updateSwitchPort, createNetworkSwitchAccessPolicy, updateNetworkSwitchAccessControlLists } from '../../../services/merakiService';
 import { extractPortNumber } from '../../../services/cat9kParser';
 import { Cat9KData, Cat9KResults } from '../Cat9KMigrationWizard';
@@ -8,16 +8,18 @@ interface ApplyStepProps {
   data: Cat9KData;
   onUpdate: (patch: Partial<Cat9KData>) => void;
   onComplete: () => void;
+  onResume: () => void;
 }
 
 // Small delay helper to avoid hammering the API
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
+export function ApplyStep({ data, onUpdate, onComplete, onResume }: ApplyStepProps) {
   const hasRun = useRef(false);
   const logRef = useRef<HTMLDivElement>(null);
+  const stopRef = useRef(false);
+  const [running, setRunning] = useState(true);
 
-  // Scroll log to bottom when updated
   const scrollLog = () => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight;
@@ -29,11 +31,15 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
     hasRun.current = true;
 
     const run = async () => {
-      const log: string[] = [];
-      let portsPushed = 0;
-      let portsFailed = 0;
-      let policiesCreated = 0;
-      let aclRulesPushed = 0;
+      // Preserve previous log and counters so resume accumulates
+      const log: string[] = [...(data.results?.log ?? [])];
+      let portsPushed = data.results?.portsPushed ?? 0;
+      let portsFailed = data.results?.portsFailed ?? 0;
+      let policiesCreated = data.results?.policiesCreated ?? 0;
+      let aclRulesPushed = data.results?.aclRulesPushed ?? 0;
+
+      // Mutable local copy of completed ports (avoids stale closure on data)
+      const appliedPorts: string[] = [...(data.appliedPorts ?? [])];
 
       const parsed = data.parsedConfig!;
       const apiKey = data.destinationApiKey;
@@ -46,20 +52,37 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
         scrollLog();
       };
 
-      addLog('Starting Cat9K → Meraki configuration push...');
-      addLog(`Target network: ${data.destinationNetwork!.name}`);
-      addLog('');
+      // Resume divider
+      if (log.length > 0) {
+        addLog('');
+        addLog('── Resuming Migration ──');
+        addLog('');
+      } else {
+        addLog('Starting Cat9K → Meraki configuration push…');
+        addLog(`Target network: ${data.destinationNetwork!.name}`);
+        addLog('');
+      }
 
-      // ── Switch ports ────────────────────────────────────────────────
+      // Determine which devices to target — prefer the specifically claimed devices
+      const targetDevices = data.claimedDevices.length > 0
+        ? data.claimedDevices
+        : data.destinationDevices
+            .filter(d =>
+              d.model?.startsWith('C93') ||
+              d.model?.startsWith('C9300') ||
+              d.model?.startsWith('C9K')
+            )
+            .map(d => ({ cloudId: d.serial, serial: d.serial, name: d.name ?? d.serial, model: d.model ?? '' }));
+
+      // ── Switch ports ──────────────────────────────────────────────────────
       if (data.applyPorts && parsed.interfaces.length > 0) {
         addLog('── Switch Port Configuration ──');
 
-        const msDevices = data.destinationDevices.filter(d => d.model?.startsWith('MS'));
-        if (msDevices.length === 0) {
-          addLog('⚠️  No Meraki MS switches found in the target network. Skipping port configuration.');
+        if (targetDevices.length === 0) {
+          addLog('⚠️  No claimed Cat9K devices found. Skipping port configuration.');
         } else {
-          for (const device of msDevices) {
-            addLog(`\nDevice: ${device.name ?? device.serial} (${device.model})`);
+          for (const device of targetDevices) {
+            addLog(`\nDevice: ${device.name} (${device.model || 'Cat9K'}) — ${device.serial}`);
             let existingPorts: any[] = [];
             try {
               existingPorts = await getSwitchPorts(apiKey, region, device.serial);
@@ -72,6 +95,14 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
               if (iface.mode === 'unknown') continue;
 
               const portNumber = extractPortNumber(iface.name);
+              const portKey = `${device.serial}:${portNumber}`;
+
+              // Skip ports already applied in a previous run
+              if (appliedPorts.includes(portKey)) {
+                addLog(`  ↩ Skipped (already applied): ${iface.shortName}`);
+                continue;
+              }
+
               const merakiPort = existingPorts.find(p => String(p.portId) === portNumber);
               if (!merakiPort) {
                 addLog(`  ⚠️  Port ${iface.shortName} (${portNumber}) not found on ${device.serial}`);
@@ -96,19 +127,34 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
                 await updateSwitchPort(apiKey, region, device.serial, portNumber, portBody);
                 addLog(`  ✅ ${iface.shortName} → ${iface.mode}${iface.mode === 'access' ? ` VLAN ${portBody.vlan}` : ` (${portBody.allowedVlans})`}`);
                 portsPushed++;
+                appliedPorts.push(portKey);
               } catch (err) {
                 addLog(`  ⚠️  ${iface.shortName}: ${(err as any).message ?? 'update failed'}`);
                 portsFailed++;
               }
+
               await delay(120);
+
+              // Check stop flag between each port push
+              if (stopRef.current) {
+                addLog('');
+                addLog('🛑 Migration paused — click Resume to continue from here.');
+                onUpdate({
+                  wasStopped: true,
+                  appliedPorts: [...appliedPorts],
+                  results: { portsPushed, portsFailed, policiesCreated, aclRulesPushed, log: [...log] },
+                });
+                setRunning(false);
+                return;
+              }
             }
           }
         }
         addLog('');
       }
 
-      // ── RADIUS access policy ────────────────────────────────────────
-      if (data.applyRadius && parsed.radiusServers.length > 0) {
+      // ── RADIUS access policy ──────────────────────────────────────────────
+      if (!data.radiusApplied && data.applyRadius && parsed.radiusServers.length > 0) {
         addLog('── RADIUS / 802.1X Access Policy ──');
         const radiusServersPayload = parsed.radiusServers.map(srv => ({
           host: srv.ip,
@@ -118,12 +164,8 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
 
         const policyBody = {
           name: 'Cat9K-RADIUS-Policy',
-          radius: {
-            servers: radiusServersPayload,
-          },
-          dot1x: {
-            controlDirection: 'inbound',
-          },
+          radius: { servers: radiusServersPayload },
+          dot1x: { controlDirection: 'inbound' },
           radiusTestingEnabled: false,
           radiusGroupAttribute: '11',
           voiceVlanClients: true,
@@ -134,22 +176,24 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
           await createNetworkSwitchAccessPolicy(apiKey, region, networkId, policyBody);
           addLog(`✅ Created RADIUS access policy with ${radiusServersPayload.length} server(s)`);
           policiesCreated++;
+          onUpdate({ radiusApplied: true });
         } catch (err) {
           addLog(`⚠️  RADIUS policy creation failed: ${(err as any).message ?? 'unknown error'}`);
         }
         addLog('');
+      } else if (data.radiusApplied) {
+        addLog('── RADIUS / 802.1X Access Policy ── (skipped — already applied)');
+        addLog('');
       }
 
-      // ── ACL rules ───────────────────────────────────────────────────
-      if (data.applyAcls && parsed.acls.length > 0) {
+      // ── ACL rules ─────────────────────────────────────────────────────────
+      if (!data.aclsApplied && data.applyAcls && parsed.acls.length > 0) {
         addLog('── ACL Rules ──');
-
         const merakiRules: any[] = [];
 
         for (const acl of parsed.acls) {
           addLog(`Processing ACL: ${acl.name} (${acl.rules.length} rules)`);
           for (const rule of acl.rules) {
-            // Map IOS-XE protocol to Meraki protocol
             let protocol: string = 'any';
             if (/^tcp$/i.test(rule.protocol)) protocol = 'tcp';
             else if (/^udp$/i.test(rule.protocol)) protocol = 'udp';
@@ -162,21 +206,16 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
               srcCidr: rule.srcCidr,
               dstCidr: rule.dstCidr,
             };
-
             if (rule.srcPort) merakiRule.srcPort = rule.srcPort;
             if (rule.dstPort) merakiRule.dstPort = rule.dstPort;
             if (rule.comment) merakiRule.comment = rule.comment;
-
             merakiRules.push(merakiRule);
           }
         }
 
-        // Meraki requires a final default allow-all rule
         merakiRules.push({
-          policy: 'allow',
-          protocol: 'any',
-          srcCidr: 'any',
-          dstCidr: 'any',
+          policy: 'allow', protocol: 'any',
+          srcCidr: 'any', dstCidr: 'any',
           comment: 'Default allow all',
         });
 
@@ -184,9 +223,13 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
           await updateNetworkSwitchAccessControlLists(apiKey, region, networkId, { rules: merakiRules });
           addLog(`✅ Pushed ${merakiRules.length - 1} ACL rule(s) + default allow-all`);
           aclRulesPushed = merakiRules.length - 1;
+          onUpdate({ aclsApplied: true });
         } catch (err) {
           addLog(`⚠️  ACL push failed: ${(err as any).message ?? 'unknown error'}`);
         }
+        addLog('');
+      } else if (data.aclsApplied) {
+        addLog('── ACL Rules ── (skipped — already applied)');
         addLog('');
       }
 
@@ -196,9 +239,12 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
       addLog(`RADIUS policies created: ${policiesCreated}`);
       addLog(`ACL rules pushed: ${aclRulesPushed}`);
 
-      onUpdate({ results: { portsPushed, portsFailed, policiesCreated, aclRulesPushed, log: [...log] } });
-      scrollLog();
-
+      onUpdate({
+        wasStopped: false,
+        appliedPorts: [...appliedPorts],
+        results: { portsPushed, portsFailed, policiesCreated, aclRulesPushed, log: [...log] },
+      });
+      setRunning(false);
       setTimeout(onComplete, 2000);
     };
 
@@ -208,17 +254,30 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
   }, []);
 
   const log = data.results?.log ?? [];
+  const isPaused = !running && data.wasStopped;
+  const isDone = !running && !data.wasStopped;
 
   return (
     <div>
+      {/* Header */}
       <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Loader2 size={18} color="#2563eb" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+        {running ? (
+          <Loader2 size={18} color="#2563eb" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+        ) : isPaused ? (
+          <PauseCircle size={18} color="#f59e0b" style={{ flexShrink: 0 }} />
+        ) : (
+          <CheckCircle2 size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+        )}
         <div>
           <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '2px' }}>
-            Applying Configuration
+            {running ? 'Applying Configuration' : isPaused ? 'Migration Paused' : 'Configuration Applied'}
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>
-            Pushing switch port configurations, RADIUS policies, and ACL rules to Meraki…
+            {running
+              ? 'Pushing switch port configurations, RADIUS policies, and ACL rules…'
+              : isPaused
+              ? 'The migration was paused. Resume to continue from the last checkpoint.'
+              : 'All configuration has been pushed to the claimed Catalyst 9K device(s).'}
           </p>
         </div>
       </div>
@@ -227,23 +286,19 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
       <div
         ref={logRef}
         style={{
-          height: '360px',
-          overflowY: 'auto',
-          backgroundColor: '#0f172a',
-          borderRadius: '6px',
-          padding: '16px',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          lineHeight: 1.6,
-          color: '#e2e8f0',
+          height: '360px', overflowY: 'auto',
+          backgroundColor: '#0f172a', borderRadius: '6px',
+          padding: '16px', fontFamily: 'var(--font-mono)',
+          fontSize: '12px', lineHeight: 1.6, color: '#e2e8f0',
           border: '1px solid var(--color-border-primary)',
         }}
       >
         {log.map((line, i) => (
           <div key={i} style={{
             color: line.startsWith('✅') ? '#4ade80'
-              : line.startsWith('⚠️') ? '#facc15'
+              : line.startsWith('⚠️') || line.startsWith('🛑') ? '#facc15'
               : line.startsWith('──') ? '#94a3b8'
+              : line.startsWith('  ↩') ? '#64748b'
               : '#e2e8f0',
           }}>
             {line || <br />}
@@ -251,6 +306,52 @@ export function ApplyStep({ data, onUpdate, onComplete }: ApplyStepProps) {
         ))}
         {log.length === 0 && (
           <div style={{ color: '#64748b' }}>Initializing…</div>
+        )}
+      </div>
+
+      {/* Action buttons */}
+      <div style={{ marginTop: '16px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        {/* Stop button — only while running */}
+        {running && (
+          <button
+            onClick={() => { stopRef.current = true; }}
+            style={{
+              padding: '8px 18px', borderRadius: '5px', fontSize: '13px', fontWeight: 600,
+              border: '1px solid #f59e0b', backgroundColor: '#fffbeb',
+              color: '#92400e', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '6px',
+            }}
+          >
+            <PauseCircle size={14} />
+            Stop After Current
+          </button>
+        )}
+
+        {/* Paused state buttons */}
+        {isPaused && (
+          <>
+            <button
+              onClick={onResume}
+              style={{
+                padding: '8px 20px', borderRadius: '5px', fontSize: '13px', fontWeight: 700,
+                backgroundColor: '#2563eb', color: '#ffffff', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '6px',
+              }}
+            >
+              <Loader2 size={14} />
+              Resume Migration
+            </button>
+            <button
+              onClick={onComplete}
+              style={{
+                padding: '8px 18px', borderRadius: '5px', fontSize: '13px', fontWeight: 600,
+                backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)',
+                border: '1px solid var(--color-border-primary)', cursor: 'pointer',
+              }}
+            >
+              View Results So Far
+            </button>
+          </>
         )}
       </div>
 

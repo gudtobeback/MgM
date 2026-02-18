@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Shield, ShieldCheck, RefreshCw, Loader2, ChevronDown, ChevronUp,
+  Lock, Wifi, Cpu, Settings, KeyRound, AlertTriangle,
+} from 'lucide-react';
 import { apiClient } from '../../services/apiClient';
+import { cn } from '../../lib/utils';
 
 interface SecurityFinding {
   id: string;
@@ -29,46 +34,42 @@ interface SecurityPageProps {
 }
 
 const RISK_CONFIG = {
-  low: { label: 'Low Risk', color: '#22c55e', bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800' },
-  medium: { label: 'Medium Risk', color: '#f59e0b', bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800' },
-  high: { label: 'High Risk', color: '#f97316', bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-800' },
-  critical: { label: 'Critical Risk', color: '#ef4444', bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800' },
+  low:      { label: 'Low Risk',      color: '#16a34a', bg: 'rgba(240,253,244,0.8)',  border: 'rgba(187,247,208,0.8)' },
+  medium:   { label: 'Medium Risk',   color: '#d97706', bg: 'rgba(255,251,235,0.8)',  border: 'rgba(253,230,138,0.8)' },
+  high:     { label: 'High Risk',     color: '#ea580c', bg: 'rgba(255,247,237,0.8)',  border: 'rgba(253,186,116,0.8)' },
+  critical: { label: 'Critical Risk', color: '#dc2626', bg: 'rgba(254,242,242,0.8)',  border: 'rgba(254,202,202,0.8)' },
 };
 
 const SEVERITY_STYLES: Record<string, string> = {
-  critical: 'bg-red-100 text-red-800',
-  high: 'bg-orange-100 text-orange-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  low: 'bg-blue-100 text-blue-700',
-  info: 'bg-gray-100 text-gray-700',
+  critical: 'bg-red-100    text-red-800',
+  high:     'bg-orange-100 text-orange-800',
+  medium:   'bg-yellow-100 text-yellow-800',
+  low:      'bg-blue-100   text-blue-700',
+  info:     'bg-gray-100   text-gray-600',
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  access_control: 'Access Control',
-  encryption: 'Encryption',
-  network_segmentation: 'Network Segmentation',
-  firmware: 'Firmware',
-  configuration: 'Configuration',
+const SEVERITY_ORDER: Record<string, number> = {
+  critical: 0, high: 1, medium: 2, low: 3, info: 4,
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
-  access_control: '🔐',
-  encryption: '🔒',
-  network_segmentation: '🌐',
-  firmware: '⚙️',
-  configuration: '📋',
+const CATEGORY_META: Record<string, { label: string; Icon: React.ElementType; color: string }> = {
+  access_control:      { label: 'Access Control',      Icon: KeyRound, color: '#6366f1' },
+  encryption:          { label: 'Encryption',          Icon: Lock,     color: '#0891b2' },
+  network_segmentation:{ label: 'Network Segmentation',Icon: Wifi,     color: '#8b5cf6' },
+  firmware:            { label: 'Firmware',            Icon: Cpu,      color: '#d97706' },
+  configuration:       { label: 'Configuration',       Icon: Settings, color: '#059669' },
 };
+
+const DEFAULT_CAT = { label: 'Other', Icon: Settings, color: '#6b7280' };
 
 export const SecurityPage: React.FC<SecurityPageProps> = ({ organizationId, organizationName }) => {
-  const [report, setReport] = useState<SecurityPostureReport | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [report,          setReport]          = useState<SecurityPostureReport | null>(null);
+  const [loading,         setLoading]         = useState(false);
+  const [error,           setError]           = useState('');
   const [expandedFinding, setExpandedFinding] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory,  setActiveCategory]  = useState('all');
 
-  useEffect(() => {
-    runAnalysis();
-  }, [organizationId]);
+  useEffect(() => { runAnalysis(); }, [organizationId]);
 
   const runAnalysis = async () => {
     setLoading(true);
@@ -83,78 +84,116 @@ export const SecurityPage: React.FC<SecurityPageProps> = ({ organizationId, orga
     }
   };
 
-  const filteredFindings = report?.findings.filter(
+  const sortedFindings = [...(report?.findings ?? [])].sort(
+    (a, b) => (SEVERITY_ORDER[a.severity] ?? 5) - (SEVERITY_ORDER[b.severity] ?? 5)
+  );
+
+  const filteredFindings = sortedFindings.filter(
     f => activeCategory === 'all' || f.category === activeCategory
-  ) ?? [];
+  );
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
+
+      {/* Header */}
+      <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">Security Posture</h2>
-          <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+          <div className="flex items-center gap-3 mb-1">
+            <Shield size={20} className="text-red-500" />
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Security Posture</h1>
+          </div>
+          <p className="text-sm text-muted-foreground mt-1">
             {organizationName ? `${organizationName} — ` : ''}Automated security analysis of your Meraki configuration.
           </p>
         </div>
         <button
           onClick={runAnalysis}
           disabled={loading}
-          className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-60 hover:opacity-90"
+          style={{ background: 'linear-gradient(135deg, #3b82f6, #4f46e5)' }}
         >
-          {loading ? 'Analyzing...' : 'Run Analysis'}
+          {loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+          {loading ? 'Analyzing…' : 'Run Analysis'}
         </button>
       </div>
 
+      {/* Error */}
       {error && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm">
+        <div className="flex items-center gap-3 px-5 py-4 rounded-xl bg-amber-50/80 border border-amber-200/80 text-amber-800 text-sm backdrop-blur-sm">
+          <AlertTriangle size={15} className="shrink-0 text-amber-500" />
           {error}
         </div>
       )}
 
+      {/* Loading */}
       {loading && (
-        <div className="text-center py-16">
-          <div className="animate-pulse text-4xl mb-3">🔒</div>
-          <p className="text-[var(--color-text-secondary)]">Analyzing security posture...</p>
+        <div className="flex flex-col items-center justify-center py-16 text-muted-foreground animate-pulse">
+          <Loader2 size={40} className="mb-4 text-blue-500 opacity-50 animate-spin" />
+          <p className="text-sm">Analyzing security posture…</p>
         </div>
       )}
 
       {!loading && report && (
         <>
           {/* Risk Overview */}
-          <div className={`border rounded-xl p-6 ${RISK_CONFIG[report.overallRisk].bg} ${RISK_CONFIG[report.overallRisk].border}`}>
+          <div
+            className="glass-card p-5"
+            style={{
+              background: RISK_CONFIG[report.overallRisk].bg,
+              borderColor: RISK_CONFIG[report.overallRisk].border,
+            }}
+          >
             <div className="flex items-center gap-6">
-              <div className="text-center">
+              {/* Score circle */}
+              <div className="shrink-0 flex flex-col items-center">
                 <div
-                  className="w-24 h-24 rounded-full border-4 flex items-center justify-center text-3xl font-bold"
-                  style={{ borderColor: RISK_CONFIG[report.overallRisk].color, color: RISK_CONFIG[report.overallRisk].color }}
+                  className="w-20 h-20 rounded-full flex items-center justify-center border-4 text-2xl font-bold"
+                  style={{
+                    borderColor: RISK_CONFIG[report.overallRisk].color,
+                    color: RISK_CONFIG[report.overallRisk].color,
+                  }}
                 >
                   {report.riskScore}
                 </div>
-                <p className="text-xs mt-1 font-medium" style={{ color: RISK_CONFIG[report.overallRisk].color }}>
+                <p className="text-xs font-semibold mt-1" style={{ color: RISK_CONFIG[report.overallRisk].color }}>
                   Risk Score
                 </p>
               </div>
-              <div className="flex-1">
-                <h3 className={`text-xl font-bold ${RISK_CONFIG[report.overallRisk].text}`}>
-                  {RISK_CONFIG[report.overallRisk].label}
-                </h3>
-                <p className={`text-sm mt-1 ${RISK_CONFIG[report.overallRisk].text}`}>
-                  {report.findings.length} security findings detected.
-                  {report.findings.filter(f => f.severity === 'critical').length > 0 && (
-                    <strong> {report.findings.filter(f => f.severity === 'critical').length} critical issues require immediate attention.</strong>
-                  )}
-                </p>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-1.5">
+                  <h2 className="text-xl font-bold" style={{ color: RISK_CONFIG[report.overallRisk].color }}>
+                    {RISK_CONFIG[report.overallRisk].label}
+                  </h2>
+                  <span className="text-sm text-muted-foreground">
+                    {report.findings.length} finding{report.findings.length !== 1 ? 's' : ''} detected
+                  </span>
+                </div>
+
+                {report.findings.filter(f => f.severity === 'critical').length > 0 && (
+                  <p className="text-sm font-semibold text-red-700 mb-3">
+                    {report.findings.filter(f => f.severity === 'critical').length} critical issue{report.findings.filter(f => f.severity === 'critical').length !== 1 ? 's' : ''} require immediate attention.
+                  </p>
+                )}
+
                 {/* Category breakdown */}
-                <div className="flex flex-wrap gap-3 mt-3">
-                  {(Object.entries(report.byCategory) as [string, { count: number; criticalCount: number }][]).map(([cat, counts]) => (
-                    <div key={cat} className="flex items-center gap-1.5 text-sm">
-                      <span>{CATEGORY_ICONS[cat] ?? '⚙️'}</span>
-                      <span className={RISK_CONFIG[report.overallRisk].text}>
-                        {CATEGORY_LABELS[cat] || cat}: <strong>{counts.count}</strong>
-                        {counts.criticalCount > 0 && <span className="text-red-700"> ({counts.criticalCount} critical)</span>}
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {(Object.entries(report.byCategory) as [string, { count: number; criticalCount: number }][]).map(([cat, counts]) => {
+                    const meta = CATEGORY_META[cat] ?? DEFAULT_CAT;
+                    const CatIcon = meta.Icon;
+                    return (
+                      <div
+                        key={cat}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-white/50 border border-white/50 backdrop-blur-sm"
+                      >
+                        <CatIcon size={11} style={{ color: meta.color }} />
+                        <span className="text-foreground">{meta.label}: <strong>{counts.count}</strong></span>
+                        {counts.criticalCount > 0 && (
+                          <span className="text-red-600 font-semibold">({counts.criticalCount} critical)</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -162,12 +201,10 @@ export const SecurityPage: React.FC<SecurityPageProps> = ({ organizationId, orga
 
           {/* All Clear */}
           {report.findings.length === 0 && (
-            <div className="text-center py-12 border border-dashed border-green-200 bg-green-50 rounded-xl">
-              <div className="text-4xl mb-3">🛡️</div>
-              <h3 className="font-semibold text-green-800">No Security Issues Found</h3>
-              <p className="text-sm text-green-700 mt-1">
-                Your configuration passes all security checks.
-              </p>
+            <div className="text-center py-14 border border-dashed border-green-200/60 bg-green-50/40 rounded-xl backdrop-blur-sm">
+              <ShieldCheck size={44} className="mx-auto mb-3 text-green-500 opacity-80" />
+              <h3 className="font-semibold text-green-800 text-lg">No Security Issues Found</h3>
+              <p className="text-sm text-green-700 mt-1">Your configuration passes all automated security checks.</p>
             </div>
           )}
 
@@ -178,63 +215,98 @@ export const SecurityPage: React.FC<SecurityPageProps> = ({ organizationId, orga
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setActiveCategory('all')}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeCategory === 'all' ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-surface)] border border-[var(--color-border-primary)]'}`}
+                  className={cn(
+                    'px-3 py-1.5 rounded-lg text-sm font-semibold transition-all',
+                    activeCategory === 'all'
+                      ? 'text-white shadow-sm'
+                      : 'bg-white/40 border border-white/40 text-foreground hover:bg-white/60'
+                  )}
+                  style={activeCategory === 'all' ? { background: 'linear-gradient(135deg, #3b82f6, #4f46e5)' } : {}}
                 >
                   All ({report.findings.length})
                 </button>
-                {Object.entries(CATEGORY_LABELS).map(([cat, label]) => {
+                {Object.entries(CATEGORY_META).map(([cat, meta]) => {
                   const count = report.findings.filter(f => f.category === cat).length;
                   if (count === 0) return null;
+                  const CatIcon = meta.Icon;
+                  const isActive = activeCategory === cat;
                   return (
                     <button
                       key={cat}
-                      onClick={() => setActiveCategory(activeCategory === cat ? 'all' : cat)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeCategory === cat ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-surface)] border border-[var(--color-border-primary)]'}`}
+                      onClick={() => setActiveCategory(isActive ? 'all' : cat)}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all',
+                        isActive
+                          ? 'text-white shadow-sm'
+                          : 'bg-white/40 border border-white/40 text-foreground hover:bg-white/60'
+                      )}
+                      style={isActive ? { background: `linear-gradient(135deg, ${meta.color}, ${meta.color}dd)` } : {}}
                     >
-                      {CATEGORY_ICONS[cat]} {label} ({count})
+                      <CatIcon size={12} />
+                      {meta.label} ({count})
                     </button>
                   );
                 })}
               </div>
 
-              {filteredFindings.map(finding => (
-                <div key={finding.id} className="bg-[var(--color-surface)] border border-[var(--color-border-primary)] rounded-xl overflow-hidden">
-                  <div
-                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-[var(--color-surface-subtle)]"
-                    onClick={() => setExpandedFinding(expandedFinding === finding.id ? null : finding.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${SEVERITY_STYLES[finding.severity]}`}>
-                        {finding.severity}
-                      </span>
-                      <span className="text-lg">{CATEGORY_ICONS[finding.category] ?? '⚙️'}</span>
-                      <div>
-                        <p className="font-medium text-[var(--color-text-primary)]">{finding.title}</p>
-                        <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
-                          {CATEGORY_LABELS[finding.category] || finding.category} &bull; {finding.affectedResource}
-                        </p>
+              {/* Finding cards */}
+              <div className="space-y-2">
+                {filteredFindings.map(finding => {
+                  const meta    = CATEGORY_META[finding.category] ?? DEFAULT_CAT;
+                  const CatIcon = meta.Icon;
+                  const isOpen  = expandedFinding === finding.id;
+
+                  return (
+                    <div key={finding.id} className="glass-card overflow-hidden">
+                      <div
+                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-white/30 transition-colors"
+                        onClick={() => setExpandedFinding(isOpen ? null : finding.id)}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Severity badge */}
+                          <span className={cn('text-xs px-2 py-0.5 rounded-full font-bold capitalize shrink-0', SEVERITY_STYLES[finding.severity])}>
+                            {finding.severity}
+                          </span>
+                          {/* Category icon */}
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                            style={{ background: `${meta.color}20`, color: meta.color }}
+                          >
+                            <CatIcon size={13} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-foreground text-sm truncate">{finding.title}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                              {meta.label} &bull; {finding.affectedResource}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-muted-foreground ml-3 shrink-0">
+                          {isOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                        </span>
                       </div>
+
+                      {isOpen && (
+                        <div className="px-4 pb-4 border-t border-white/40 pt-3 space-y-3">
+                          <p className="text-sm text-foreground leading-relaxed">{finding.description}</p>
+                          <div className="bg-blue-50/60 border border-blue-100/80 rounded-lg p-3 backdrop-blur-sm">
+                            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">How to Fix</p>
+                            <p className="text-sm text-blue-900 leading-relaxed">{finding.remediation}</p>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Detected: {new Date(finding.detectedAt).toLocaleString()}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <span className="text-[var(--color-text-secondary)]">
-                      {expandedFinding === finding.id ? '▲' : '▼'}
-                    </span>
-                  </div>
-                  {expandedFinding === finding.id && (
-                    <div className="px-4 pb-4 border-t border-[var(--color-border-primary)] pt-3 space-y-3">
-                      <p className="text-sm text-[var(--color-text-primary)]">{finding.description}</p>
-                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">How to Fix</p>
-                        <p className="text-sm text-blue-800">{finding.remediation}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          <p className="text-xs text-[var(--color-text-secondary)] text-center">
-            Analysis completed: {new Date(report.checkedAt).toLocaleString()}
+          <p className="text-xs text-center text-muted-foreground">
+            Analysis completed: {new Date(report.checkedAt).toLocaleString()} &nbsp;·&nbsp; Snapshot: {report.snapshotId.slice(0, 8)}…
           </p>
         </>
       )}

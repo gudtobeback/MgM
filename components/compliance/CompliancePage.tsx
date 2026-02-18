@@ -257,19 +257,20 @@ const ControlRow: React.FC<ControlRowProps> = ({ control, status, violation, ove
     : STATUS_ICON[status];
 
   return (
-    <div style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.3)' }}>
       {/* Row header */}
       <div
         style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 16px', cursor: 'pointer', userSelect: 'none' }}
+        className="hover:bg-white/20 transition-colors"
         onClick={() => setExpanded(v => !v)}
       >
         <div style={{ flexShrink: 0 }}>{rowIcon}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--color-text-tertiary)', backgroundColor: 'var(--color-bg-secondary)', padding: '1px 6px', borderRadius: '3px', border: '1px solid var(--color-border-subtle)', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 600, color: '#6b7280', backgroundColor: 'rgba(255,255,255,0.5)', padding: '1px 6px', borderRadius: '3px', border: '1px solid rgba(255,255,255,0.4)', whiteSpace: 'nowrap' }}>
               {control.reqId}
             </span>
-            <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--color-text-primary)' }}>{control.title}</span>
+            <span style={{ fontSize: '13px', fontWeight: 500, color: '#111827' }}>{control.title}</span>
           </div>
         </div>
         <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '4px', whiteSpace: 'nowrap', flexShrink: 0, ...badgeStyle }}>
@@ -280,7 +281,7 @@ const ControlRow: React.FC<ControlRowProps> = ({ control, status, violation, ove
       {/* Expanded detail */}
       {expanded && (
         <div style={{ padding: '0 16px 14px 43px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', lineHeight: 1.6, margin: 0 }}>{control.description}</p>
+          <p style={{ fontSize: '12px', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>{control.description}</p>
 
           {violation && !override && (
             <>
@@ -332,11 +333,11 @@ const ControlRow: React.FC<ControlRowProps> = ({ control, status, violation, ove
 
           {/* Override: entry form */}
           {isOverrideEligible && !override && (
-            <div style={{ padding: '10px 14px', backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-primary)', borderRadius: '6px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div style={{ padding: '10px 14px', backgroundColor: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.4)', borderRadius: '6px', backdropFilter: 'blur(8px)' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#6b7280', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Override / Accept with Justification
               </div>
-              <p style={{ fontSize: '12px', color: 'var(--color-text-tertiary)', margin: '0 0 8px 0', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '12px', color: '#9ca3af', margin: '0 0 8px 0', lineHeight: 1.5 }}>
                 If this control cannot be verified from the Meraki dashboard, provide a written justification and mark it as accepted.
               </p>
               <textarea
@@ -347,8 +348,8 @@ const ControlRow: React.FC<ControlRowProps> = ({ control, status, violation, ove
                 rows={3}
                 style={{
                   width: '100%', padding: '8px 10px', fontSize: '12px', lineHeight: 1.5,
-                  border: '1px solid var(--color-border-primary)', borderRadius: '5px',
-                  backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)',
+                  border: '1px solid rgba(255,255,255,0.4)', borderRadius: '5px',
+                  backgroundColor: 'rgba(255,255,255,0.5)', color: '#111827',
                   resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit', outline: 'none',
                   marginBottom: '8px',
                 }}
@@ -625,7 +626,7 @@ ${report ? `<div class="summary">
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-            <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-text-primary)', margin: 0 }}>Compliance Monitoring</h1>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: 0, letterSpacing: '-0.02em' }}>Compliance Monitoring</h1>
             {organizationName && (
               <span style={{
                 display: 'inline-flex', alignItems: 'center', gap: '5px',
@@ -639,7 +640,7 @@ ${report ? `<div class="summary">
               </span>
             )}
           </div>
-          <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', margin: 0 }}>
+          <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
             Automated and manual checks across PCI DSS, HIPAA, DPDP, ISO 27001, and CIS Controls.
           </p>
         </div>
@@ -651,10 +652,11 @@ ${report ? `<div class="summary">
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 padding: '8px 14px',
-                backgroundColor: 'var(--color-bg-secondary)',
-                color: 'var(--color-text-primary)',
-                border: '1px solid var(--color-border-primary)',
+                backgroundColor: 'rgba(255,255,255,0.5)',
+                color: '#111827',
+                border: '1px solid rgba(255,255,255,0.4)',
                 borderRadius: '5px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
               }}
             >
               <Download size={13} />
@@ -664,10 +666,11 @@ ${report ? `<div class="summary">
             {exportOpen && (
               <div style={{
                 position: 'absolute', right: 0, top: 'calc(100% + 4px)',
-                backgroundColor: 'var(--color-bg-primary)',
-                border: '1px solid var(--color-border-primary)',
+                backgroundColor: 'rgba(255,255,255,0.92)',
+                border: '1px solid rgba(255,255,255,0.5)',
                 borderRadius: '6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 minWidth: '180px', zIndex: 100, overflow: 'hidden',
+                backdropFilter: 'blur(16px)',
               }}>
                 <button
                   onClick={handleExportCSV}
@@ -675,16 +678,16 @@ ${report ? `<div class="summary">
                     display: 'flex', alignItems: 'center', gap: '9px',
                     width: '100%', padding: '10px 14px', background: 'none',
                     border: 'none', cursor: 'pointer', textAlign: 'left',
-                    fontSize: '13px', color: 'var(--color-text-primary)',
-                    borderBottom: '1px solid var(--color-border-subtle)',
+                    fontSize: '13px', color: '#111827',
+                    borderBottom: '1px solid rgba(0,0,0,0.06)',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)')}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   <FileSpreadsheet size={14} color="#16a34a" />
                   <div>
                     <div style={{ fontWeight: 600 }}>Download CSV</div>
-                    <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)' }}>All controls + findings</div>
+                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>All controls + findings</div>
                   </div>
                 </button>
                 <button
@@ -693,15 +696,15 @@ ${report ? `<div class="summary">
                     display: 'flex', alignItems: 'center', gap: '9px',
                     width: '100%', padding: '10px 14px', background: 'none',
                     border: 'none', cursor: 'pointer', textAlign: 'left',
-                    fontSize: '13px', color: 'var(--color-text-primary)',
+                    fontSize: '13px', color: '#111827',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)')}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   <FileText size={14} color="#2563eb" />
                   <div>
                     <div style={{ fontWeight: 600 }}>Print / Save as PDF</div>
-                    <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)' }}>Formatted report</div>
+                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>Formatted report</div>
                   </div>
                 </button>
               </div>
@@ -711,7 +714,12 @@ ${report ? `<div class="summary">
           <button
             onClick={runChecks}
             disabled={loading}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', backgroundColor: loading ? '#6b7280' : '#2563eb', color: '#fff', border: 'none', borderRadius: '5px', fontSize: '13px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer' }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px',
+              background: loading ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6, #4f46e5)',
+              color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+            }}
           >
             <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
             {loading ? 'Running…' : 'Run Checks'}
@@ -728,18 +736,18 @@ ${report ? `<div class="summary">
 
       {/* Overall summary strip */}
       {report && (
-        <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '24px', border: '1px solid var(--color-border-primary)', borderRadius: '8px', padding: '20px 24px', backgroundColor: 'var(--color-bg-primary)', marginBottom: '20px', alignItems: 'center' }}>
+        <div className="glass-card" style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '24px', padding: '20px 24px', marginBottom: '20px', alignItems: 'center' }}>
           <ScoreGauge score={report.score} />
           <div>
             <div style={{ display: 'flex', gap: '24px', marginBottom: '12px' }}>
               {[
                 { label: 'Passed', value: report.passed, color: '#16a34a' },
                 { label: 'Failed', value: report.failed, color: '#dc2626' },
-                { label: 'Total Checks', value: report.totalChecks, color: 'var(--color-text-primary)' },
+                { label: 'Total Checks', value: report.totalChecks, color: '#111827' },
               ].map(s => (
                 <div key={s.label}>
                   <div style={{ fontSize: '22px', fontWeight: 700, color: s.color, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{s.value}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)' }}>{s.label}</div>
+                  <div style={{ fontSize: '11px', color: '#9ca3af' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -751,12 +759,12 @@ ${report ? `<div class="summary">
                   ? Math.round((catData.passed / (catData.passed + catData.failed)) * 100)
                   : null;
                 return (
-                  <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '5px', backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-subtle)' }}>
+                  <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '5px', backgroundColor: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.3)' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: f.color, flexShrink: 0 }} />
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-text-primary)' }}>{f.shortName}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#111827' }}>{f.shortName}</span>
                     {catScore !== null
                       ? <span style={{ fontSize: '12px', color: catScore >= 80 ? '#16a34a' : '#d97706' }}>{catScore}%</span>
-                      : <span style={{ fontSize: '11px', color: 'var(--color-text-tertiary)' }}>Manual</span>
+                      : <span style={{ fontSize: '11px', color: '#9ca3af' }}>Manual</span>
                     }
                   </div>
                 );
@@ -767,7 +775,7 @@ ${report ? `<div class="summary">
       )}
 
       {/* Framework tabs */}
-      <div style={{ display: 'flex', gap: '0', borderBottom: '1px solid var(--color-border-primary)', marginBottom: '0', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', gap: '0', borderBottom: '1px solid rgba(255,255,255,0.4)', marginBottom: '0', overflowX: 'auto' }}>
         {FRAMEWORKS.map(f => (
           <button
             key={f.id}
@@ -775,7 +783,7 @@ ${report ? `<div class="summary">
             style={{
               padding: '10px 18px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
               border: 'none', background: 'none', whiteSpace: 'nowrap',
-              color: activeFramework === f.id ? f.color : 'var(--color-text-secondary)',
+              color: activeFramework === f.id ? f.color : '#6b7280',
               borderBottom: activeFramework === f.id ? `2px solid ${f.color}` : '2px solid transparent',
               transition: 'color 120ms',
             }}
@@ -786,13 +794,13 @@ ${report ? `<div class="summary">
       </div>
 
       {/* Framework panel */}
-      <div style={{ border: '1px solid var(--color-border-primary)', borderTop: 'none', borderRadius: '0 0 8px 8px', backgroundColor: 'var(--color-bg-primary)', overflow: 'hidden' }}>
+      <div style={{ border: '1px solid rgba(255,255,255,0.4)', borderTop: 'none', borderRadius: '0 0 8px 8px', backgroundColor: 'rgba(255,255,255,0.65)', backdropFilter: 'blur(20px)', overflow: 'hidden' }}>
 
         {/* Framework header */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-border-subtle)', display: 'flex', alignItems: 'center', gap: '16px', backgroundColor: 'var(--color-bg-secondary)' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', gap: '16px', backgroundColor: 'rgba(255,255,255,0.4)' }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '2px' }}>{framework.name}</div>
-            <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>{framework.description}</div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#111827', marginBottom: '2px' }}>{framework.name}</div>
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>{framework.description}</div>
           </div>
           <div style={{ display: 'flex', gap: '16px', flexShrink: 0 }}>
             {[
@@ -803,7 +811,7 @@ ${report ? `<div class="summary">
             ].map(s => (
               <div key={s.label} style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '18px', fontWeight: 700, color: s.color }}>{s.value}</div>
-                <div style={{ fontSize: '10px', color: 'var(--color-text-tertiary)' }}>{s.label}</div>
+                <div style={{ fontSize: '10px', color: '#9ca3af' }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -818,14 +826,14 @@ ${report ? `<div class="summary">
         )}
 
         {/* Category filter */}
-        <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-border-subtle)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          <button onClick={() => setCategoryFilter('all')} style={{ padding: '4px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: '1px solid var(--color-border-primary)', backgroundColor: categoryFilter === 'all' ? framework.color : 'var(--color-bg-primary)', color: categoryFilter === 'all' ? '#fff' : 'var(--color-text-secondary)' }}>
+        <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.3)', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          <button onClick={() => setCategoryFilter('all')} style={{ padding: '4px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.4)', backgroundColor: categoryFilter === 'all' ? framework.color : 'rgba(255,255,255,0.5)', color: categoryFilter === 'all' ? '#fff' : '#6b7280', transition: 'all 120ms' }}>
             All ({framework.controls.length})
           </button>
           {categories.map(cat => {
             const count = framework.controls.filter(c => c.category === cat).length;
             return (
-              <button key={cat} onClick={() => setCategoryFilter(cat)} style={{ padding: '4px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: '1px solid var(--color-border-primary)', backgroundColor: categoryFilter === cat ? framework.color : 'var(--color-bg-primary)', color: categoryFilter === cat ? '#fff' : 'var(--color-text-secondary)' }}>
+              <button key={cat} onClick={() => setCategoryFilter(cat)} style={{ padding: '4px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.4)', backgroundColor: categoryFilter === cat ? framework.color : 'rgba(255,255,255,0.5)', color: categoryFilter === cat ? '#fff' : '#6b7280', transition: 'all 120ms' }}>
                 {cat.split('–')[0].trim().replace(/^(Req \d+\s*–\s*|A\.\d+\s*)/, '')} ({count})
               </button>
             );
@@ -840,7 +848,7 @@ ${report ? `<div class="summary">
             if (catControls.length === 0) return null;
             return (
               <div key={cat}>
-                <div style={{ padding: '8px 16px', backgroundColor: 'var(--color-bg-secondary)', borderTop: '1px solid var(--color-border-subtle)', borderBottom: '1px solid var(--color-border-subtle)', fontSize: '11px', fontWeight: 700, color: 'var(--color-text-tertiary)', letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>
+                <div style={{ padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.35)', borderTop: '1px solid rgba(255,255,255,0.3)', borderBottom: '1px solid rgba(255,255,255,0.3)', fontSize: '11px', fontWeight: 700, color: '#6b7280', letterSpacing: '0.05em', textTransform: 'uppercase' as const }}>
                   {cat}
                 </div>
                 {catControls.map(cs => (
@@ -860,7 +868,7 @@ ${report ? `<div class="summary">
       </div>
 
       {report && (
-        <p style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', textAlign: 'center', marginTop: '12px' }}>
+        <p style={{ fontSize: '11px', color: '#9ca3af', textAlign: 'center', marginTop: '12px' }}>
           Last checked: {new Date(report.checkedAt).toLocaleString()} · Snapshot: {report.snapshotId.slice(0, 8)}…
         </p>
       )}

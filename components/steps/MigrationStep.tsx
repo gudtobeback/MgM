@@ -3,7 +3,7 @@ import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, CheckCircle2, XCircle, RefreshCw, ArrowRight, AlertTriangle, Undo2 } from 'lucide-react';
-import { removeDeviceFromNetwork, claimDevicesToInventory, unclaimDevicesFromInventory, addDevicesToNetwork } from '../../services/merakiService';
+import { removeDeviceFromNetwork, claimDevicesToInventory, unclaimDevicesFromInventory, addDevicesToNetwork, getNetworkDevices } from '../../services/merakiService';
 import { MigrationData } from '../MigrationWizard';
 import { MerakiDeviceDetails } from '../../types';
 
@@ -142,8 +142,36 @@ export function MigrationStep({ data, onUpdate, onComplete }: MigrationStepProps
         success.push(...devicesToMigrate);
         log('  ✅ All devices added to destination network.\n');
       } catch (e: any) {
-        handleFailure(e.message);
-        return;
+        // "Devices already claimed" means the devices are already in a network within the
+        // destination org. This happens on retries when Stage 4 previously completed partially,
+        // or when Meraki still associates the device with a network from the previous org.
+        // Verify whether all devices are already in the target network — if so, treat as success.
+        if (e.message?.includes('already claimed')) {
+          log('  ⚠️  Meraki says devices already claimed — verifying if they are already in the destination network...');
+          try {
+            const existingDevices = await getNetworkDevices(destinationApiKey, destinationRegion, destinationNetwork.id);
+            const existingSerials = new Set(existingDevices.map((d: any) => d.serial));
+            const alreadyThere = serialsToMigrate.filter(s => existingSerials.has(s));
+            const missing = serialsToMigrate.filter(s => !existingSerials.has(s));
+
+            if (missing.length === 0) {
+              log(`  ✅ All ${serialsToMigrate.length} device(s) are already in the destination network — treating as success.\n`);
+              stageReached.current = STAGE.ADDED_TO_DEST_NETWORK;
+              success.push(...devicesToMigrate);
+            } else {
+              log(`  ℹ️  ${alreadyThere.length} device(s) already in network, ${missing.length} device(s) missing: ${missing.join(', ')}`);
+              handleFailure(`Meraki API Error: Devices already claimed — and ${missing.length} device(s) could not be added. They may be in another network within the destination org. Remove them from that network in the Meraki dashboard, then retry.`);
+              return;
+            }
+          } catch (verifyErr: any) {
+            // Could not verify — surface the original error
+            handleFailure(e.message);
+            return;
+          }
+        } else {
+          handleFailure(e.message);
+          return;
+        }
       }
     } else {
       log('  ⏩ Stage 4 already completed — skipping.\n');

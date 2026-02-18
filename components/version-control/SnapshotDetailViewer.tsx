@@ -18,7 +18,7 @@ interface SnapshotDetailViewerProps {
   onClose: () => void;
 }
 
-type Tab = 'overview' | 'devices' | 'networks' | 'vlans' | 'ssids' | 'firewall';
+type Tab = 'overview' | 'devices' | 'networks' | 'vlans' | 'ssids' | 'firewall' | 'json';
 
 const formatBytes = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -28,6 +28,8 @@ const formatBytes = (bytes: number) => {
 
 export const SnapshotDetailViewer: React.FC<SnapshotDetailViewerProps> = ({ snapshot, onClose }) => {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const [copied, setCopied] = useState(false);
+  const [jsonSearch, setJsonSearch] = useState('');
 
   const data = snapshot.snapshotData || {};
   const networks: any[] = Array.isArray(data.networks) ? data.networks : [];
@@ -77,7 +79,26 @@ export const SnapshotDetailViewer: React.FC<SnapshotDetailViewerProps> = ({ snap
     { id: 'vlans', label: 'VLANs', count: allVlans.length },
     { id: 'ssids', label: 'SSIDs', count: allSsids.length },
     { id: 'firewall', label: 'Firewall Rules', count: allFirewallRules.length },
+    { id: 'json', label: 'Raw JSON' },
   ];
+
+  const rawJson = JSON.stringify(snapshot.snapshotData, null, 2);
+
+  const handleCopyJson = () => {
+    navigator.clipboard.writeText(rawJson).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadJson = () => {
+    const blob = new Blob([rawJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `snapshot-${snapshot.id.slice(0, 8)}-${new Date(snapshot.createdAt).toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const typeColors: Record<string, string> = {
     manual: 'bg-blue-100 text-blue-800',
@@ -396,6 +417,85 @@ export const SnapshotDetailViewer: React.FC<SnapshotDetailViewerProps> = ({ snap
               </div>
             )
           )}
+          {/* Raw JSON Tab */}
+          {activeTab === 'json' && (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-sm text-slate-500 flex-1">
+                  Complete snapshot data · {formatBytes(snapshot.sizeBytes)}
+                </p>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={jsonSearch}
+                    onChange={e => setJsonSearch(e.target.value)}
+                    placeholder="Search JSON…"
+                    className="px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 w-44"
+                  />
+                  <button
+                    onClick={handleCopyJson}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    {copied ? (
+                      <><svg className="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Copied!</>
+                    ) : (
+                      <><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg> Copy</>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleDownloadJson}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    Download .json
+                  </button>
+                </div>
+              </div>
+              <div className="relative rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-8 bg-slate-800 flex items-center px-4 gap-2 z-10">
+                  <span className="w-3 h-3 rounded-full bg-red-400" />
+                  <span className="w-3 h-3 rounded-full bg-yellow-400" />
+                  <span className="w-3 h-3 rounded-full bg-green-400" />
+                  <span className="ml-2 text-xs text-slate-400 font-mono">snapshot.json</span>
+                </div>
+                <pre
+                  className="text-xs font-mono p-4 pt-10 bg-slate-900 text-slate-300 overflow-auto max-h-[60vh] leading-relaxed"
+                  style={{ tabSize: 2 }}
+                >
+                  {jsonSearch
+                    ? (() => {
+                        const lines = rawJson.split('\n');
+                        const lc = jsonSearch.toLowerCase();
+                        return lines
+                          .map((line, i) => {
+                            if (!line.toLowerCase().includes(lc)) return null;
+                            return (
+                              <span key={i} className="block">
+                                <span className="text-slate-600 select-none mr-3">{String(i + 1).padStart(4)}</span>
+                                {line.replace(
+                                  new RegExp(`(${jsonSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
+                                  (m) => `\x00HIGHLIGHT\x00${m}\x00ENDHIGHLIGHT\x00`
+                                ).split('\x00').map((part, j) =>
+                                  part.startsWith('HIGHLIGHT\x00') ? (
+                                    <mark key={j} className="bg-yellow-400 text-slate-900 rounded px-0.5">{part.slice('HIGHLIGHT\x00'.length)}</mark>
+                                  ) : part === 'ENDHIGHLIGHT\x00' ? null : part
+                                )}
+                              </span>
+                            );
+                          })
+                          .filter(Boolean);
+                      })()
+                    : rawJson}
+                </pre>
+              </div>
+              {jsonSearch && (
+                <p className="text-xs text-slate-500">
+                  Showing lines containing "{jsonSearch}" — {rawJson.split('\n').filter(l => l.toLowerCase().includes(jsonSearch.toLowerCase())).length} match(es)
+                </p>
+              )}
+            </div>
+          )}
+
         </div>
       </div>
     </div>

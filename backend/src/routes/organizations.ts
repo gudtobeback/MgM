@@ -199,6 +199,200 @@ router.post('/:id/refresh', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/organizations/:id/credentials
+ * Return the stored API key and region for a connected org.
+ * Accessible to the org owner OR any user in the same company (MSP multi-user support).
+ * Used by Cat9K wizard to push config using the stored credentials.
+ */
+router.get('/:id/credentials', async (req: Request, res: Response) => {
+  try {
+    const user = req.user as any;
+    const isSuperAdmin = user.role === 'super_admin';
+
+    // Super admins can access any org
+    if (isSuperAdmin) {
+      const result = await query(
+        `SELECT meraki_api_key_encrypted AS api_key, meraki_region AS region
+         FROM organizations WHERE id = $1 AND is_active = true`,
+        [req.params.id]
+      );
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'Organization not found' });
+      }
+      return res.json(result.rows[0]);
+    }
+
+    // Primary check: user owns the org directly
+    const byOwner = await query(
+      `SELECT meraki_api_key_encrypted AS api_key, meraki_region AS region
+       FROM organizations WHERE id = $1 AND user_id = $2 AND is_active = true`,
+      [req.params.id, req.user!.id]
+    );
+    if (byOwner.rows.length > 0) {
+      return res.json(byOwner.rows[0]);
+    }
+
+    // Fallback: user is in the same company as the org (MSP multi-user scenario)
+    // Only attempted if the MSP migration has been applied (company_id columns exist)
+    try {
+      const byCompany = await query(
+        `SELECT o.meraki_api_key_encrypted AS api_key, o.meraki_region AS region
+         FROM organizations o
+         WHERE o.id = $1 AND o.is_active = true
+           AND o.company_id IS NOT NULL
+           AND o.company_id = (SELECT company_id FROM users WHERE id = $2 LIMIT 1)`,
+        [req.params.id, req.user!.id]
+      );
+      if (byCompany.rows.length > 0) {
+        return res.json(byCompany.rows[0]);
+      }
+    } catch {
+      // company_id column may not exist if MSP migration hasn't run — continue to 404
+    }
+
+    res.status(404).json({ error: 'Organization not found or access denied' });
+  } catch (error) {
+    console.error('Get credentials error:', error);
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: `Failed to get credentials: ${msg}` });
+  }
+});
+
+/**
+ * GET /api/organizations/:id/networks
+ * Fetch networks from Meraki using the stored API key for the connected org.
+ * Used by Cat9K wizard so users don't need to re-enter their API key.
+ */
+router.get('/:id/networks', async (req: Request, res: Response) => {
+  try {
+    const user = req.user as any;
+    const isSuperAdmin = user.role === 'super_admin';
+
+    let org: any = null;
+
+    if (isSuperAdmin) {
+      const r = await query(
+        `SELECT id, meraki_org_id, meraki_api_key_encrypted, meraki_region
+         FROM organizations WHERE id = $1 AND is_active = true`,
+        [req.params.id]
+      );
+      if (r.rows.length > 0) org = r.rows[0];
+    } else {
+      // Try direct ownership first
+      const byOwner = await query(
+        `SELECT id, meraki_org_id, meraki_api_key_encrypted, meraki_region
+         FROM organizations WHERE id = $1 AND user_id = $2 AND is_active = true`,
+        [req.params.id, req.user!.id]
+      );
+      if (byOwner.rows.length > 0) {
+        org = byOwner.rows[0];
+      } else {
+        // Fallback: same company
+        try {
+          const byCompany = await query(
+            `SELECT o.id, o.meraki_org_id, o.meraki_api_key_encrypted, o.meraki_region
+             FROM organizations o
+             WHERE o.id = $1 AND o.is_active = true
+               AND o.company_id IS NOT NULL
+               AND o.company_id = (SELECT company_id FROM users WHERE id = $2 LIMIT 1)`,
+            [req.params.id, req.user!.id]
+          );
+          if (byCompany.rows.length > 0) org = byCompany.rows[0];
+        } catch { /* company_id may not exist yet */ }
+      }
+    }
+
+    if (!org) {
+      return res.status(404).json({ error: 'Organization not found' });
+    }
+
+    const baseUrl = MERAKI_REGION_BASES[org.meraki_region] ?? MERAKI_REGION_BASES.com;
+
+    const merakiRes = await fetch(
+      `${baseUrl}/organizations/${org.meraki_org_id}/networks`,
+      { headers: { 'X-Cisco-Meraki-API-Key': org.meraki_api_key_encrypted } }
+    );
+
+    if (!merakiRes.ok) {
+      const text = await merakiRes.text();
+      return res.status(merakiRes.status).json({ error: `Meraki API error: ${text}` });
+    }
+
+    const networks = await merakiRes.json();
+    res.json(networks);
+  } catch (error) {
+    console.error('Get org networks error:', error);
+    res.status(500).json({ error: 'Failed to fetch networks' });
+  }
+});
+
+/**
+ * GET /api/organizations/:id/networks/:networkId/devices
+ * Fetch devices for a specific network using the stored API key.
+ * Used by Cat9K wizard to count MS switches without re-entering credentials.
+ */
+router.get('/:id/networks/:networkId/devices', async (req: Request, res: Response) => {
+  try {
+    const user = req.user as any;
+    const isSuperAdmin = user.role === 'super_admin';
+
+    let orgRow: any = null;
+
+    if (isSuperAdmin) {
+      const r = await query(
+        `SELECT meraki_api_key_encrypted, meraki_region
+         FROM organizations WHERE id = $1 AND is_active = true`,
+        [req.params.id]
+      );
+      if (r.rows.length > 0) orgRow = r.rows[0];
+    } else {
+      const byOwner = await query(
+        `SELECT meraki_api_key_encrypted, meraki_region
+         FROM organizations WHERE id = $1 AND user_id = $2 AND is_active = true`,
+        [req.params.id, req.user!.id]
+      );
+      if (byOwner.rows.length > 0) {
+        orgRow = byOwner.rows[0];
+      } else {
+        try {
+          const byCompany = await query(
+            `SELECT o.meraki_api_key_encrypted, o.meraki_region
+             FROM organizations o
+             WHERE o.id = $1 AND o.is_active = true
+               AND o.company_id IS NOT NULL
+               AND o.company_id = (SELECT company_id FROM users WHERE id = $2 LIMIT 1)`,
+            [req.params.id, req.user!.id]
+          );
+          if (byCompany.rows.length > 0) orgRow = byCompany.rows[0];
+        } catch { /* company_id may not exist yet */ }
+      }
+    }
+
+    if (!orgRow) {
+      return res.status(404).json({ error: 'Organization not found' });
+    }
+
+    const { meraki_api_key_encrypted, meraki_region } = orgRow;
+    const baseUrl = MERAKI_REGION_BASES[meraki_region] ?? MERAKI_REGION_BASES.com;
+
+    const merakiRes = await fetch(
+      `${baseUrl}/networks/${req.params.networkId}/devices`,
+      { headers: { 'X-Cisco-Meraki-API-Key': meraki_api_key_encrypted } }
+    );
+
+    if (!merakiRes.ok) {
+      return res.status(merakiRes.status).json({ error: 'Failed to fetch devices from Meraki' });
+    }
+
+    const devices = await merakiRes.json();
+    res.json(devices);
+  } catch (error) {
+    console.error('Get network devices error:', error);
+    res.status(500).json({ error: 'Failed to fetch devices' });
+  }
+});
+
+/**
  * DELETE /api/organizations/:id
  * Remove an organization (soft delete)
  */

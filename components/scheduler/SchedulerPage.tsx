@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
-import { Camera, CalendarClock, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Camera, CalendarClock, Clock, CheckCircle2, AlertCircle, Loader2, Shield } from 'lucide-react';
 
 interface ScheduleConfig {
   enabled: boolean;
@@ -40,6 +40,8 @@ function formatBytes(b: number) {
   if (b < 1024 * 1024)     return `${(b / 1024).toFixed(1)} KB`;
   return `${(b / 1024 / 1024).toFixed(2)} MB`;
 }
+
+const SELECT = 'w-full px-3 py-2 text-sm rounded-lg border border-white/40 bg-white/50 text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all backdrop-blur-sm';
 
 export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, organizationName }) => {
   const [schedule,   setSchedule]   = useState<ScheduleConfig | null>(null);
@@ -120,25 +122,21 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
     return `Weekly on ${DAYS[cfg.dayOfWeek]} at ${timeLabel}`;
   };
 
-  const selectClass = "w-full px-3 py-2 text-sm rounded-md border border-[var(--color-border-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-shadow";
-
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
 
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-              Scheduled Snapshots
-            </h2>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Scheduled Snapshots</h1>
             {organizationName && (
-              <Badge variant="outline" className="text-primary border-primary/30 bg-primary/5 font-medium">
+              <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 font-medium">
                 {organizationName}
               </Badge>
             )}
           </div>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          <p className="text-sm text-muted-foreground">
             Automatically capture configuration snapshots on a recurring schedule.
           </p>
         </div>
@@ -147,30 +145,31 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
           disabled={triggering}
           variant="outline"
           size="sm"
-          className="shrink-0"
+          className="shrink-0 gap-1.5"
         >
-          <Camera size={14} />
+          {triggering ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
           {triggering ? 'Capturing…' : 'Capture Now'}
         </Button>
       </div>
 
       {/* Alerts */}
       {error && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-          <AlertCircle size={15} className="shrink-0" />
+        <div className="flex items-center gap-3 px-5 py-4 rounded-xl bg-red-50/80 border border-red-200/80 text-red-700 text-sm shadow-sm backdrop-blur-sm">
+          <Shield size={15} className="shrink-0 text-red-500" />
           {error}
         </div>
       )}
       {success && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
-          <CheckCircle2 size={15} className="shrink-0" />
+        <div className="flex items-center gap-3 px-5 py-4 rounded-xl bg-green-50/80 border border-green-200/80 text-green-700 text-sm shadow-sm backdrop-blur-sm">
+          <CheckCircle2 size={15} className="shrink-0 text-green-500" />
           {success}
         </div>
       )}
 
       {loading ? (
-        <div className="text-center py-16 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-          Loading schedule…
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground animate-pulse">
+          <Loader2 size={36} className="text-blue-500 opacity-50 animate-spin mb-3" />
+          <p className="text-sm">Loading schedule…</p>
         </div>
       ) : (
         <>
@@ -178,16 +177,16 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
           {schedule && (
             <div className={`flex items-center justify-between p-4 rounded-xl border ${
               schedule.enabled
-                ? 'bg-blue-50 border-blue-200'
-                : 'bg-gray-50 border-gray-200'
+                ? 'bg-blue-50/60 border-blue-200/60 backdrop-blur-sm'
+                : 'bg-white/30 border-white/40 backdrop-blur-sm'
             }`}>
               <div className="flex items-center gap-3">
                 <div className={`w-2.5 h-2.5 rounded-full ${schedule.enabled ? 'bg-blue-500' : 'bg-gray-400'}`} />
                 <div>
-                  <p className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
+                  <p className="font-semibold text-sm text-foreground">
                     {schedule.enabled ? 'Scheduling Active' : 'Scheduling Disabled'}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                  <p className="text-xs mt-0.5 text-muted-foreground">
                     {frequencyLabel(schedule)}
                   </p>
                 </div>
@@ -199,14 +198,10 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
           )}
 
           {/* Configure form */}
-          <div className="rounded-xl border p-6 space-y-6"
-            style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border-primary)' }}>
-
+          <div className="glass-card p-6 space-y-6">
             <div className="flex items-center gap-2">
-              <CalendarClock size={16} style={{ color: 'var(--color-primary)' }} />
-              <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                Configure Schedule
-              </h3>
+              <CalendarClock size={16} className="text-orange-500" />
+              <h2 className="font-semibold text-foreground">Configure Schedule</h2>
             </div>
 
             {/* Enable toggle */}
@@ -216,8 +211,7 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
                 checked={form.enabled}
                 onCheckedChange={v => setForm(f => ({ ...f, enabled: v }))}
               />
-              <Label htmlFor="sched-enabled" className="text-sm font-medium cursor-pointer"
-                style={{ color: 'var(--color-text-primary)' }}>
+              <Label htmlFor="sched-enabled" className="text-sm font-medium cursor-pointer text-foreground">
                 {form.enabled ? 'Enabled' : 'Disabled'}
               </Label>
             </div>
@@ -226,14 +220,13 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
 
               {/* Frequency */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wide"
-                  style={{ color: 'var(--color-text-secondary)' }}>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Frequency
                 </Label>
                 <select
                   value={form.frequency}
                   onChange={e => setForm(f => ({ ...f, frequency: e.target.value as any }))}
-                  className={selectClass}
+                  className={SELECT}
                 >
                   <option value="hourly">Hourly</option>
                   <option value="daily">Daily</option>
@@ -244,14 +237,13 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
               {/* Time of day */}
               {(form.frequency === 'daily' || form.frequency === 'weekly') && (
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wide"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Time of Day
                   </Label>
                   <select
                     value={form.hour}
                     onChange={e => setForm(f => ({ ...f, hour: Number(e.target.value) }))}
-                    className={selectClass}
+                    className={SELECT}
                   >
                     {HOURS.map(h => <option key={h.value} value={h.value}>{h.label}</option>)}
                   </select>
@@ -261,14 +253,13 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
               {/* Day of week */}
               {form.frequency === 'weekly' && (
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wide"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Day of Week
                   </Label>
                   <select
                     value={form.dayOfWeek}
                     onChange={e => setForm(f => ({ ...f, dayOfWeek: Number(e.target.value) }))}
-                    className={selectClass}
+                    className={SELECT}
                   >
                     {DAYS.map((d, i) => <option key={i} value={i}>{d}</option>)}
                   </select>
@@ -277,8 +268,7 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
 
               {/* Retain count */}
               <div className="space-y-1.5">
-                <Label htmlFor="retain-count" className="text-xs font-semibold uppercase tracking-wide"
-                  style={{ color: 'var(--color-text-secondary)' }}>
+                <Label htmlFor="retain-count" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Keep Last N Snapshots
                 </Label>
                 <Input
@@ -288,15 +278,14 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
                   max={100}
                   value={form.retainCount}
                   onChange={e => setForm(f => ({ ...f, retainCount: Number(e.target.value) }))}
-                  className="bg-white"
+                  className="bg-white/50 border-white/40"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-1 border-t"
-              style={{ borderColor: 'var(--color-border-subtle)' }}>
+            <div className="flex items-center gap-3 pt-2 border-t border-white/40">
               <Button onClick={saveSchedule} disabled={saving} size="sm">
-                {saving ? 'Saving…' : 'Save Schedule'}
+                {saving ? <><Loader2 size={13} className="animate-spin mr-1" />Saving…</> : 'Save Schedule'}
               </Button>
               {schedule?.enabled && (
                 <Button
@@ -312,33 +301,29 @@ export const SchedulerPage: React.FC<SchedulerPageProps> = ({ organizationId, or
           </div>
 
           {/* Snapshot history */}
-          <div className="rounded-xl border overflow-hidden"
-            style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border-primary)' }}>
-            <div className="flex items-center gap-2 px-5 py-3.5 border-b"
-              style={{ borderColor: 'var(--color-border-primary)' }}>
-              <Clock size={14} style={{ color: 'var(--color-text-muted)' }} />
-              <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                Snapshot History
-              </h3>
+          <div className="glass-card overflow-hidden">
+            <div className="flex items-center gap-2 px-5 py-3.5 border-b border-white/40">
+              <Clock size={14} className="text-muted-foreground" />
+              <h2 className="font-semibold text-sm text-foreground">Snapshot History</h2>
               {history.length > 0 && (
                 <Badge variant="secondary" className="ml-auto text-xs">{history.length}</Badge>
               )}
             </div>
 
             {history.length === 0 ? (
-              <div className="text-center py-12 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <div className="text-center py-12 text-sm text-muted-foreground">
                 No scheduled snapshots yet. Use <strong>Capture Now</strong> or configure a schedule above.
               </div>
             ) : (
-              <div className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+              <div className="divide-y divide-white/40">
                 {history.map(snap => (
-                  <div key={snap.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
+                  <div key={snap.id} className="flex items-center justify-between px-5 py-3 hover:bg-white/30 transition-colors">
                     <div>
-                      <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                      <p className="text-sm font-medium text-foreground">
                         {new Date(snap.created_at).toLocaleString()}
                       </p>
                       {snap.notes && (
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                        <p className="text-xs mt-0.5 text-muted-foreground">
                           {snap.notes}
                         </p>
                       )}

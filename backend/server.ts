@@ -17,6 +17,7 @@ import companyRoutes from './src/routes/company';
 import { authMiddleware } from './src/middleware/auth';
 import { requireRole } from './src/middleware/role';
 import { SchedulerService } from './src/services/SchedulerService';
+import { SnapshotService } from './src/services/SnapshotService';
 import { query as dbQuery } from './src/config/database';
 
 // Load environment variables
@@ -124,11 +125,7 @@ app.listen(port, () => {
 });
 
 // ── Background Scheduler ────────────────────────────────────────────────────
-// Runs every hour; takes snapshots for any org whose schedule is due.
-const SCHED_BASES: Record<string, string> = {
-  com: 'https://api.meraki.com/api/v1',
-  in:  'https://api.meraki.in/api/v1',
-};
+// Runs every hour; takes full snapshots for any org whose schedule is due.
 
 async function runScheduledSnapshots(): Promise<void> {
   try {
@@ -138,26 +135,13 @@ async function runScheduledSnapshots(): Promise<void> {
 
     for (const org of due) {
       try {
-        const baseUrl = SCHED_BASES[org.region] ?? SCHED_BASES.com;
-        const headers = { 'X-Cisco-Meraki-API-Key': org.apiKey };
-
-        const [networksRes, devicesRes] = await Promise.allSettled([
-          fetch(`${baseUrl}/organizations/${org.merakiOrgId}/networks`, { headers }),
-          fetch(`${baseUrl}/organizations/${org.merakiOrgId}/devices`,  { headers }),
-        ]);
-
-        const networks = networksRes.status === 'fulfilled' && networksRes.value.ok
-          ? await networksRes.value.json() : [];
-        const devices  = devicesRes.status  === 'fulfilled' && devicesRes.value.ok
-          ? await devicesRes.value.json()  : [];
-
-        const snapshotData = { networks, devices, vlans: [], ssids: [], l3FirewallRules: [] };
-        const sizeBytes    = JSON.stringify(snapshotData).length;
-
-        await dbQuery(
-          `INSERT INTO config_snapshots (organization_id, snapshot_type, snapshot_data, size_bytes, notes)
-           VALUES ($1, 'scheduled', $2, $3, $4)`,
-          [org.id, JSON.stringify(snapshotData), sizeBytes, `Auto snapshot — ${org.config.frequency}`]
+        // Use SnapshotService so scheduled snapshots contain the same full
+        // configuration data as manual snapshots and can be compared/diffed.
+        await SnapshotService.createSnapshot(
+          String(org.id),
+          'scheduled',
+          undefined, // no user — automated
+          `Auto snapshot — ${org.config.frequency}`
         );
 
         await SchedulerService.pruneOldSnapshots(org.id, org.config.retainCount);

@@ -8,16 +8,23 @@ router.use(authMiddleware);
 
 /**
  * GET /api/organizations/:orgId/drift
- * Detect drift between the two most recent snapshots
+ * Detect drift.
+ *
+ * Optional query param:
+ *   baselineSnapshotId — if supplied, compares the latest snapshot against this
+ *                        specific "golden config" snapshot.
+ *                        If omitted, compares the two most recent snapshots.
  */
 router.get('/:orgId/drift', async (req: Request, res: Response) => {
   try {
     const { orgId } = req.params;
-    const report = await DriftService.detectDrift(orgId);
+    const baselineSnapshotId = req.query.baselineSnapshotId as string | undefined;
+    const report = await DriftService.detectDrift(orgId, baselineSnapshotId);
     res.json(report);
   } catch (error) {
     console.error('Drift detection error:', error);
-    res.status(500).json({ error: 'Failed to run drift detection' });
+    const message = error instanceof Error ? error.message : 'Failed to run drift detection';
+    res.status(500).json({ error: message });
   }
 });
 

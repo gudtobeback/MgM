@@ -16,6 +16,7 @@ interface AppShellProps {
   onNavigate: (mode: ToolMode) => void;
   onLogout: () => void;
   children: React.ReactNode;
+  userPermissions?: Record<string, boolean>;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -26,6 +27,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   onNavigate,
   onLogout,
   children,
+  userPermissions,
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -52,10 +54,11 @@ export const AppShell: React.FC<AppShellProps> = ({
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(v => !v)}
           userRole={user?.role}
+          userPermissions={userPermissions}
         />
 
         {/* Main content — only this area scrolls, scrollbar hidden */}
-        <main className="flex-1 overflow-y-auto no-scrollbar bg-transparent min-w-0 p-6">
+        <main className="flex-1 overflow-y-auto no-scrollbar bg-transparent min-w-0 p-4">
           <div className="glass-panel min-h-full p-6">
             {children}
           </div>

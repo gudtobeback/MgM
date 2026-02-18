@@ -23,7 +23,13 @@
       "Bash(powershell -Command \"Get-ChildItem -Recurse -Include *.tsx | Select-String -Pattern \"\"fontFamily: ''monospace''\"\" | ForEach-Object { \\(Get-Content $_Path\\) -replace \"\"fontFamily: ''monospace''\"\", \"\"fontFamily: \\\\\"\"''JetBrains Mono'', ui-monospace, Menlo, Consolas, monospace\\\\\"\"\"\" | Set-Content $_Path }\")",
       "Bash(powershell -Command:*)",
       "Bash(powershell -Command \"\\(Get-Content ''components\\\\cat9k\\\\steps\\\\ApplyStep.tsx''\\) -replace [regex]::Escape\\(\"\"fontFamily: ''monospace''\"\"\\), \"\"fontFamily: ''var\\(--font-mono\\)''\"\" | Set-Content ''components\\\\cat9k\\\\steps\\\\ApplyStep.tsx''\")",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:documentation.meraki.com)",
+      "WebFetch(domain:developer.cisco.com)",
+      "Bash(Get-Content \"C:\\\\Users\\\\user\\\\.claude\\\\projects\\\\C--Users-user-Desktop-MerakiMigration-v1-0-0-MerakiMigration1-0-merakimigration-v1-0-completed\\\\a6d531dc-22cd-4701-9d51-abf83a6a2633.jsonl\")",
+      "Bash(Measure-Object -Line)",
+      "Bash(python3:*)",
+      "Bash(cat:*)"
     ]
   }
 }

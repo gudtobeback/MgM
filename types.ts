@@ -344,7 +344,7 @@ export interface OrgConfigBackup {
 export interface NetworkConfigBackup {
     // Network-wide
     webhooks?: WebhookHttpServer[];
-    syslogServers?: SyslogServer[];
+    syslogServers?: { servers: SyslogServer[] };
     snmp?: NetworkSnmpSettings;
     networkAlerts?: AlertSettings;
     floorplans?: Floorplan[];
@@ -352,6 +352,7 @@ export interface NetworkConfigBackup {
 
     // Appliance (MX)
     applianceSettings?: ApplianceSettings;
+    applianceVlansSettings?: { vlansEnabled: boolean };
     applianceVlans?: ApplianceVlan[];
     staticRoutes?: ApplianceStaticRoute[]; // Appliance static routes
     intrusionSettings?: IntrusionSettings;
@@ -392,6 +393,8 @@ export interface DeviceConfigBackup {
   switchPorts?: SwitchPortSettings[];
   routingInterfaces?: SwitchRoutingInterface[]; // SVIs
   staticRoutes?: SwitchStaticRoute[]; // Switch static routes
+  managementInterface?: any;
+  wirelessRadioSettings?: any;
 }
 
 export interface DeviceBackup {
@@ -406,4 +409,56 @@ export interface BackupFile {
   devices: DeviceBackup[];
   networkConfigs: Record<string, Partial<NetworkConfigBackup>>;
   organizationConfig: Partial<OrgConfigBackup>;
+}
+
+export interface RestoreCategories {
+  // ── Organization ──────────────────────────────────
+  orgAdmins: boolean;
+  orgPolicyObjects: boolean;
+  orgSnmp: boolean;
+  orgVpnFirewallRules: boolean;
+  orgThirdPartyVpn: boolean;
+
+  // ── Appliance (MX) ────────────────────────────────
+  vlans: boolean;
+  applianceFirewallL3: boolean;
+  applianceFirewallL7: boolean;
+  applianceStaticRoutes: boolean;
+  contentFiltering: boolean;
+  applianceSecurity: boolean;        // intrusion + malware
+  trafficShaping: boolean;           // traffic shaping + uplink selection
+  applianceSettings: boolean;
+  siteToSiteVpn: boolean;
+  bgpSettings: boolean;
+
+  // ── Switch (MS) ───────────────────────────────────
+  switchPorts: boolean;              // device-level
+  switchRoutingInterfaces: boolean;  // device-level SVIs + static routes
+  switchAcls: boolean;
+  switchSettings: boolean;
+  portSchedules: boolean;
+  qosRules: boolean;
+  dhcpServerPolicy: boolean;
+  stormControl: boolean;
+  switchMtu: boolean;
+  switchOspf: boolean;
+  switchLinkAggregations: boolean;
+
+  // ── Wireless (MR) ─────────────────────────────────
+  ssids: boolean;
+  ssidFirewallRules: boolean;        // per-SSID L3 + L7
+  ssidTrafficShaping: boolean;
+  wirelessRfProfiles: boolean;
+  bluetoothSettings: boolean;
+  wirelessSettings: boolean;
+
+  // ── Network General ───────────────────────────────
+  groupPolicies: boolean;
+  syslogServers: boolean;
+  networkSnmp: boolean;
+  networkAlerts: boolean;
+
+  // ── Device ────────────────────────────────────────
+  managementInterface: boolean;
+  wirelessRadioSettings: boolean;
 }

@@ -183,12 +183,54 @@ class ApiClient {
     localStorage.setItem('user', JSON.stringify(tokens.user));
   }
 
+  /**
+   * Fetch feature permissions for the current user and cache them in localStorage.
+   * Returns the permissions map { featureKey: boolean }.
+   * Absent keys default to true (opt-out model — no restriction unless explicitly disabled).
+   */
+  async fetchAndCachePermissions(): Promise<Record<string, boolean>> {
+    try {
+      const response = await this.request('/auth/permissions');
+      if (!response.ok) return {};
+      const perms: Record<string, boolean> = await response.json();
+      localStorage.setItem('userPermissions', JSON.stringify(perms));
+      return perms;
+    } catch {
+      return {};
+    }
+  }
+
+  /**
+   * Returns the cached permissions object (loaded on login).
+   */
+  getUserPermissions(): Record<string, boolean> {
+    try {
+      return JSON.parse(localStorage.getItem('userPermissions') || '{}');
+    } catch {
+      return {};
+    }
+  }
+
+  /**
+   * Check if the current user has access to a feature.
+   * Defaults to true if no explicit permission entry exists (opt-out model).
+   * super_admin always returns true.
+   */
+  hasPermission(feature: string): boolean {
+    if (this.getCurrentRole() === 'super_admin') return true;
+    const perms = this.getUserPermissions();
+    // If no explicit entry, default to allowed
+    if (!(feature in perms)) return true;
+    return perms[feature] === true;
+  }
+
   logout() {
     this.accessToken = null;
     this.refreshToken = null;
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('userPermissions');
   }
 
   isAuthenticated(): boolean {
@@ -371,10 +413,47 @@ class ApiClient {
     return response.json();
   }
 
+  /**
+   * Return the stored API key and region for a connected org.
+   * Safe to expose — the authenticated user is the owner of the key.
+   */
+  async getOrganizationCredentials(orgId: string): Promise<{ api_key: string; region: string }> {
+    const response = await this.request(`/organizations/${orgId}/credentials`);
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to get credentials');
+    }
+    return response.json();
+  }
+
+  /**
+   * Fetch the Meraki networks for a connected org without requiring the user
+   * to re-enter their API key (uses the stored key on the backend).
+   */
+  async getOrganizationNetworks(orgId: string) {
+    const response = await this.request(`/organizations/${orgId}/networks`);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch networks');
+    }
+    return response.json();
+  }
+
+  /**
+   * Fetch devices for a specific network using the stored org API key.
+   * Used by Cat9K wizard to count MS switches without re-entering credentials.
+   */
+  async getOrganizationNetworkDevices(orgId: string, networkId: string) {
+    const response = await this.request(`/organizations/${orgId}/networks/${networkId}/devices`);
+    if (!response.ok) throw new Error('Failed to fetch network devices');
+    return response.json();
+  }
+
   // ============ Drift Detection ============
 
-  async detectDrift(organizationId: string) {
-    const response = await this.request(`/organizations/${organizationId}/drift`);
+  async detectDrift(organizationId: string, baselineSnapshotId?: string) {
+    const params = baselineSnapshotId ? `?baselineSnapshotId=${encodeURIComponent(baselineSnapshotId)}` : '';
+    const response = await this.request(`/organizations/${organizationId}/drift${params}`);
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Failed to run drift detection');

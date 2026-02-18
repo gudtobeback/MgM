@@ -46,6 +46,9 @@ function App() {
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
   const [selectedOrgName, setSelectedOrgName] = useState<string>('');
   const [connectedOrgs, setConnectedOrgs] = useState<any[]>([]);
+  const [userPermissions, setUserPermissions] = useState<Record<string, boolean>>(
+    () => apiClient.getUserPermissions()
+  );
 
   const fetchOrgs = async (currentSelectedId?: string | null) => {
     try {
@@ -71,6 +74,9 @@ function App() {
     if (apiClient.isAuthenticated()) {
       setUser(apiClient.getUser());
       fetchOrgs(selectedOrgId);
+      // Load any cached permissions (already in localStorage) then re-fetch in background
+      setUserPermissions(apiClient.getUserPermissions());
+      apiClient.fetchAndCachePermissions().then(perms => setUserPermissions(perms)).catch(() => {});
     }
     setIsInitializing(false);
   }, []);
@@ -78,11 +84,14 @@ function App() {
   const handleLogin = (loggedInUser: any) => {
     setUser(loggedInUser);
     fetchOrgs(null); // null = no selection yet, auto-select first org
+    // Fetch feature permissions for this user
+    apiClient.fetchAndCachePermissions().then(perms => setUserPermissions(perms)).catch(() => {});
   };
 
   const handleLogout = () => {
     apiClient.logout();
     setUser(null);
+    setUserPermissions({});
     setToolMode('selection');
     setIsHome(true);
   };
@@ -183,7 +192,12 @@ function App() {
       case 'cross-region':
         return <CrossRegionPage />;
       case 'cat9k':
-        return <Cat9KMigrationWizard />;
+        return (
+          <Cat9KMigrationWizard
+            connectedOrgs={connectedOrgs}
+            selectedOrgId={effectiveOrgId}
+          />
+        );
       case 'profile':
         return <ProfilePage onTierChange={handleTierChange} />;
       case 'restore':
@@ -267,6 +281,7 @@ function App() {
       selectedOrgName={selectedOrgName}
       onNavigate={handleNavigate}
       onLogout={handleLogout}
+      userPermissions={userPermissions}
     >
       {renderContent()}
       <Toaster />

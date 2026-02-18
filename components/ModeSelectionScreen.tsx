@@ -167,25 +167,152 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
 
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-            {firstName ? `Welcome back, ${firstName}` : 'Dashboard'}
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Unified Meraki Management — {connectedOrgs.length} organization{connectedOrgs.length !== 1 ? 's' : ''} connected
-          </p>
-        </div>
+      {/* ── Hero Row: Device Distribution + Network Health ─────────────── */}
+      {connectedOrgs.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 
-        <button
-          onClick={() => onSelectMode('organizations')}
-          className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-lg hover:shadow-xl hover:opacity-95 transition-all duration-200"
-        >
-          <Plus size={18} />
-          <span>Add Organization</span>
-        </button>
-      </div>
+          {/* Device Distribution */}
+          <div className="glass-card p-7">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <BarChart3 size={20} className="text-indigo-500" />
+                Device Distribution
+              </h2>
+              <div className="text-right">
+                <p className="text-3xl font-bold text-foreground tracking-tight">{totalDevices.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">total devices</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {connectedOrgs.slice(0, 5).map((org, i) => {
+                const max = Math.max(...connectedOrgs.map((o: any) => o.device_count ?? 0), 1);
+                const pct = Math.round(((org.device_count ?? 0) / max) * 100);
+                const colors = ['bg-blue-500', 'bg-cyan-500', 'bg-violet-500', 'bg-emerald-500', 'bg-amber-500'];
+                const bgColors = ['bg-blue-50/60 border-blue-100/80', 'bg-cyan-50/60 border-cyan-100/80', 'bg-violet-50/60 border-violet-100/80', 'bg-emerald-50/60 border-emerald-100/80', 'bg-amber-50/60 border-amber-100/80'];
+                const colorClass = colors[i % colors.length];
+                return (
+                  <div key={org.id}>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-semibold text-foreground truncate max-w-[65%]">{org.meraki_org_name}</span>
+                      <span className="text-sm font-bold text-foreground">{(org.device_count ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div className="h-3 w-full bg-secondary/50 rounded-full overflow-hidden">
+                      <div
+                        className={cn("h-full rounded-full transition-all duration-500 ease-out", colorClass)}
+                        style={{ width: `${Math.max(pct, 2)}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1">{pct}% of fleet</p>
+                  </div>
+                );
+              })}
+              {connectedOrgs.length > 5 && (
+                <p className="text-xs text-muted-foreground text-center pt-1">
+                  +{connectedOrgs.length - 5} more organization{connectedOrgs.length - 5 !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Network Health */}
+          <div className="glass-card p-7 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Wifi size={20} className="text-emerald-500" />
+                Network Health
+              </h2>
+            </div>
+            {(() => {
+              const total = totalDevices;
+              const online = Math.round(total * 0.9);
+              const offline = total - online;
+              // Arc geometry: large radius, centered in a wide viewBox
+              const r = 90, cx = 120, cy = 110;
+              const circumference = Math.PI * r;
+              const onlineDash  = total > 0 ? (online  / total) * circumference : 0;
+              const offlineDash = total > 0 ? (offline / total) * circumference : 0;
+
+              return (
+                <div className="flex flex-col items-center gap-5 flex-1 justify-center">
+
+                  {/* Gauge SVG — text embedded inside SVG for perfect centering */}
+                  <svg width="240" height="130" viewBox="0 0 240 130">
+                    {/* Track */}
+                    <path
+                      d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+                      fill="none" stroke="#e5e7eb" strokeWidth="14" strokeLinecap="round"
+                    />
+                    {/* Online (green) arc */}
+                    <path
+                      d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+                      fill="none" stroke="#16a34a" strokeWidth="14" strokeLinecap="round"
+                      strokeDasharray={`${onlineDash} ${circumference}`}
+                      style={{ transition: 'stroke-dasharray 0.7s ease-out' }}
+                    />
+                    {/* Offline (red) arc */}
+                    <path
+                      d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+                      fill="none" stroke="#ef4444" strokeWidth="14" strokeLinecap="round"
+                      strokeDasharray={`${offlineDash} ${circumference}`}
+                      strokeDashoffset={`${-onlineDash}`}
+                      style={{ transition: 'stroke-dasharray 0.7s ease-out' }}
+                    />
+                    {/* Center number — positioned well inside the arc */}
+                    <text
+                      x={cx} y={cy - 18}
+                      textAnchor="middle" dominantBaseline="auto"
+                      fontSize="40" fontWeight="bold" fill="#111827"
+                    >
+                      {total.toLocaleString()}
+                    </text>
+                    {/* Label below number */}
+                    <text
+                      x={cx} y={cy + 4}
+                      textAnchor="middle" dominantBaseline="auto"
+                      fontSize="11" fontWeight="600" fill="#9ca3af"
+                      letterSpacing="0.08em"
+                    >
+                      DEVICES
+                    </text>
+                  </svg>
+
+                  {/* Online / Offline counts */}
+                  <div className="flex gap-10 justify-center">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-green-600" />
+                        <span className="text-2xl font-bold text-foreground">{online.toLocaleString()}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground font-medium">Online</span>
+                    </div>
+                    <div className="w-px bg-border/40 self-stretch" />
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-red-500" />
+                        <span className="text-2xl font-bold text-foreground">{offline.toLocaleString()}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground font-medium">Offline</span>
+                    </div>
+                  </div>
+
+                  {/* Uptime bar */}
+                  <div className="w-full space-y-1.5">
+                    <div className="w-full bg-secondary/40 rounded-full h-2.5">
+                      <div
+                        className="h-2.5 rounded-full bg-green-500 transition-all duration-700"
+                        style={{ width: total > 0 ? `${Math.round((online / total) * 100)}%` : '0%' }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center">
+                      {total > 0 ? Math.round((online / total) * 100) : 0}% uptime estimated
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
 
       {/* ── Org summary stat row ────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -254,115 +381,6 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
               })}
             </div>
           </div>
-
-          {/* ── Charts row ──────────────────────────────────────────── */}
-          {connectedOrgs.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-              {/* Device Distribution bar chart */}
-              <div className="glass-card p-5">
-                <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <BarChart3 size={16} className="text-indigo-500" />
-                  Device Distribution
-                </h3>
-                <div className="space-y-3">
-                  {connectedOrgs.slice(0, 5).map((org, i) => {
-                    const max = Math.max(...connectedOrgs.map((o: any) => o.device_count ?? 0), 1);
-                    const pct = Math.round(((org.device_count ?? 0) / max) * 100);
-                    const colors = ['bg-blue-500', 'bg-cyan-500', 'bg-violet-500', 'bg-emerald-500'];
-                    const colorClass = colors[i % colors.length];
-
-                    return (
-                      <div key={org.id} className="space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span className="font-medium text-foreground truncate max-w-[70%]">
-                            {org.meraki_org_name}
-                          </span>
-                          <span className="font-bold text-muted-foreground">
-                            {org.device_count ?? 0}
-                          </span>
-                        </div>
-                        <div className="h-1.5 w-full bg-secondary/50 rounded-full overflow-hidden">
-                          <div
-                            className={cn("h-full rounded-full transition-all duration-500 ease-out", colorClass)}
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Online / Offline half-pie */}
-              <div className="glass-card p-5 flex flex-col items-center justify-center">
-                <h3 className="text-sm font-semibold text-foreground mb-4 w-full text-left flex items-center gap-2">
-                  <Wifi size={16} className="text-emerald-500" />
-                  Network Health
-                </h3>
-                {(() => {
-                  const total = totalDevices;
-                  const online = Math.round(total * 0.9);   // estimated 90% online
-                  const offline = total - online;
-                  const r = 40, cx = 60, cy = 60;
-                  const circumference = Math.PI * r;         // half circle = π·r
-                  const onlineDash = total > 0 ? (online / total) * circumference : 0;
-                  const offlineDash = total > 0 ? (offline / total) * circumference : 0;
-
-                  return (
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="relative">
-                        <svg width="120" height="70" viewBox="0 0 120 70" className="overflow-visible">
-                          {/* Track */}
-                          <path
-                            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-                            fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round"
-                            className="text-secondary"
-                          />
-                          {/* Online arc */}
-                          <path
-                            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-                            fill="none" stroke="#16a34a" strokeWidth="8" strokeLinecap="round"
-                            strokeDasharray={`${onlineDash} ${circumference}`}
-                            className="transition-all duration-700 ease-out"
-                          />
-                          {/* Offline arc offset */}
-                          <path
-                            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-                            fill="none" stroke="#ef4444" strokeWidth="8" strokeLinecap="round"
-                            strokeDasharray={`${offlineDash} ${circumference}`}
-                            strokeDashoffset={`${-onlineDash}`}
-                            className="transition-all duration-700 ease-out"
-                          />
-                        </svg>
-                        <div className="absolute inset-x-0 bottom-0 text-center flex flex-col items-center justify-center">
-                          <span className="text-2xl font-bold text-foreground leading-none">{total}</span>
-                          <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">Devices</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-4 justify-center">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-2.5 h-2.5 rounded-full bg-green-600" />
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-foreground">{online}</span>
-                            <span className="text-[10px] text-muted-foreground">Online</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-foreground">{offline}</span>
-                            <span className="text-[10px] text-muted-foreground">Offline</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ── Right: Connected Organizations ──────────────────────────── */}

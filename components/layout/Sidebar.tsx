@@ -75,6 +75,21 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+// Maps feature-permission keys to the ToolMode IDs they gate.
+// Absent feature key = no restriction (opt-out model).
+const PERMISSION_GATE: Record<string, ToolMode[]> = {
+  backup:            ['backup'],
+  restore:           ['restore'],
+  migration:         ['migration'],
+  cat9k:             ['cat9k'],
+  'change-management': ['change-management'],
+  compliance:        ['compliance'],
+  drift:             ['drift'],
+  scheduler:         ['scheduler'],
+  analytics:         ['dashboard'],
+  security:          ['security'],
+};
+
 interface SidebarProps {
   activeMode: ToolMode;
   onNavigate: (mode: ToolMode) => void;
@@ -82,6 +97,7 @@ interface SidebarProps {
   collapsed: boolean;
   onToggleCollapse: () => void;
   userRole?: string;
+  userPermissions?: Record<string, boolean>;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -91,12 +107,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
   collapsed,
   onToggleCollapse,
   userRole,
+  userPermissions = {},
 }) => {
   const isCompanyAdmin = userRole === 'company_admin';
+  const isSuperAdmin   = userRole === 'super_admin';
 
-  // Build nav items dynamically based on role
+  /**
+   * Returns false only when a permission is explicitly set to false.
+   * If the feature isn't in the permissions map at all → allowed.
+   */
+  const isModeAllowed = (mode: ToolMode): boolean => {
+    if (isSuperAdmin) return true;
+    for (const [feature, modes] of Object.entries(PERMISSION_GATE)) {
+      if (modes.includes(mode)) {
+        if (feature in userPermissions && userPermissions[feature] === false) return false;
+      }
+    }
+    return true;
+  };
+
+  // Build nav items dynamically based on role, then filter children by permissions
   const navItems: NavItem[] = [
-    ...NAV_ITEMS,
+    ...NAV_ITEMS.map(item => {
+      if (!item.children) return item;
+      const allowedChildren = item.children.filter(c => isModeAllowed(c.id));
+      return { ...item, children: allowedChildren };
+    }).filter(item => {
+      // Remove top-level items whose children are all hidden
+      if (item.children && item.children.length === 0) return false;
+      // For childless items, check permission directly
+      if (!item.children) return isModeAllowed(item.id);
+      return true;
+    }),
     ...(isCompanyAdmin ? [{
       id: 'team' as ToolMode,
       label: 'Team',
@@ -154,7 +196,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   "flex items-center w-full p-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
                   collapsed ? "justify-center" : "justify-start gap-3",
                   groupActive
-                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
                     : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
                 )}
               >
@@ -196,12 +238,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className={cn(
                           "flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left",
                           childActive
-                            ? "bg-white/60 text-primary font-medium shadow-sm"
+                            ? "bg-blue-50 text-blue-700 font-medium shadow-sm"
                             : "text-muted-foreground hover:bg-white/40 hover:text-foreground"
                         )}
                       >
                         {childActive && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2 shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mr-2 shrink-0" />
                         )}
                         <span className="truncate">{child.label}</span>
                       </button>

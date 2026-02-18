@@ -112,9 +112,25 @@ export class DocumentationService {
     const data = snapshot.snapshot_data;
     const networks: any[] = data.networks || [];
     const devices: any[] = data.devices || [];
-    const vlans: any[] = data.vlans || [];
-    const ssids: any[] = data.ssids || [];
-    const firewallRules: any[] = data.l3FirewallRules || data.firewallRules || [];
+
+    // SSIDs, VLANs, and firewall rules are stored per-network inside
+    // data.networkLevel[networkId] — flatten them all with networkId attached.
+    const networkLevel: Record<string, any> = data.networkLevel || {};
+
+    const vlans: any[] = Object.entries(networkLevel).flatMap(([networkId, cfg]: [string, any]) =>
+      (cfg.vlans || []).map((v: any) => ({ ...v, networkId }))
+    );
+
+    const ssids: any[] = Object.entries(networkLevel).flatMap(([networkId, cfg]: [string, any]) =>
+      (cfg.ssids || []).map((s: any) => ({ ...s, networkId }))
+    );
+
+    // Meraki returns l3FirewallRules as { rules: [...] }, not a bare array
+    const firewallRules: any[] = Object.entries(networkLevel).flatMap(([networkId, cfg]: [string, any]) => {
+      const raw = cfg.l3FirewallRules;
+      const rules: any[] = Array.isArray(raw) ? raw : (raw?.rules || []);
+      return rules.map((r: any) => ({ ...r, networkId }));
+    });
 
     // Build network name lookup
     const networkMap = new Map<string, string>(networks.map((n: any) => [n.id, n.name]));

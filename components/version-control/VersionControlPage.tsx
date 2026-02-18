@@ -40,7 +40,7 @@ export const VersionControlPage: React.FC<VersionControlPageProps> = ({ organiza
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-8">
+    <div className="p-0">
       <div className="max-w-7xl mx-auto">
         <SnapshotTimeline
           organizationId={organizationId}

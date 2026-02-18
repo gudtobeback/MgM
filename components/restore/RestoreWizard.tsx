@@ -113,7 +113,7 @@ export function RestoreWizard() {
     <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto', padding: '8px 0 40px' }}>
 
       {/* Step indicator */}
-      <nav aria-label="Restore steps" style={{ marginBottom: '36px' }}>
+      <nav aria-label="Restore steps" style={{ marginBottom: '28px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
           {STEPS.map((step, index) => {
             const isCompleted = currentStep > step.id;
@@ -122,18 +122,17 @@ export function RestoreWizard() {
               <React.Fragment key={step.id}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '72px', maxWidth: '88px' }}>
                   <div style={{
-                    width: '30px', height: '30px', borderRadius: '50%',
+                    width: isActive ? '12px' : '10px', height: isActive ? '12px' : '10px',
+                    borderRadius: '50%', flexShrink: 0,
+                    backgroundColor: (isCompleted || isActive) ? '#2563eb' : '#e5e7eb',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '11px', fontWeight: 700, flexShrink: 0,
-                    transition: 'background 200ms, border 200ms',
-                    backgroundColor: (isCompleted || isActive) ? '#2563eb' : '#ffffff',
-                    border: (isCompleted || isActive) ? '2px solid #2563eb' : '2px solid #d1d5db',
-                    color: (isCompleted || isActive) ? '#ffffff' : '#9ca3af',
+                    transition: 'all 200ms', marginTop: isActive ? 0 : '1px',
                   }}>
-                    {isCompleted
-                      ? <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      : step.id
-                    }
+                    {isCompleted && (
+                      <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
+                        <path d="M1 3l1.5 1.5 2.5-2.5" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
                   </div>
                   <span style={{
                     fontSize: '9.5px', fontWeight: isActive ? 700 : 500,
@@ -146,7 +145,7 @@ export function RestoreWizard() {
                 </div>
                 {index < STEPS.length - 1 && (
                   <div style={{
-                    flex: 1, height: '2px', marginTop: '14px',
+                    flex: 1, height: '1.5px', marginTop: '4px',
                     backgroundColor: currentStep > step.id ? '#2563eb' : '#e5e7eb',
                     minWidth: '4px', transition: 'background 200ms',
                   }} />

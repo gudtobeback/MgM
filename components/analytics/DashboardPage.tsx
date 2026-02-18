@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../services/apiClient';
-import { RefreshCw, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
+import { RefreshCw, ArrowUpRight, ArrowDownRight, Activity, Building2, Wifi, WifiOff, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface AnalyticsOverview {
@@ -140,56 +140,215 @@ export const DashboardPage: React.FC = () => {
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
+  // Device Distribution calculations
+  const totalDevices = data.summary.totalDevices || 0;
+  const sortedOrgs = [...data.organizations].sort((a, b) => (b.device_count || 0) - (a.device_count || 0));
+  const globalOrgs = data.organizations.filter(o => o.meraki_region !== 'in');
+  const indiaOrgs  = data.organizations.filter(o => o.meraki_region === 'in');
+  const globalDevices = globalOrgs.reduce((s, o) => s + (o.device_count || 0), 0);
+  const indiaDevices  = indiaOrgs.reduce((s, o) => s + (o.device_count || 0), 0);
+
+  // Network Health calculations
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const healthyOrgs  = data.organizations.filter(o => o.last_snapshot_at && o.last_snapshot_at > sevenDaysAgo);
+  const warningOrgs  = data.organizations.filter(o => o.last_snapshot_at && o.last_snapshot_at <= sevenDaysAgo);
+  const criticalOrgs = data.organizations.filter(o => !o.last_snapshot_at);
+  const healthScore  = data.organizations.length > 0
+    ? Math.round((healthyOrgs.length / data.organizations.length) * 100)
+    : 0;
+  const healthColor  = healthScore >= 80 ? '#16a34a' : healthScore >= 50 ? '#d97706' : '#dc2626';
+  const healthLabel  = healthScore >= 80 ? 'Healthy' : healthScore >= 50 ? 'Warning' : 'Critical';
+
   return (
-    <div className="max-w-7xl mx-auto space-y-8 p-6 animate-fade-in">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-foreground tracking-tight">Analytics Dashboard</h2>
-          <p className="text-muted-foreground mt-1">
-            Overview of all connected organizations and activity.
-          </p>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Analytics Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Overview of all connected organizations and activity.</p>
         </div>
         <button
           onClick={loadAnalytics}
-          className="flex items-center gap-2 px-4 py-2 bg-white/50 hover:bg-white border border-white/60 rounded-xl text-sm font-medium shadow-sm transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-white/50 hover:bg-white border border-white/60 rounded-lg text-sm font-medium shadow-sm transition-all"
         >
           <RefreshCw size={14} />
           Refresh
         </button>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          label="Organizations"
-          value={data.summary.totalOrganizations}
-          icon="🏢"
-        />
-        <StatCard
-          label="Total Devices"
-          value={data.summary.totalDevices.toLocaleString()}
-          icon="📡"
-          trend="up"
-          sub="Active devices"
-        />
-        <StatCard
-          label="Snapshots"
-          value={data.summary.totalSnapshots.toLocaleString()}
-          sub={`Last: ${formatDate(data.summary.lastSnapshotAt)}`}
-          icon="💾"
-        />
-        <StatCard
-          label="Changes (7d)"
-          value={data.changesSummary.created + data.changesSummary.modified + data.changesSummary.deleted}
-          sub={`+${data.changesSummary.created} added, ~${data.changesSummary.modified} modified`}
-          icon="🔄"
-        />
+      {/* ── Hero Row: Device Distribution + Network Health ───────────────── */}
+      <div className="grid lg:grid-cols-2 gap-6">
+
+        {/* Device Distribution */}
+        <div className="glass-card p-8 flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-foreground tracking-tight">Device Distribution</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">Devices spread across organizations</p>
+            </div>
+            <div className="text-right">
+              <p className="text-4xl font-bold text-foreground tracking-tight">{totalDevices.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">total devices</p>
+            </div>
+          </div>
+
+          {/* Regional split */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-100/80">
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Global</p>
+              <p className="text-3xl font-bold text-blue-700 mt-1">{globalDevices.toLocaleString()}</p>
+              <p className="text-xs text-blue-500/80 mt-0.5">{globalOrgs.length} org{globalOrgs.length !== 1 ? 's' : ''}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-100/80">
+              <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">India</p>
+              <p className="text-3xl font-bold text-purple-700 mt-1">{indiaDevices.toLocaleString()}</p>
+              <p className="text-xs text-purple-500/80 mt-0.5">{indiaOrgs.length} org{indiaOrgs.length !== 1 ? 's' : ''}</p>
+            </div>
+          </div>
+
+          {/* Per-org bars */}
+          {sortedOrgs.length > 0 ? (
+            <div className="space-y-3">
+              {sortedOrgs.slice(0, 5).map(org => {
+                const pct = totalDevices > 0 ? Math.round(((org.device_count || 0) / totalDevices) * 100) : 0;
+                return (
+                  <div key={org.id}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-sm font-medium text-foreground truncate max-w-[200px]">{org.meraki_org_name}</span>
+                      <span className="text-sm font-bold text-foreground ml-2">{(org.device_count || 0).toLocaleString()}</span>
+                    </div>
+                    <div className="w-full bg-secondary/50 rounded-full h-2.5">
+                      <div
+                        className={cn(
+                          "h-2.5 rounded-full transition-all duration-500",
+                          org.meraki_region === 'in' ? 'bg-purple-500' : 'bg-blue-500'
+                        )}
+                        style={{ width: `${Math.max(pct, 2)}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{pct}% of fleet</p>
+                  </div>
+                );
+              })}
+              {sortedOrgs.length > 5 && (
+                <p className="text-xs text-muted-foreground text-center pt-1">
+                  +{sortedOrgs.length - 5} more organization{sortedOrgs.length - 5 !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+              <Building2 size={32} className="opacity-20 mb-2" />
+              <p className="text-sm">No organizations connected</p>
+            </div>
+          )}
+        </div>
+
+        {/* Network Health */}
+        <div className="glass-card p-8 flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-foreground tracking-tight">Network Health</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">Snapshot freshness across all orgs</p>
+            </div>
+            {data.organizations.length > 0 && (
+              <div className="text-right">
+                <p className="text-4xl font-bold tracking-tight" style={{ color: healthColor }}>{healthScore}%</p>
+                <p className="text-xs mt-0.5 font-semibold" style={{ color: healthColor }}>{healthLabel}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Health donut-style ring */}
+          {data.organizations.length > 0 ? (
+            <>
+              {/* Health score bar */}
+              <div>
+                <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                  <span>Overall health score</span>
+                  <span className="font-semibold" style={{ color: healthColor }}>{healthScore}%</span>
+                </div>
+                <div className="w-full bg-secondary/50 rounded-full h-3">
+                  <div
+                    className="h-3 rounded-full transition-all duration-700"
+                    style={{ width: `${healthScore}%`, backgroundColor: healthColor }}
+                  />
+                </div>
+              </div>
+
+              {/* Status breakdown */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="flex flex-col items-center p-4 rounded-xl bg-green-50/60 border border-green-100/80">
+                  <CheckCircle2 size={22} className="text-green-600 mb-1" />
+                  <p className="text-2xl font-bold text-green-700">{healthyOrgs.length}</p>
+                  <p className="text-[10px] font-semibold text-green-600/80 uppercase tracking-wide mt-0.5">Healthy</p>
+                  <p className="text-[9px] text-green-500/70 text-center mt-0.5">Snapshot &lt; 7d</p>
+                </div>
+                <div className="flex flex-col items-center p-4 rounded-xl bg-amber-50/60 border border-amber-100/80">
+                  <AlertCircle size={22} className="text-amber-600 mb-1" />
+                  <p className="text-2xl font-bold text-amber-700">{warningOrgs.length}</p>
+                  <p className="text-[10px] font-semibold text-amber-600/80 uppercase tracking-wide mt-0.5">Warning</p>
+                  <p className="text-[9px] text-amber-500/70 text-center mt-0.5">Snapshot stale</p>
+                </div>
+                <div className="flex flex-col items-center p-4 rounded-xl bg-red-50/60 border border-red-100/80">
+                  <WifiOff size={22} className="text-red-600 mb-1" />
+                  <p className="text-2xl font-bold text-red-700">{criticalOrgs.length}</p>
+                  <p className="text-[10px] font-semibold text-red-600/80 uppercase tracking-wide mt-0.5">Critical</p>
+                  <p className="text-[9px] text-red-500/70 text-center mt-0.5">Never snapped</p>
+                </div>
+              </div>
+
+              {/* Per-org health list */}
+              <div className="space-y-2">
+                {data.organizations.slice(0, 5).map(org => {
+                  const isHealthy  = !!org.last_snapshot_at && org.last_snapshot_at > sevenDaysAgo;
+                  const isCritical = !org.last_snapshot_at;
+                  return (
+                    <div key={org.id} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/30 transition-colors">
+                      <span className={cn(
+                        "w-2 h-2 rounded-full shrink-0",
+                        isCritical ? 'bg-red-500' : isHealthy ? 'bg-green-500' : 'bg-amber-500'
+                      )} />
+                      <span className="text-sm text-foreground truncate flex-1">{org.meraki_org_name}</span>
+                      <span className="text-xs text-muted-foreground shrink-0">
+                        {org.last_snapshot_at ? formatDate(org.last_snapshot_at) : 'Never'}
+                      </span>
+                    </div>
+                  );
+                })}
+                {data.organizations.length > 5 && (
+                  <p className="text-xs text-muted-foreground text-center pt-1">
+                    +{data.organizations.length - 5} more organization{data.organizations.length - 5 !== 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Wifi size={36} className="opacity-20 mb-3" />
+              <p className="text-sm">No organizations to assess</p>
+              <p className="text-xs mt-1 opacity-70">Connect organizations to see health status</p>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* ── Summary Stats Row ─────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard label="Organizations" value={data.summary.totalOrganizations} icon="🏢" />
+        <StatCard label="Total Devices" value={data.summary.totalDevices.toLocaleString()} icon="📡" trend="up" sub="Active devices" />
+        <StatCard label="Snapshots" value={data.summary.totalSnapshots.toLocaleString()} sub={`Last: ${formatDate(data.summary.lastSnapshotAt)}`} icon="💾" />
+        <StatCard label="Changes (7d)" value={data.changesSummary.created + data.changesSummary.modified + data.changesSummary.deleted} sub={`+${data.changesSummary.created} added, ~${data.changesSummary.modified} modified`} icon="🔄" />
+      </div>
+
+      {/* ── Activity Chart + Recent Activity ─────────────────────────────── */}
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Snapshot Activity Chart */}
         <div className="lg:col-span-2 glass-card p-6">
-          <h3 className="font-semibold text-lg text-foreground mb-6">Snapshot Activity <span className="text-muted-foreground text-sm font-normal ml-2">(Last 30 Days)</span></h3>
+          <h3 className="font-semibold text-lg text-foreground mb-6">
+            Snapshot Activity <span className="text-muted-foreground text-sm font-normal ml-2">(Last 30 Days)</span>
+          </h3>
           {chartValues.every(v => v === 0) ? (
             <div className="text-center py-12 text-muted-foreground text-sm bg-secondary/30 rounded-xl border border-secondary">
               No snapshot activity in the last 30 days.
@@ -228,7 +387,6 @@ export const DashboardPage: React.FC = () => {
           <div className="p-5 border-b border-border/40 bg-white/30 backdrop-blur-md sticky top-0 z-10">
             <h3 className="font-semibold text-lg text-foreground">Recent Activity</h3>
           </div>
-
           <div className="overflow-y-auto p-4 space-y-4 flex-1">
             {data.recentActivity.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-2">
@@ -259,7 +417,7 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Organizations Table */}
+      {/* ── Organizations Table ───────────────────────────────────────────── */}
       {data.organizations.length > 0 && (
         <div className="glass-card overflow-hidden">
           <div className="p-6 border-b border-border/40">
@@ -315,12 +473,10 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {data.organizations.length === 0 && (
-        <div className="text-center py-16 border-2 border-dashed border-border/60 rounded-3xl bg-white/20">
-          <div className="text-4xl mb-4 opacity-70">🏢</div>
+        <div className="text-center py-16 border-2 border-dashed border-border/60 rounded-2xl bg-white/20">
+          <Building2 size={40} className="mx-auto mb-4 text-muted-foreground opacity-40" />
           <h3 className="font-semibold text-lg text-foreground">No Organizations Connected</h3>
-          <p className="text-muted-foreground mt-2">
-            Connect a Meraki organization to start seeing analytics.
-          </p>
+          <p className="text-muted-foreground mt-2">Connect a Meraki organization to start seeing analytics.</p>
         </div>
       )}
     </div>
