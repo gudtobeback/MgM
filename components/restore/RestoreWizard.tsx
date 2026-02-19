@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { BackupFile, MerakiOrganization, MerakiNetwork, MerakiDeviceDetails } from '../../types';
+import { BackupFile, MerakiOrganization, MerakiNetwork, MerakiDeviceDetails, RestoreCategories } from '../../types';
 import { UploadStep } from './steps/UploadStep';
 import { SelectStep } from './steps/SelectStep';
 import { DestinationStep } from './steps/DestinationStep';
@@ -15,15 +15,6 @@ const STEPS = [
   { id: 4, name: 'Restore',     description: 'Apply configuration' },
   { id: 5, name: 'Results',     description: 'View results' },
 ];
-
-export interface RestoreCategories {
-  vlans: boolean;
-  firewallRules: boolean;
-  ssids: boolean;
-  switchPorts: boolean;
-  groupPolicies: boolean;
-  vpnSettings: boolean;
-}
 
 export interface RestoreResults {
   log: string[];
@@ -51,12 +42,93 @@ const DEFAULT_DATA: RestoreData = {
   parsedBackup: null,
   selectedNetworkId: '',
   restoreCategories: {
+    // Organization
+    orgDetails: true,
+    orgAdmins: true,
+    orgPolicyObjects: true,
+    orgPolicyObjectGroups: true,
+    orgSnmp: true,
+    orgVpnFirewallRules: true,
+    orgThirdPartyVpn: true,
+    orgAlertProfiles: true,
+    orgBrandingPolicies: true,
+    orgBrandingPoliciesPriorities: true,
+    orgConfigTemplates: true,
+    orgLoginSecurity: true,
+    orgSamlRoles: true,
+    orgApplianceSecurityIntrusion: true,
+    orgWebhooks: true,
+    // Appliance
     vlans: true,
-    firewallRules: true,
-    ssids: true,
+    applianceFirewallL3: true,
+    applianceFirewallL7: true,
+    cellularFirewallRules: true,
+    inboundFirewallRules: true,
+    oneToManyNat: true,
+    oneToOneNat: true,
+    portForwardingRules: true,
+    applianceStaticRoutes: true,
+    contentFiltering: true,
+    applianceSecurity: true,
+    trafficShaping: true,
+    trafficShapingGeneral: true,
+    customPerformanceClasses: true,
+    applianceSettings: true,
+    applianceConnectivityMonitoring: true,
+    applianceUplinksSettings: true,
+    siteToSiteVpn: true,
+    bgpSettings: true,
+    // Switch
     switchPorts: true,
+    switchRoutingInterfaces: true,
+    switchAcls: true,
+    switchAccessPolicies: true,
+    switchSettings: true,
+    networkStp: true,
+    portSchedules: true,
+    qosRules: true,
+    dhcpServerPolicy: true,
+    stormControl: true,
+    switchMtu: true,
+    switchOspf: true,
+    switchLinkAggregations: true,
+    // Wireless
+    ssids: true,
+    ssidFirewallRules: true,
+    ssidTrafficShaping: true,
+    ssidBonjourForwarding: true,
+    ssidDeviceTypeGroupPolicies: true,
+    ssidHotspot20: true,
+    ssidIdentityPsks: true,
+    ssidSchedules: true,
+    ssidSplashSettings: true,
+    ssidVpnSettings: true,
+    wirelessRfProfiles: true,
+    bluetoothSettings: true,
+    wirelessSettings: true,
+    alternateManagementInterface: true,
+    wirelessBilling: true,
+    // Network General
+    networkDetails: true,
     groupPolicies: true,
-    vpnSettings: false,
+    syslogServers: true,
+    networkSnmp: true,
+    networkAlerts: true,
+    networkSettings: true,
+    floorPlans: true,
+    netflowSettings: true,
+    trafficAnalysis: true,
+    vlanProfiles: true,
+    networkWebhooks: true,
+    // Device - General
+    managementInterface: true,
+    wirelessRadioSettings: true,
+    // Device - Switch
+    deviceSwitchOspf: true,
+    deviceSwitchStp: true,
+    // Device - Appliance
+    deviceApplianceUplink: true,
+    deviceApplianceDhcpSubnets: true,
   },
   destinationApiKey: '',
   destinationRegion: 'com',

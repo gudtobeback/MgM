@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
-import { restoreNetworkConfiguration, restoreDeviceConfiguration } from '../../../services/merakiService';
-import { NetworkConfigBackup } from '../../../types';
+import { restoreOrganizationConfiguration, restoreNetworkConfiguration, restoreDeviceConfiguration } from '../../../services/merakiService';
 import { RestoreData } from '../RestoreWizard';
 
 interface RestoreExecStepProps {
@@ -33,6 +32,7 @@ export function RestoreExecStep({ data, onUpdate, onComplete }: RestoreExecStepP
       const cats = data.restoreCategories;
       const apiKey = data.destinationApiKey;
       const region = data.destinationRegion;
+      const orgId = data.destinationOrg!.id;
       const networkId = data.destinationNetwork!.id;
       const networkName = data.destinationNetwork!.name;
       const srcNetCfg = backup.networkConfigs[data.selectedNetworkId] ?? {};
@@ -44,58 +44,54 @@ export function RestoreExecStep({ data, onUpdate, onComplete }: RestoreExecStepP
       };
 
       addLog('Starting restore…');
+      addLog(`Target organization: ${data.destinationOrg!.name} (${orgId})`);
       addLog(`Target network: ${networkName} (${networkId})`);
       addLog(`Source: ${backup.sourceOrgName}`);
       addLog('');
 
-      // ── Build filtered NetworkConfigBackup ────────────────────────────────────
-      const filteredConfig: Partial<NetworkConfigBackup> = {};
-
-      if (cats.vlans && srcNetCfg.applianceVlans) {
-        filteredConfig.applianceVlans = srcNetCfg.applianceVlans;
-      }
-      if (cats.firewallRules && srcNetCfg.applianceL3FirewallRules) {
-        filteredConfig.applianceL3FirewallRules = srcNetCfg.applianceL3FirewallRules;
-      }
-      if (cats.ssids && srcNetCfg.ssids) {
-        filteredConfig.ssids = srcNetCfg.ssids;
-      }
-      if (cats.groupPolicies && srcNetCfg.groupPolicies) {
-        filteredConfig.groupPolicies = srcNetCfg.groupPolicies;
-      }
-      if (cats.vpnSettings && srcNetCfg.siteToSiteVpnSettings) {
-        filteredConfig.siteToSiteVpnSettings = srcNetCfg.siteToSiteVpnSettings;
-      }
-
-      const hasNetworkWork = Object.keys(filteredConfig).length > 0;
-
-      // ── Network-level restore ─────────────────────────────────────────────────
-      if (hasNetworkWork) {
-        addLog('── Network Configuration ──');
-        const count = await restoreNetworkConfiguration(
+      // ── Organization restore ──────────────────────────────────────────────────
+      if (backup.organizationConfig && Object.keys(backup.organizationConfig).length > 0) {
+        addLog('── Organization Configuration ──');
+        const count = await restoreOrganizationConfiguration(
           apiKey,
           region,
-          networkId,
-          filteredConfig as NetworkConfigBackup,
+          orgId,
+          backup.organizationConfig,
+          cats,
           addLog
         );
         restored += count;
         addLog('');
       }
 
-      // ── Device-level restore (switch ports) ───────────────────────────────────
-      if (cats.switchPorts && backup.devices.length > 0) {
-        addLog('── Switch Port Configuration ──');
+      // ── Network restore ───────────────────────────────────────────────────────
+      if (srcNetCfg && Object.keys(srcNetCfg).length > 0) {
+        addLog('── Network Configuration ──');
+        const count = await restoreNetworkConfiguration(
+          apiKey,
+          region,
+          networkId,
+          srcNetCfg,
+          cats,
+          addLog
+        );
+        restored += count;
+        addLog('');
+      }
+
+      // ── Device restore ────────────────────────────────────────────────────────
+      if (backup.devices.length > 0) {
+        addLog('── Device Configuration ──');
         addLog(`Found ${backup.devices.length} device(s) in backup`);
 
         for (const device of backup.devices) {
-          if (!device.config.switchPorts || device.config.switchPorts.length === 0) continue;
           addLog(`\nDevice: ${device.serial}`);
           const ok = await restoreDeviceConfiguration(
             apiKey,
             region,
             device.serial,
             device.config,
+            cats,
             addLog
           );
           if (ok) restored++;
@@ -127,10 +123,10 @@ export function RestoreExecStep({ data, onUpdate, onComplete }: RestoreExecStepP
       <div style={{ marginBottom: '28px', display: 'flex', alignItems: 'center', gap: '14px' }}>
         <Loader2 size={18} color="#2563eb" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>
             Restoring Configuration
           </h2>
-          <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+          <p style={{ fontSize: '14px', color: '#6b7280' }}>
             Pushing selected categories to {data.destinationNetwork?.name ?? 'the target network'}…
           </p>
         </div>
@@ -145,11 +141,11 @@ export function RestoreExecStep({ data, onUpdate, onComplete }: RestoreExecStepP
           backgroundColor: '#0f172a',
           borderRadius: '6px',
           padding: '16px',
-          fontFamily: 'var(--font-mono)',
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
           fontSize: '12px',
           lineHeight: 1.6,
           color: '#e2e8f0',
-          border: '1px solid var(--color-border-primary)',
+          border: '1px solid rgba(255,255,255,0.4)',
         }}
       >
         {log.map((line, i) => (

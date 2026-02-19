@@ -1,6 +1,6 @@
 
 import JSZip from 'jszip';
-import { 
+import {
     MerakiDevice, MerakiNetwork, MerakiOrganization, MerakiDeviceDetails, GroupPolicy,
     SwitchPortSettings, ManagementInterfaceSettings, DeviceWirelessRadioSettings, ApplianceUplinkSettings, SwitchStack,
     SwitchRoutingInterface, SwitchStaticRoute, OspfSettings, AccessControlLists, AccessPolicy, PortSchedule,
@@ -11,7 +11,7 @@ import {
     PolicyObject, VpnPeer, VpnFirewallRule, WebhookHttpServer, NetworkSnmpSettings, Floorplan, ApplianceSettings,
     UplinkSelection, TrafficShapingRules, QosRule, DhcpServerPolicy, DscpToCosMappings, StormControlSettings, MtuSettings,
     SsidTrafficShapingRules, WirelessBluetoothSettings,
-    BackupFile, DeviceConfigBackup, NetworkConfigBackup
+    BackupFile, DeviceConfigBackup, NetworkConfigBackup, OrgConfigBackup, RestoreCategories
 } from '../types';
 
 // The proxy endpoint is now explicitly set for local development.
@@ -200,14 +200,23 @@ export const claimDevicesToInventory = (apiKey: string, r: string, oid: string, 
 
 
 // --- Organization-Level ---
+export const getOrganization = (apiKey: string, r: string, oid: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}`);
+export const updateOrganization = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}`, 'PUT', body);
+export const updateOrganizationBrandingPoliciesPriorities = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/brandingPolicies/priorities`, 'PUT', body);
+export const updateOrganizationApplianceSecurityIntrusion = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/appliance/security/intrusion`, 'PUT', body);
+export const getOrganizationAdmins = (apiKey: string, r: string, oid: string): Promise<OrganizationAdmin[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/admins`);
+export const createOrganizationAdmin = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/admins`, 'POST', body);
+export const getOrganizationSnmp = (apiKey: string, r: string, oid: string): Promise<SnmpSettings> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/snmp`);
+export const updateOrganizationSnmp = (apiKey: string, r: string, oid: string, body: SnmpSettings): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/snmp`, 'PUT', body);
 export const getOrganizationPolicyObjects = (apiKey: string, r: string, oid: string): Promise<PolicyObject[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/policyObjects`);
+export const createOrganizationPolicyObject = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/policyObjects`, 'POST', body);
 export const getThirdPartyVpnPeers = (apiKey: string, r: string, oid: string): Promise<VpnPeer[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/vpn/thirdPartyVPNPeers`);
 export const updateThirdPartyVpnPeers = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/vpn/thirdPartyVPNPeers`, 'PUT', body);
 export const getVpnFirewallRules = (apiKey: string, r: string, oid: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/appliance/vpn/vpnFirewallRules`);
 export const updateVpnFirewallRules = (apiKey: string, r: string, oid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${oid}/appliance/vpn/vpnFirewallRules`, 'PUT', body);
 
 // --- Network-Level ---
-export const updateNetworkSettings = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}`, 'PUT', body);
+export const updateNetwork = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}`, 'PUT', body);
 export const getNetworkWebhooks = (apiKey: string, r: string, nid: string): Promise<WebhookHttpServer[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/webhooks/httpServers`);
 export const createNetworkWebhook = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/webhooks/httpServers`, 'POST', body);
 export const getNetworkSnmp = (apiKey: string, r: string, nid: string): Promise<NetworkSnmpSettings> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/snmp`);
@@ -256,6 +265,7 @@ export const updateNetworkApplianceVpnBgp = (apiKey: string, r: string, nid: str
 
 // --- Switch (MS) ---
 export const getNetworkSwitchPortSchedules = (apiKey: string, r: string, nid: string): Promise<PortSchedule[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/portSchedules`);
+export const updateNetworkSwitchPortSchedules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/portSchedules`, 'PUT', body);
 export const getNetworkSwitchQosRules = (apiKey: string, r: string, nid: string): Promise<QosRule[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/qosRules`);
 export const updateNetworkSwitchQosRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/qosRules`, 'PUT', body);
 export const getNetworkSwitchAccessPolicies = (apiKey: string, r: string, nid: string): Promise<AccessPolicy[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/accessPolicies`);
@@ -267,6 +277,10 @@ export const claimNetworkDevices = (apiKey: string, r: string, networkId: string
 export const getSwitchPorts = (apiKey: string, r: string, serial: string): Promise<SwitchPortSettings[]> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/ports`);
 export const getSwitchPort = (apiKey: string, r: string, serial: string, portId: string): Promise<SwitchPortSettings> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/ports/${portId}`);
 export const updateSwitchPort = (apiKey: string, r: string, serial: string, portId: string, body: Omit<SwitchPortSettings, 'portId'>): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/ports/${portId}`, 'PUT', body);
+export const getDeviceManagementInterface = (apiKey: string, r: string, serial: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/managementInterface`);
+export const updateDeviceManagementInterface = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/managementInterface`, 'PUT', body);
+export const getDeviceWirelessRadioSettings = (apiKey: string, r: string, serial: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/wireless/radio/settings`);
+export const updateDeviceWirelessRadioSettings = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/wireless/radio/settings`, 'PUT', body);
 export const getNetworkSwitchAccessControlLists = (apiKey: string, r: string, nid: string): Promise<AccessControlLists> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/accessControlLists`);
 export const updateNetworkSwitchAccessControlLists = (apiKey: string, r: string, nid: string, body: AccessControlLists): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/accessControlLists`, 'PUT', body);
 export const getNetworkSwitchDhcpServerPolicy = (apiKey: string, r: string, nid: string): Promise<DhcpServerPolicy> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/dhcpServerPolicy`);
@@ -305,6 +319,74 @@ export const getNetworkWirelessBluetoothSettings = (apiKey: string, r: string, n
 export const updateNetworkWirelessBluetoothSettings = (apiKey: string, r: string, nid: string, body: WirelessBluetoothSettings): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/bluetooth/settings`, 'PUT', body);
 export const getNetworkWirelessSettings = (apiKey: string, r: string, nid: string): Promise<WirelessSettings> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/settings`);
 export const updateNetworkWirelessSettings = (apiKey: string, r: string, nid: string, body: WirelessSettings): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/settings`, 'PUT', body);
+
+// Wireless SSID Advanced Settings
+export const updateNetworkWirelessSsidBonjourForwarding = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/bonjourForwarding`, 'PUT', body);
+export const updateNetworkWirelessSsidDeviceTypeGroupPolicies = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/deviceTypeGroupPolicies`, 'PUT', body);
+export const updateNetworkWirelessSsidHotspot20 = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/hotspot20`, 'PUT', body);
+export const getNetworkWirelessSsidIdentityPsks = (apiKey: string, r: string, nid: string, ssidNum: number): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/identityPsks`);
+export const createNetworkWirelessSsidIdentityPsk = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/identityPsks`, 'POST', body);
+export const updateNetworkWirelessSsidSchedules = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/schedules`, 'PUT', body);
+export const updateNetworkWirelessSsidSplashSettings = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/splash/settings`, 'PUT', body);
+export const updateNetworkWirelessSsidVpn = (apiKey: string, r: string, nid: string, ssidNum: number, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/ssids/${ssidNum}/vpn`, 'PUT', body);
+export const updateNetworkWirelessAlternateManagementInterface = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/alternateManagementInterface`, 'PUT', body);
+export const updateNetworkWirelessBilling = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/wireless/billing`, 'PUT', body);
+
+// Organization Advanced Settings
+export const getOrganizationAlertProfiles = (apiKey: string, r: string, orgId: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/alerts/profiles`);
+export const createOrganizationAlertProfile = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/alerts/profiles`, 'POST', body);
+export const getOrganizationBrandingPolicies = (apiKey: string, r: string, orgId: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/brandingPolicies`);
+export const createOrganizationBrandingPolicy = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/brandingPolicies`, 'POST', body);
+export const getOrganizationConfigTemplates = (apiKey: string, r: string, orgId: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/configTemplates`);
+export const createOrganizationConfigTemplate = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/configTemplates`, 'POST', body);
+export const getOrganizationLoginSecurity = (apiKey: string, r: string, orgId: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/loginSecurity`);
+export const updateOrganizationLoginSecurity = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/loginSecurity`, 'PUT', body);
+export const getOrganizationSamlRoles = (apiKey: string, r: string, orgId: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/saml/roles`);
+export const createOrganizationSamlRole = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/saml/roles`, 'POST', body);
+export const getOrganizationWebhookHttpServers = (apiKey: string, r: string, orgId: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/webhooks/httpServers`);
+export const createOrganizationWebhookHttpServer = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/webhooks/httpServers`, 'POST', body);
+export const getOrganizationPolicyObjectGroups = (apiKey: string, r: string, orgId: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/policyObjects/groups`);
+export const createOrganizationPolicyObjectGroup = (apiKey: string, r: string, orgId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/organizations/${orgId}/policyObjects/groups`, 'POST', body);
+
+// Appliance Advanced Firewall & NAT
+export const updateNetworkApplianceFirewallCellularFirewallRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/firewall/cellularFirewallRules`, 'PUT', body);
+export const updateNetworkApplianceFirewallInboundFirewallRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/firewall/inboundFirewallRules`, 'PUT', body);
+export const updateNetworkApplianceFirewallOneToManyNatRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/firewall/oneToManyNatRules`, 'PUT', body);
+export const updateNetworkApplianceFirewallOneToOneNatRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/firewall/oneToOneNatRules`, 'PUT', body);
+export const updateNetworkApplianceFirewallPortForwardingRules = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/firewall/portForwardingRules`, 'PUT', body);
+
+// Appliance Traffic Shaping & Connectivity
+export const updateNetworkApplianceTrafficShaping = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/trafficShaping`, 'PUT', body);
+export const getNetworkApplianceTrafficShapingCustomPerformanceClasses = (apiKey: string, r: string, nid: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/trafficShaping/customPerformanceClasses`);
+export const createNetworkApplianceTrafficShapingCustomPerformanceClass = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/trafficShaping/customPerformanceClasses`, 'POST', body);
+export const updateNetworkApplianceConnectivityMonitoringDestinations = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/connectivityMonitoringDestinations`, 'PUT', body);
+export const updateNetworkApplianceUplinksSettings = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/appliance/uplinks/settings`, 'PUT', body);
+
+// Switch Advanced Settings
+export const getNetworkSwitchStp = (apiKey: string, r: string, nid: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/stp`);
+export const updateNetworkSwitchStp = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/switch/stp`, 'PUT', body);
+export const getDeviceSwitchRoutingOspf = (apiKey: string, r: string, serial: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/ospf`);
+export const updateDeviceSwitchRoutingOspf = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/routing/ospf`, 'PUT', body);
+export const getDeviceSwitchStp = (apiKey: string, r: string, serial: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/stp`);
+export const updateDeviceSwitchStp = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/switch/stp`, 'PUT', body);
+
+// Network General Settings
+export const updateNetworkSettings = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/settings`, 'PUT', body);
+export const getNetworkFloorPlans = (apiKey: string, r: string, nid: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/floorPlans`);
+export const createNetworkFloorPlan = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/floorPlans`, 'POST', body);
+export const updateNetworkNetflow = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/netflow`, 'PUT', body);
+export const updateNetworkTrafficAnalysis = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/trafficAnalysis`, 'PUT', body);
+export const getNetworkVlanProfiles = (apiKey: string, r: string, nid: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/vlanProfiles`);
+export const createNetworkVlanProfile = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/vlanProfiles`, 'POST', body);
+export const getNetworkWebhookHttpServers = (apiKey: string, r: string, nid: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/webhooks/httpServers`);
+export const createNetworkWebhookHttpServer = (apiKey: string, r: string, nid: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/networks/${nid}/webhooks/httpServers`, 'POST', body);
+
+// Device-Level Appliance Configuration
+export const getDeviceApplianceUplinkSettings = (apiKey: string, r: string, serial: string): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/appliance/uplink/settings`);
+export const updateDeviceApplianceUplinkSettings = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/appliance/uplink/settings`, 'PUT', body);
+export const getDeviceApplianceDhcpSubnets = (apiKey: string, r: string, serial: string): Promise<any[]> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/appliance/dhcp/subnets`);
+export const createDeviceApplianceDhcpSubnet = (apiKey: string, r: string, serial: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/appliance/dhcp/subnets`, 'POST', body);
+export const updateDeviceApplianceDhcpSubnet = (apiKey: string, r: string, serial: string, subnetId: string, body: any): Promise<any> => fetchWithMerakiApi(apiKey, r, `/devices/${serial}/appliance/dhcp/subnets/${subnetId}`, 'PUT', body);
 
 
 // --- Selective Backup Engine ---
@@ -657,15 +739,262 @@ export const createExhaustiveBackup = async (
 
 // --- Restore Engines ---
 
+export const restoreOrganizationConfiguration = async (
+    apiKey: string,
+    region: string,
+    orgId: string,
+    orgConfig: Partial<OrgConfigBackup>,
+    cats: RestoreCategories,
+    log: (msg: string) => void
+): Promise<number> => {
+    let successCount = 0;
+
+    const runRestore = async (name: string, backupData: any, restoreFn: () => Promise<any>) => {
+        if (backupData && (!Array.isArray(backupData) || backupData.length > 0)) {
+            log(`  - Restoring ${name}...`);
+            try {
+                await restoreFn();
+                log(`    ✅ ${name} restored successfully.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to restore ${name}: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        } else {
+            log(`  - ⏩ Skipping ${name} (no backup data).`);
+        }
+    };
+
+    // Org Admins - match by email, create if not exists
+    if (cats.orgAdmins && orgConfig.admins && orgConfig.admins.length > 0) {
+        log(`  - Restoring ${orgConfig.admins.length} organization admin(s)...`);
+        try {
+            const existingAdmins = await getOrganizationAdmins(apiKey, region, orgId);
+            const existingEmails = new Set(existingAdmins.map(a => a.email.toLowerCase()));
+
+            for (const admin of orgConfig.admins) {
+                if (existingEmails.has(admin.email.toLowerCase())) {
+                    log(`    ⏩ Admin "${admin.email}" already exists - skipped.`);
+                    continue;
+                }
+                try {
+                    await createOrganizationAdmin(apiKey, region, orgId, {
+                        email: admin.email,
+                        name: admin.name,
+                        orgAccess: admin.orgAccess,
+                        networks: admin.networks || []
+                    });
+                    log(`    ✅ Admin "${admin.email}" created.`);
+                    successCount++;
+                } catch (e) {
+                    log(`    ❌ FAILED to create admin "${admin.email}": ${e instanceof Error ? e.message : String(e)}`);
+                }
+            }
+        } catch (e) {
+            log(`    ❌ FAILED to restore admins: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    } else if (!cats.orgAdmins) {
+        log(`  - ⏩ Skipping Organization Admins (category not selected).`);
+    } else {
+        log(`  - ⏩ Skipping Organization Admins (no backup data).`);
+    }
+
+    // Policy Objects - create each individually
+    if (cats.orgPolicyObjects && orgConfig.policyObjects && orgConfig.policyObjects.length > 0) {
+        log(`  - Restoring ${orgConfig.policyObjects.length} policy object(s)...`);
+        for (const obj of orgConfig.policyObjects) {
+            try {
+                const { id, ...objBody } = obj as any;
+                await createOrganizationPolicyObject(apiKey, region, orgId, objBody);
+                log(`    ✅ Policy object "${obj.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create policy object "${obj.name}": ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgPolicyObjects) {
+        log(`  - ⏩ Skipping Policy Objects (category not selected).`);
+    } else {
+        log(`  - ⏩ Skipping Policy Objects (no backup data).`);
+    }
+
+    // Organization SNMP
+    if (cats.orgSnmp) {
+        await runRestore('Organization SNMP', orgConfig.snmp, () =>
+            updateOrganizationSnmp(apiKey, region, orgId, orgConfig.snmp!)
+        );
+    } else {
+        log(`  - ⏩ Skipping Organization SNMP (category not selected).`);
+    }
+
+    // VPN Firewall Rules
+    if (cats.orgVpnFirewallRules) {
+        await runRestore('VPN Firewall Rules', orgConfig.vpnFirewallRules, () =>
+            updateVpnFirewallRules(apiKey, region, orgId, orgConfig.vpnFirewallRules!)
+        );
+    } else {
+        log(`  - ⏩ Skipping VPN Firewall Rules (category not selected).`);
+    }
+
+    // Third-Party VPN Peers
+    if (cats.orgThirdPartyVpn) {
+        await runRestore('Third-Party VPN Peers', orgConfig.thirdPartyVpnPeers, () =>
+            updateThirdPartyVpnPeers(apiKey, region, orgId, { peers: orgConfig.thirdPartyVpnPeers })
+        );
+    } else {
+        log(`  - ⏩ Skipping Third-Party VPN Peers (category not selected).`);
+    }
+
+    // Policy Object Groups
+    if (cats.orgPolicyObjectGroups && (orgConfig as any).policyObjectGroups && (orgConfig as any).policyObjectGroups.length > 0) {
+        log(`  - Restoring ${(orgConfig as any).policyObjectGroups.length} policy object group(s)...`);
+        for (const group of (orgConfig as any).policyObjectGroups) {
+            try {
+                const { id, ...groupBody } = group;
+                await createOrganizationPolicyObjectGroup(apiKey, region, orgId, groupBody);
+                log(`    ✅ Policy object group "${group.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create policy object group "${group.name}": ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgPolicyObjectGroups) {
+        log(`  - ⏩ Skipping Policy Object Groups (category not selected).`);
+    }
+
+    // Alert Profiles
+    if (cats.orgAlertProfiles && (orgConfig as any).alertProfiles && (orgConfig as any).alertProfiles.length > 0) {
+        log(`  - Restoring ${(orgConfig as any).alertProfiles.length} alert profile(s)...`);
+        for (const profile of (orgConfig as any).alertProfiles) {
+            try {
+                const { id, ...profileBody } = profile;
+                await createOrganizationAlertProfile(apiKey, region, orgId, profileBody);
+                log(`    ✅ Alert profile created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create alert profile: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgAlertProfiles) {
+        log(`  - ⏩ Skipping Alert Profiles (category not selected).`);
+    }
+
+    // Branding Policies
+    if (cats.orgBrandingPolicies && (orgConfig as any).brandingPolicies && (orgConfig as any).brandingPolicies.length > 0) {
+        log(`  - Restoring ${(orgConfig as any).brandingPolicies.length} branding polic(ies)...`);
+        for (const policy of (orgConfig as any).brandingPolicies) {
+            try {
+                const { id, ...policyBody } = policy;
+                await createOrganizationBrandingPolicy(apiKey, region, orgId, policyBody);
+                log(`    ✅ Branding policy "${policy.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create branding policy: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgBrandingPolicies) {
+        log(`  - ⏩ Skipping Branding Policies (category not selected).`);
+    }
+
+    // Config Templates
+    if (cats.orgConfigTemplates && (orgConfig as any).configTemplates && (orgConfig as any).configTemplates.length > 0) {
+        log(`  - Restoring ${(orgConfig as any).configTemplates.length} config template(s)...`);
+        for (const template of (orgConfig as any).configTemplates) {
+            try {
+                const { id, ...templateBody } = template;
+                await createOrganizationConfigTemplate(apiKey, region, orgId, templateBody);
+                log(`    ✅ Config template "${template.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create config template: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgConfigTemplates) {
+        log(`  - ⏩ Skipping Config Templates (category not selected).`);
+    }
+
+    // Login Security
+    if (cats.orgLoginSecurity) {
+        await runRestore('Login Security', (orgConfig as any).loginSecurity, () =>
+            updateOrganizationLoginSecurity(apiKey, region, orgId, (orgConfig as any).loginSecurity!)
+        );
+    } else {
+        log(`  - ⏩ Skipping Login Security (category not selected).`);
+    }
+
+    // SAML Roles
+    if (cats.orgSamlRoles && (orgConfig as any).samlRoles && (orgConfig as any).samlRoles.length > 0) {
+        log(`  - Restoring ${(orgConfig as any).samlRoles.length} SAML role(s)...`);
+        for (const role of (orgConfig as any).samlRoles) {
+            try {
+                const { id, ...roleBody } = role;
+                await createOrganizationSamlRole(apiKey, region, orgId, roleBody);
+                log(`    ✅ SAML role created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create SAML role: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgSamlRoles) {
+        log(`  - ⏩ Skipping SAML Roles (category not selected).`);
+    }
+
+    // Webhook HTTP Servers (Org-level)
+    if (cats.orgWebhooks && (orgConfig as any).webhookHttpServers && (orgConfig as any).webhookHttpServers.length > 0) {
+        log(`  - Restoring ${(orgConfig as any).webhookHttpServers.length} webhook HTTP server(s)...`);
+        for (const server of (orgConfig as any).webhookHttpServers) {
+            try {
+                const { id, ...serverBody } = server;
+                await createOrganizationWebhookHttpServer(apiKey, region, orgId, serverBody);
+                log(`    ✅ Webhook server "${server.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create webhook server: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.orgWebhooks) {
+        log(`  - ⏩ Skipping Webhook HTTP Servers (category not selected).`);
+    }
+
+    // Organization Details
+    if (cats.orgDetails) {
+        await runRestore('Organization Details', (orgConfig as any).organizationDetails, () =>
+            updateOrganization(apiKey, region, orgId, (orgConfig as any).organizationDetails!)
+        );
+    } else {
+        log(`  - ⏩ Skipping Organization Details (category not selected).`);
+    }
+
+    // Branding Policies Priorities
+    if (cats.orgBrandingPoliciesPriorities) {
+        await runRestore('Branding Policies Priorities', (orgConfig as any).brandingPoliciesPriorities, () =>
+            updateOrganizationBrandingPoliciesPriorities(apiKey, region, orgId, (orgConfig as any).brandingPoliciesPriorities!)
+        );
+    } else {
+        log(`  - ⏩ Skipping Branding Policies Priorities (category not selected).`);
+    }
+
+    // Appliance Security Intrusion (Org-level)
+    if (cats.orgApplianceSecurityIntrusion) {
+        await runRestore('Appliance Security Intrusion (Org)', (orgConfig as any).applianceSecurityIntrusion, () =>
+            updateOrganizationApplianceSecurityIntrusion(apiKey, region, orgId, (orgConfig as any).applianceSecurityIntrusion!)
+        );
+    } else {
+        log(`  - ⏩ Skipping Appliance Security Intrusion (Org-level) (category not selected).`);
+    }
+
+    return successCount;
+};
+
 export const restoreDeviceConfiguration = async (
     apiKey: string,
     region: string,
     serial: string,
     deviceConfig: DeviceConfigBackup,
+    cats: RestoreCategories,
     log: (msg: string) => void
 ): Promise<boolean> => {
     try {
-        // Restore device name / tags / notes (skip if name is null/empty)
+        // Restore device name / tags / notes (always restore general settings)
         const { name, tags, notes } = deviceConfig.general;
         if (name) {
             log(`  - Restoring general settings for ${serial} (Name: ${name})...`);
@@ -676,7 +1005,7 @@ export const restoreDeviceConfiguration = async (
         }
 
         // Restore switch ports
-        if (deviceConfig.switchPorts && deviceConfig.switchPorts.length > 0) {
+        if (cats.switchPorts && deviceConfig.switchPorts && deviceConfig.switchPorts.length > 0) {
             log(`  - Restoring ${deviceConfig.switchPorts.length} switch port configuration(s)...`);
             for (const port of deviceConfig.switchPorts) {
                 try {
@@ -687,12 +1016,13 @@ export const restoreDeviceConfiguration = async (
                     log(`    ❌ FAILED to restore port ${port.portId}: ${portError instanceof Error ? portError.message : String(portError)}`);
                 }
             }
+        } else if (!cats.switchPorts) {
+            log(`  - ⏩ Skipping Switch Ports (category not selected).`);
         }
 
-        // Restore switch routing interfaces (SVIs)
-        if (deviceConfig.routingInterfaces && deviceConfig.routingInterfaces.length > 0) {
+        // Restore switch routing interfaces (SVIs) + static routes
+        if (cats.switchRoutingInterfaces && deviceConfig.routingInterfaces && deviceConfig.routingInterfaces.length > 0) {
             log(`  - Restoring ${deviceConfig.routingInterfaces.length} routing interface(s) (SVIs)...`);
-            // Fetch existing interfaces so we can decide create vs update
             const existingInterfaces = await getDeviceSwitchRoutingInterfaces(apiKey, region, serial).catch(() => [] as SwitchRoutingInterface[]);
             const existingByVlan = new Map(existingInterfaces.map(i => [i.vlanId, i.interfaceId]));
 
@@ -711,10 +1041,11 @@ export const restoreDeviceConfiguration = async (
                     log(`    ❌ FAILED to restore routing interface ${iface.name}: ${ifaceError instanceof Error ? ifaceError.message : String(ifaceError)}`);
                 }
             }
+        } else if (!cats.switchRoutingInterfaces) {
+            log(`  - ⏩ Skipping Switch Routing Interfaces (category not selected).`);
         }
 
-        // Restore switch static routes
-        if (deviceConfig.staticRoutes && deviceConfig.staticRoutes.length > 0) {
+        if (cats.switchRoutingInterfaces && deviceConfig.staticRoutes && deviceConfig.staticRoutes.length > 0) {
             log(`  - Restoring ${deviceConfig.staticRoutes.length} static route(s)...`);
             for (const route of deviceConfig.staticRoutes) {
                 try {
@@ -725,6 +1056,97 @@ export const restoreDeviceConfiguration = async (
                     log(`    ❌ FAILED to restore static route ${route.subnet}: ${routeError instanceof Error ? routeError.message : String(routeError)}`);
                 }
             }
+        }
+
+        // Management Interface
+        if (cats.managementInterface && deviceConfig.managementInterface) {
+            log(`  - Restoring management interface settings...`);
+            try {
+                await updateDeviceManagementInterface(apiKey, region, serial, deviceConfig.managementInterface);
+                log(`    ✅ Management interface restored.`);
+            } catch (e) {
+                log(`    ❌ FAILED to restore management interface: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        } else if (!cats.managementInterface) {
+            log(`  - ⏩ Skipping Management Interface (category not selected).`);
+        }
+
+        // Wireless Radio Settings
+        if (cats.wirelessRadioSettings && deviceConfig.wirelessRadioSettings) {
+            log(`  - Restoring wireless radio settings...`);
+            try {
+                await updateDeviceWirelessRadioSettings(apiKey, region, serial, deviceConfig.wirelessRadioSettings);
+                log(`    ✅ Wireless radio settings restored.`);
+            } catch (e) {
+                log(`    ❌ FAILED to restore wireless radio settings: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        } else if (!cats.wirelessRadioSettings) {
+            log(`  - ⏩ Skipping Wireless Radio Settings (category not selected).`);
+        }
+
+        // Device Switch OSPF
+        if (cats.deviceSwitchOspf && (deviceConfig as any).switchOspf) {
+            log(`  - Restoring device-level switch OSPF settings...`);
+            try {
+                await updateDeviceSwitchRoutingOspf(apiKey, region, serial, (deviceConfig as any).switchOspf);
+                log(`    ✅ Device switch OSPF restored.`);
+            } catch (e) {
+                log(`    ❌ FAILED to restore device switch OSPF: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        } else if (!cats.deviceSwitchOspf) {
+            log(`  - ⏩ Skipping Device Switch OSPF (category not selected).`);
+        }
+
+        // Device Switch STP
+        if (cats.deviceSwitchStp && (deviceConfig as any).switchStp) {
+            log(`  - Restoring device-level switch STP settings...`);
+            try {
+                await updateDeviceSwitchStp(apiKey, region, serial, (deviceConfig as any).switchStp);
+                log(`    ✅ Device switch STP restored.`);
+            } catch (e) {
+                log(`    ❌ FAILED to restore device switch STP: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        } else if (!cats.deviceSwitchStp) {
+            log(`  - ⏩ Skipping Device Switch STP (category not selected).`);
+        }
+
+        // Device Appliance Uplink Settings
+        if (cats.deviceApplianceUplink && (deviceConfig as any).applianceUplinkSettings) {
+            log(`  - Restoring device appliance uplink settings...`);
+            try {
+                await updateDeviceApplianceUplinkSettings(apiKey, region, serial, (deviceConfig as any).applianceUplinkSettings);
+                log(`    ✅ Device appliance uplink settings restored.`);
+            } catch (e) {
+                log(`    ❌ FAILED to restore device appliance uplink settings: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        } else if (!cats.deviceApplianceUplink) {
+            log(`  - ⏩ Skipping Device Appliance Uplink (category not selected).`);
+        }
+
+        // Device Appliance DHCP Subnets
+        if (cats.deviceApplianceDhcpSubnets && (deviceConfig as any).applianceDhcpSubnets && (deviceConfig as any).applianceDhcpSubnets.length > 0) {
+            log(`  - Restoring ${(deviceConfig as any).applianceDhcpSubnets.length} device appliance DHCP subnet(s)...`);
+            for (const subnet of (deviceConfig as any).applianceDhcpSubnets) {
+                try {
+                    const { vlanId, ...subnetBody } = subnet;
+                    // Try creating first, fall back to update if exists
+                    try {
+                        await createDeviceApplianceDhcpSubnet(apiKey, region, serial, { vlanId, ...subnetBody });
+                        log(`    ✅ DHCP subnet for VLAN ${vlanId} created.`);
+                    } catch (createErr: any) {
+                        if (createErr?.message?.toLowerCase().includes('already') || createErr?.message?.toLowerCase().includes('exist')) {
+                            await updateDeviceApplianceDhcpSubnet(apiKey, region, serial, vlanId, subnetBody);
+                            log(`    ✅ DHCP subnet for VLAN ${vlanId} updated.`);
+                        } else {
+                            throw createErr;
+                        }
+                    }
+                } catch (e) {
+                    log(`    ❌ FAILED to restore DHCP subnet: ${e instanceof Error ? e.message : String(e)}`);
+                }
+            }
+        } else if (!cats.deviceApplianceDhcpSubnets) {
+            log(`  - ⏩ Skipping Device Appliance DHCP Subnets (category not selected).`);
         }
 
         return true;
@@ -740,12 +1162,16 @@ export const restoreNetworkConfiguration = async (
     region: string,
     networkId: string,
     networkConfig: NetworkConfigBackup,
+    cats: RestoreCategories,
     log: (msg: string) => void
 ): Promise<number> => {
     let successCount = 0;
-    
-    // Helper to run and log a restore operation
-    const runRestore = async (name: string, backupData: any, restoreFn: () => Promise<any>) => {
+
+    const runRestore = async (name: string, backupData: any, cat: boolean, restoreFn: () => Promise<any>) => {
+        if (!cat) {
+            log(`  - ⏩ Skipping ${name} (category not selected).`);
+            return;
+        }
         if (backupData && (!Array.isArray(backupData) || backupData.length > 0)) {
             log(`  - Restoring ${name}...`);
             try {
@@ -762,10 +1188,9 @@ export const restoreNetworkConfiguration = async (
 
     // --- Appliance (MX) settings ---
 
-    // Enable VLAN mode on the destination MX before attempting any VLAN operations.
-    // Without this, the Meraki API rejects all VLAN create/update calls with a 400 error.
+    // Enable VLAN mode on the destination MX before attempting any VLAN operations
     let vlanModeReady = true;
-    if (networkConfig.applianceVlansSettings?.vlansEnabled) {
+    if (cats.vlans && networkConfig.applianceVlansSettings?.vlansEnabled) {
         log(`  - Enabling VLAN mode on destination MX...`);
         try {
             await updateNetworkApplianceVlansSettings(apiKey, region, networkId, { vlansEnabled: true });
@@ -777,26 +1202,20 @@ export const restoreNetworkConfiguration = async (
         }
     }
 
-    // VLANs: upsert — try CREATE, fall back to UPDATE if the VLAN already exists
-    await runRestore('VLANs', vlanModeReady ? networkConfig.applianceVlans : undefined, async () => {
+    // VLANs
+    await runRestore('VLANs', vlanModeReady ? networkConfig.applianceVlans : undefined, cats.vlans, async () => {
         if (networkConfig.applianceVlans) {
             for (const vlan of networkConfig.applianceVlans) {
-                // Strip server-assigned fields that the API won't accept in the body.
-                // 'id' is the VLAN number and MUST be in the POST body for create,
-                // but must NOT be in the PUT body (it goes in the URL instead).
                 const { networkId: _srcNetId, mask: _mask, ...vlanWithId } = vlan as any;
                 const { id, ...vlanWithoutId } = vlanWithId;
 
                 if (String(id) === "1") {
-                    // VLAN 1 always exists — update only (id goes in URL, not body)
                     await updateNetworkApplianceVlan(apiKey, region, networkId, id, vlanWithoutId);
                     continue;
                 }
                 try {
-                    // id is required in the POST body
                     await createNetworkApplianceVlan(apiKey, region, networkId, { id, ...vlanWithoutId });
                 } catch (createErr: any) {
-                    // VLAN already exists — update it instead (id goes in URL, not body)
                     if (createErr?.message?.toLowerCase().includes('already') || createErr?.message?.toLowerCase().includes('exist')) {
                         await updateNetworkApplianceVlan(apiKey, region, networkId, id, vlanWithoutId);
                     } else {
@@ -807,48 +1226,53 @@ export const restoreNetworkConfiguration = async (
         }
     });
 
-    await runRestore('L3 Firewall Rules', networkConfig.applianceL3FirewallRules, () =>
+    await runRestore('L3 Firewall Rules', networkConfig.applianceL3FirewallRules, cats.applianceFirewallL3, () =>
         updateNetworkApplianceFirewallL3FirewallRules(apiKey, region, networkId, networkConfig.applianceL3FirewallRules!)
     );
 
-    await runRestore('L7 Firewall Rules', networkConfig.applianceL7FirewallRules, () =>
+    await runRestore('L7 Firewall Rules', networkConfig.applianceL7FirewallRules, cats.applianceFirewallL7, () =>
         updateNetworkApplianceFirewallL7FirewallRules(apiKey, region, networkId, networkConfig.applianceL7FirewallRules!)
     );
 
-    await runRestore('Content Filtering', networkConfig.contentFiltering, () =>
+    await runRestore('Content Filtering', networkConfig.contentFiltering, cats.contentFiltering, () =>
         updateNetworkApplianceContentFiltering(apiKey, region, networkId, networkConfig.contentFiltering!)
     );
 
-    await runRestore('Intrusion Settings', networkConfig.intrusionSettings, () =>
+    // Intrusion + Malware (applianceSecurity)
+    await runRestore('Intrusion Settings', networkConfig.intrusionSettings, cats.applianceSecurity, () =>
         updateNetworkApplianceSecurityIntrusion(apiKey, region, networkId, networkConfig.intrusionSettings!)
     );
 
-    await runRestore('Malware Settings', networkConfig.malwareSettings, () =>
+    await runRestore('Malware Settings', networkConfig.malwareSettings, cats.applianceSecurity, () =>
         updateNetworkApplianceSecurityMalware(apiKey, region, networkId, networkConfig.malwareSettings!)
     );
 
-    await runRestore('Appliance Traffic Shaping Rules', networkConfig.trafficShapingRules, () =>
+    // Traffic Shaping + Uplink Selection (trafficShaping)
+    await runRestore('Appliance Traffic Shaping Rules', networkConfig.trafficShapingRules, cats.trafficShaping, () =>
         updateNetworkApplianceTrafficShapingRules(apiKey, region, networkId, networkConfig.trafficShapingRules!)
     );
 
-    await runRestore('Uplink Selection', networkConfig.uplinkSelection, () =>
+    await runRestore('Uplink Selection', networkConfig.uplinkSelection, cats.trafficShaping, () =>
         updateNetworkApplianceUplinkSelection(apiKey, region, networkId, networkConfig.uplinkSelection!)
     );
 
-    await runRestore('BGP Settings', networkConfig.bgpSettings, () =>
+    await runRestore('BGP Settings', networkConfig.bgpSettings, cats.bgpSettings, () =>
         updateNetworkApplianceVpnBgp(apiKey, region, networkId, networkConfig.bgpSettings!)
     );
 
-    await runRestore('Site-to-Site VPN', networkConfig.siteToSiteVpnSettings, () =>
+    await runRestore('Site-to-Site VPN', networkConfig.siteToSiteVpnSettings, cats.siteToSiteVpn, () =>
         updateNetworkApplianceVpnSiteToSiteVpn(apiKey, region, networkId, networkConfig.siteToSiteVpnSettings!)
     );
 
-    // Appliance static routes (create each individually)
-    if (networkConfig.staticRoutes && networkConfig.staticRoutes.length > 0) {
+    await runRestore('Appliance Settings', networkConfig.applianceSettings, cats.applianceSettings, () =>
+        updateNetworkApplianceSettings(apiKey, region, networkId, networkConfig.applianceSettings!)
+    );
+
+    // Appliance static routes
+    if (cats.applianceStaticRoutes && networkConfig.staticRoutes && networkConfig.staticRoutes.length > 0) {
         log(`  - Restoring ${networkConfig.staticRoutes.length} appliance static route(s)...`);
         for (const route of networkConfig.staticRoutes as ApplianceStaticRoute[]) {
             try {
-                // Strip server-assigned read-only fields before POST
                 const { id: _id, networkId: _rNetId, ...routeBody } = route as any;
                 await createNetworkApplianceStaticRoute(apiKey, region, networkId, routeBody);
                 log(`    ✅ Static route ${route.subnet} restored.`);
@@ -857,45 +1281,66 @@ export const restoreNetworkConfiguration = async (
                 log(`    ❌ FAILED to restore static route ${route.subnet}: ${e instanceof Error ? e.message : String(e)}`);
             }
         }
+    } else if (!cats.applianceStaticRoutes) {
+        log(`  - ⏩ Skipping Appliance Static Routes (category not selected).`);
     } else {
         log(`  - ⏩ Skipping Appliance Static Routes (no backup data).`);
     }
 
     // --- Switch (MS) network settings ---
 
-    await runRestore('Switch Settings', networkConfig.switchSettings, () =>
+    await runRestore('Switch Settings', networkConfig.switchSettings, cats.switchSettings, () =>
         updateNetworkSwitchSettings(apiKey, region, networkId, networkConfig.switchSettings!)
     );
 
-    await runRestore('Switch ACLs', networkConfig.switchAcls, () =>
+    await runRestore('Switch ACLs', networkConfig.switchAcls, cats.switchAcls, () =>
         updateNetworkSwitchAccessControlLists(apiKey, region, networkId, networkConfig.switchAcls!)
     );
 
-    // --- Network-wide settings ---
-
-    await runRestore('Syslog Servers', networkConfig.syslogServers, () =>
-        updateNetworkSyslogServers(apiKey, region, networkId, networkConfig.syslogServers!)
+    await runRestore('DHCP Server Policy', networkConfig.dhcpServerPolicy, cats.dhcpServerPolicy, () =>
+        updateNetworkSwitchDhcpServerPolicy(apiKey, region, networkId, networkConfig.dhcpServerPolicy!)
     );
 
-    // Group Policies (create each individually — IDs will differ in destination)
-    if (networkConfig.groupPolicies && networkConfig.groupPolicies.length > 0) {
-        log(`  - Restoring ${networkConfig.groupPolicies.length} Group Policies...`);
-        for (const policy of networkConfig.groupPolicies) {
+    await runRestore('Storm Control', networkConfig.stormControl, cats.stormControl, () =>
+        updateNetworkSwitchStormControl(apiKey, region, networkId, networkConfig.stormControl!)
+    );
+
+    await runRestore('Switch MTU', networkConfig.switchMtu, cats.switchMtu, () =>
+        updateNetworkSwitchMtu(apiKey, region, networkId, networkConfig.switchMtu!)
+    );
+
+    await runRestore('Switch OSPF', networkConfig.switchOspf, cats.switchOspf, () =>
+        updateNetworkSwitchOspf(apiKey, region, networkId, networkConfig.switchOspf!)
+    );
+
+    // QoS Rules
+    await runRestore('QoS Rules', networkConfig.qosRules, cats.qosRules, () =>
+        updateNetworkSwitchQosRules(apiKey, region, networkId, { rules: networkConfig.qosRules })
+    );
+
+    // Link Aggregations
+    if (cats.switchLinkAggregations && networkConfig.switchLinkAggregations && networkConfig.switchLinkAggregations.length > 0) {
+        log(`  - Restoring ${networkConfig.switchLinkAggregations.length} link aggregation(s)...`);
+        for (const agg of networkConfig.switchLinkAggregations) {
             try {
-                const { groupPolicyId, ...policyData } = policy;
-                await createNetworkGroupPolicy(apiKey, region, networkId, policyData);
-                log(`    ✅ Group Policy "${policy.name}" restored.`);
+                const { id, ...aggBody } = agg as any;
+                await createNetworkSwitchLinkAggregation(apiKey, region, networkId, aggBody);
+                log(`    ✅ Link aggregation created.`);
                 successCount++;
-            } catch(e) {
-                log(`    ❌ FAILED to restore Group Policy "${policy.name}": ${e instanceof Error ? e.message : String(e)}`);
+            } catch (e) {
+                log(`    ❌ FAILED to create link aggregation: ${e instanceof Error ? e.message : String(e)}`);
             }
         }
+    } else if (!cats.switchLinkAggregations) {
+        log(`  - ⏩ Skipping Link Aggregations (category not selected).`);
     } else {
-        log(`  - ⏩ Skipping Group Policies (no backup data).`);
+        log(`  - ⏩ Skipping Link Aggregations (no backup data).`);
     }
 
-    // SSIDs (update by SSID number)
-    if (networkConfig.ssids && networkConfig.ssids.length > 0) {
+    // --- Wireless (MR) ---
+
+    // SSIDs (base config)
+    if (cats.ssids && networkConfig.ssids && networkConfig.ssids.length > 0) {
         log(`  - Restoring ${networkConfig.ssids.length} SSID(s)...`);
         const destSsids = await getNetworkWirelessSsids(apiKey, region, networkId).catch(() => [] as WirelessSsid[]);
         for (const ssid of networkConfig.ssids) {
@@ -912,9 +1357,318 @@ export const restoreNetworkConfiguration = async (
                 log(`    ❌ FAILED to restore SSID "${ssid.name}": ${e instanceof Error ? e.message : String(e)}`);
             }
         }
+    } else if (!cats.ssids) {
+        log(`  - ⏩ Skipping SSIDs (category not selected).`);
     } else {
         log(`  - ⏩ Skipping SSIDs (no backup data).`);
     }
+
+    // SSID Firewall Rules (L3 + L7)
+    if (cats.ssidFirewallRules && networkConfig.ssidFirewallL3Rules) {
+        for (const [ssidNumStr, rules] of Object.entries(networkConfig.ssidFirewallL3Rules)) {
+            const ssidNum = parseInt(ssidNumStr, 10);
+            await runRestore(`SSID ${ssidNum} L3 Firewall Rules`, rules, cats.ssidFirewallRules, () =>
+                updateNetworkWirelessSsidFirewallL3Rules(apiKey, region, networkId, ssidNum, rules)
+            );
+        }
+    }
+    if (cats.ssidFirewallRules && networkConfig.ssidFirewallL7Rules) {
+        for (const [ssidNumStr, rules] of Object.entries(networkConfig.ssidFirewallL7Rules)) {
+            const ssidNum = parseInt(ssidNumStr, 10);
+            await runRestore(`SSID ${ssidNum} L7 Firewall Rules`, rules, cats.ssidFirewallRules, () =>
+                updateNetworkWirelessSsidFirewallL7Rules(apiKey, region, networkId, ssidNum, rules)
+            );
+        }
+    }
+
+    // SSID Traffic Shaping
+    if (cats.ssidTrafficShaping && networkConfig.ssidTrafficShaping) {
+        for (const [ssidNumStr, rules] of Object.entries(networkConfig.ssidTrafficShaping)) {
+            const ssidNum = parseInt(ssidNumStr, 10);
+            await runRestore(`SSID ${ssidNum} Traffic Shaping`, rules, cats.ssidTrafficShaping, () =>
+                updateNetworkWirelessSsidTrafficShapingRules(apiKey, region, networkId, ssidNum, rules)
+            );
+        }
+    }
+
+    // Wireless RF Profiles
+    if (cats.wirelessRfProfiles && networkConfig.wirelessRfProfiles && networkConfig.wirelessRfProfiles.length > 0) {
+        log(`  - Restoring ${networkConfig.wirelessRfProfiles.length} RF profile(s)...`);
+        for (const profile of networkConfig.wirelessRfProfiles) {
+            try {
+                const { id, networkId: _nid, ...profileBody } = profile as any;
+                await createNetworkWirelessRfProfile(apiKey, region, networkId, profileBody);
+                log(`    ✅ RF profile "${profile.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create RF profile "${profile.name}": ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.wirelessRfProfiles) {
+        log(`  - ⏩ Skipping RF Profiles (category not selected).`);
+    } else {
+        log(`  - ⏩ Skipping RF Profiles (no backup data).`);
+    }
+
+    await runRestore('Bluetooth Settings', networkConfig.bluetoothSettings, cats.bluetoothSettings, () =>
+        updateNetworkWirelessBluetoothSettings(apiKey, region, networkId, networkConfig.bluetoothSettings!)
+    );
+
+    await runRestore('Wireless Settings', networkConfig.wirelessSettings, cats.wirelessSettings, () =>
+        updateNetworkWirelessSettings(apiKey, region, networkId, networkConfig.wirelessSettings!)
+    );
+
+    // --- Network General ---
+
+    await runRestore('Syslog Servers', networkConfig.syslogServers, cats.syslogServers, () =>
+        updateNetworkSyslogServers(apiKey, region, networkId, networkConfig.syslogServers!)
+    );
+
+    // Group Policies
+    if (cats.groupPolicies && networkConfig.groupPolicies && networkConfig.groupPolicies.length > 0) {
+        log(`  - Restoring ${networkConfig.groupPolicies.length} Group Policies...`);
+        for (const policy of networkConfig.groupPolicies) {
+            try {
+                const { groupPolicyId, ...policyData } = policy;
+                await createNetworkGroupPolicy(apiKey, region, networkId, policyData);
+                log(`    ✅ Group Policy "${policy.name}" restored.`);
+                successCount++;
+            } catch(e) {
+                log(`    ❌ FAILED to restore Group Policy "${policy.name}": ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.groupPolicies) {
+        log(`  - ⏩ Skipping Group Policies (category not selected).`);
+    } else {
+        log(`  - ⏩ Skipping Group Policies (no backup data).`);
+    }
+
+    await runRestore('Network SNMP', networkConfig.snmp, cats.networkSnmp, () =>
+        updateNetworkSnmp(apiKey, region, networkId, networkConfig.snmp!)
+    );
+
+    await runRestore('Network Alerts', networkConfig.networkAlerts, cats.networkAlerts, () =>
+        updateNetworkAlertsSettings(apiKey, region, networkId, networkConfig.networkAlerts!)
+    );
+
+    // --- Additional Appliance Settings ---
+
+    await runRestore('Cellular Firewall Rules', (networkConfig as any).cellularFirewallRules, cats.cellularFirewallRules, () =>
+        updateNetworkApplianceFirewallCellularFirewallRules(apiKey, region, networkId, (networkConfig as any).cellularFirewallRules!)
+    );
+
+    await runRestore('Inbound Firewall Rules', (networkConfig as any).inboundFirewallRules, cats.inboundFirewallRules, () =>
+        updateNetworkApplianceFirewallInboundFirewallRules(apiKey, region, networkId, (networkConfig as any).inboundFirewallRules!)
+    );
+
+    await runRestore('One-to-Many NAT Rules', (networkConfig as any).oneToManyNatRules, cats.oneToManyNat, () =>
+        updateNetworkApplianceFirewallOneToManyNatRules(apiKey, region, networkId, (networkConfig as any).oneToManyNatRules!)
+    );
+
+    await runRestore('One-to-One NAT Rules', (networkConfig as any).oneToOneNatRules, cats.oneToOneNat, () =>
+        updateNetworkApplianceFirewallOneToOneNatRules(apiKey, region, networkId, (networkConfig as any).oneToOneNatRules!)
+    );
+
+    await runRestore('Port Forwarding Rules', (networkConfig as any).portForwardingRules, cats.portForwardingRules, () =>
+        updateNetworkApplianceFirewallPortForwardingRules(apiKey, region, networkId, (networkConfig as any).portForwardingRules!)
+    );
+
+    await runRestore('Traffic Shaping General', (networkConfig as any).trafficShaping, cats.trafficShapingGeneral, () =>
+        updateNetworkApplianceTrafficShaping(apiKey, region, networkId, (networkConfig as any).trafficShaping!)
+    );
+
+    // Custom Performance Classes
+    if (cats.customPerformanceClasses && (networkConfig as any).customPerformanceClasses && (networkConfig as any).customPerformanceClasses.length > 0) {
+        log(`  - Restoring ${(networkConfig as any).customPerformanceClasses.length} custom performance class(es)...`);
+        for (const perfClass of (networkConfig as any).customPerformanceClasses) {
+            try {
+                const { customPerformanceClassId, ...classBody } = perfClass;
+                await createNetworkApplianceTrafficShapingCustomPerformanceClass(apiKey, region, networkId, classBody);
+                log(`    ✅ Custom performance class created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create custom performance class: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.customPerformanceClasses) {
+        log(`  - ⏩ Skipping Custom Performance Classes (category not selected).`);
+    }
+
+    await runRestore('Connectivity Monitoring Destinations', (networkConfig as any).connectivityMonitoring, cats.applianceConnectivityMonitoring, () =>
+        updateNetworkApplianceConnectivityMonitoringDestinations(apiKey, region, networkId, (networkConfig as any).connectivityMonitoring!)
+    );
+
+    await runRestore('Appliance Uplinks Settings', (networkConfig as any).applianceUplinksSettings, cats.applianceUplinksSettings, () =>
+        updateNetworkApplianceUplinksSettings(apiKey, region, networkId, (networkConfig as any).applianceUplinksSettings!)
+    );
+
+    // --- Additional Switch Settings ---
+
+    // Switch Access Policies
+    if (cats.switchAccessPolicies && (networkConfig as any).switchAccessPolicies && (networkConfig as any).switchAccessPolicies.length > 0) {
+        log(`  - Restoring ${(networkConfig as any).switchAccessPolicies.length} switch access polic(ies)...`);
+        for (const policy of (networkConfig as any).switchAccessPolicies) {
+            try {
+                const { accessPolicyId, ...policyBody } = policy;
+                await createNetworkSwitchAccessPolicy(apiKey, region, networkId, policyBody);
+                log(`    ✅ Switch access policy created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create switch access policy: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.switchAccessPolicies) {
+        log(`  - ⏩ Skipping Switch Access Policies (category not selected).`);
+    }
+
+    await runRestore('Network STP', (networkConfig as any).switchStp, cats.networkStp, () =>
+        updateNetworkSwitchStp(apiKey, region, networkId, (networkConfig as any).switchStp!)
+    );
+
+    // --- Additional Wireless Settings ---
+
+    // SSID-specific advanced settings
+    if (networkConfig.ssids && networkConfig.ssids.length > 0) {
+        for (const ssid of networkConfig.ssids) {
+            const ssidNum = ssid.number;
+            const ssidName = ssid.name || `SSID ${ssidNum}`;
+
+            // Bonjour Forwarding
+            if (cats.ssidBonjourForwarding && (ssid as any).bonjourForwarding) {
+                await runRestore(`Bonjour Forwarding (${ssidName})`, (ssid as any).bonjourForwarding, cats.ssidBonjourForwarding, () =>
+                    updateNetworkWirelessSsidBonjourForwarding(apiKey, region, networkId, ssidNum, (ssid as any).bonjourForwarding!)
+                );
+            }
+
+            // Device Type Group Policies
+            if (cats.ssidDeviceTypeGroupPolicies && (ssid as any).deviceTypeGroupPolicies) {
+                await runRestore(`Device Type Group Policies (${ssidName})`, (ssid as any).deviceTypeGroupPolicies, cats.ssidDeviceTypeGroupPolicies, () =>
+                    updateNetworkWirelessSsidDeviceTypeGroupPolicies(apiKey, region, networkId, ssidNum, (ssid as any).deviceTypeGroupPolicies!)
+                );
+            }
+
+            // Hotspot 2.0
+            if (cats.ssidHotspot20 && (ssid as any).hotspot20) {
+                await runRestore(`Hotspot 2.0 (${ssidName})`, (ssid as any).hotspot20, cats.ssidHotspot20, () =>
+                    updateNetworkWirelessSsidHotspot20(apiKey, region, networkId, ssidNum, (ssid as any).hotspot20!)
+                );
+            }
+
+            // Identity PSKs
+            if (cats.ssidIdentityPsks && (ssid as any).identityPsks && (ssid as any).identityPsks.length > 0) {
+                log(`  - Restoring ${(ssid as any).identityPsks.length} Identity PSK(s) for ${ssidName}...`);
+                for (const psk of (ssid as any).identityPsks) {
+                    try {
+                        const { id, ...pskBody } = psk;
+                        await createNetworkWirelessSsidIdentityPsk(apiKey, region, networkId, ssidNum, pskBody);
+                        log(`    ✅ Identity PSK created.`);
+                        successCount++;
+                    } catch (e) {
+                        log(`    ❌ FAILED to create Identity PSK: ${e instanceof Error ? e.message : String(e)}`);
+                    }
+                }
+            }
+
+            // SSID Schedules
+            if (cats.ssidSchedules && (ssid as any).schedules) {
+                await runRestore(`SSID Schedules (${ssidName})`, (ssid as any).schedules, cats.ssidSchedules, () =>
+                    updateNetworkWirelessSsidSchedules(apiKey, region, networkId, ssidNum, (ssid as any).schedules!)
+                );
+            }
+
+            // Splash Settings
+            if (cats.ssidSplashSettings && (ssid as any).splashSettings) {
+                await runRestore(`Splash Settings (${ssidName})`, (ssid as any).splashSettings, cats.ssidSplashSettings, () =>
+                    updateNetworkWirelessSsidSplashSettings(apiKey, region, networkId, ssidNum, (ssid as any).splashSettings!)
+                );
+            }
+
+            // VPN Settings
+            if (cats.ssidVpnSettings && (ssid as any).vpn) {
+                await runRestore(`VPN Settings (${ssidName})`, (ssid as any).vpn, cats.ssidVpnSettings, () =>
+                    updateNetworkWirelessSsidVpn(apiKey, region, networkId, ssidNum, (ssid as any).vpn!)
+                );
+            }
+        }
+    }
+
+    await runRestore('Alternate Management Interface', (networkConfig as any).alternateManagementInterface, cats.alternateManagementInterface, () =>
+        updateNetworkWirelessAlternateManagementInterface(apiKey, region, networkId, (networkConfig as any).alternateManagementInterface!)
+    );
+
+    await runRestore('Wireless Billing', (networkConfig as any).wirelessBilling, cats.wirelessBilling, () =>
+        updateNetworkWirelessBilling(apiKey, region, networkId, (networkConfig as any).wirelessBilling!)
+    );
+
+    // --- Additional Network General Settings ---
+
+    await runRestore('Network Settings', (networkConfig as any).networkSettings, cats.networkSettings, () =>
+        updateNetworkSettings(apiKey, region, networkId, (networkConfig as any).networkSettings!)
+    );
+
+    // Floor Plans
+    if (cats.floorPlans && (networkConfig as any).floorPlans && (networkConfig as any).floorPlans.length > 0) {
+        log(`  - Restoring ${(networkConfig as any).floorPlans.length} floor plan(s)...`);
+        for (const plan of (networkConfig as any).floorPlans) {
+            try {
+                const { floorPlanId, ...planBody } = plan;
+                await createNetworkFloorPlan(apiKey, region, networkId, planBody);
+                log(`    ✅ Floor plan "${plan.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create floor plan: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.floorPlans) {
+        log(`  - ⏩ Skipping Floor Plans (category not selected).`);
+    }
+
+    await runRestore('Netflow Settings', (networkConfig as any).netflow, cats.netflowSettings, () =>
+        updateNetworkNetflow(apiKey, region, networkId, (networkConfig as any).netflow!)
+    );
+
+    await runRestore('Traffic Analysis', (networkConfig as any).trafficAnalysis, cats.trafficAnalysis, () =>
+        updateNetworkTrafficAnalysis(apiKey, region, networkId, (networkConfig as any).trafficAnalysis!)
+    );
+
+    // VLAN Profiles
+    if (cats.vlanProfiles && (networkConfig as any).vlanProfiles && (networkConfig as any).vlanProfiles.length > 0) {
+        log(`  - Restoring ${(networkConfig as any).vlanProfiles.length} VLAN profile(s)...`);
+        for (const profile of (networkConfig as any).vlanProfiles) {
+            try {
+                const { iname, ...profileBody } = profile;
+                await createNetworkVlanProfile(apiKey, region, networkId, profileBody);
+                log(`    ✅ VLAN profile created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create VLAN profile: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.vlanProfiles) {
+        log(`  - ⏩ Skipping VLAN Profiles (category not selected).`);
+    }
+
+    // Network Webhook HTTP Servers
+    if (cats.networkWebhooks && (networkConfig as any).webhookHttpServers && (networkConfig as any).webhookHttpServers.length > 0) {
+        log(`  - Restoring ${(networkConfig as any).webhookHttpServers.length} network webhook HTTP server(s)...`);
+        for (const server of (networkConfig as any).webhookHttpServers) {
+            try {
+                const { id, ...serverBody } = server;
+                await createNetworkWebhookHttpServer(apiKey, region, networkId, serverBody);
+                log(`    ✅ Webhook server "${server.name}" created.`);
+                successCount++;
+            } catch (e) {
+                log(`    ❌ FAILED to create webhook server: ${e instanceof Error ? e.message : String(e)}`);
+            }
+        }
+    } else if (!cats.networkWebhooks) {
+        log(`  - ⏩ Skipping Network Webhook HTTP Servers (category not selected).`);
+    }
+
+    // Network Details
+    await runRestore('Network Details', (networkConfig as any).networkDetails, cats.networkDetails, () =>
+        updateNetwork(apiKey, region, networkId, (networkConfig as any).networkDetails!)
+    );
 
     return successCount;
 };

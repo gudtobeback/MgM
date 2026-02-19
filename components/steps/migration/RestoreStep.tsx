@@ -3,7 +3,36 @@ import { Card } from '../../ui/card';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { restoreDeviceConfiguration, restoreNetworkConfiguration } from '../../../services/merakiService';
 import { MigrationData } from '../../MigrationWizard';
-import { DeviceBackup, NetworkConfigBackup } from '../../../types';
+import { DeviceBackup, NetworkConfigBackup, RestoreCategories } from '../../../types';
+
+// Default categories: restore everything in migration flow
+const ALL_CATEGORIES: RestoreCategories = {
+  orgDetails: true, orgAdmins: true, orgPolicyObjects: true, orgPolicyObjectGroups: true, orgSnmp: true,
+  orgVpnFirewallRules: true, orgThirdPartyVpn: true, orgAlertProfiles: true,
+  orgBrandingPolicies: true, orgBrandingPoliciesPriorities: true, orgConfigTemplates: true, orgLoginSecurity: true,
+  orgSamlRoles: true, orgApplianceSecurityIntrusion: true, orgWebhooks: true,
+  vlans: true, applianceFirewallL3: true, applianceFirewallL7: true, cellularFirewallRules: true,
+  inboundFirewallRules: true, oneToManyNat: true, oneToOneNat: true, portForwardingRules: true,
+  applianceStaticRoutes: true, contentFiltering: true, applianceSecurity: true,
+  trafficShaping: true, trafficShapingGeneral: true, customPerformanceClasses: true,
+  applianceSettings: true, applianceConnectivityMonitoring: true, applianceUplinksSettings: true,
+  siteToSiteVpn: true, bgpSettings: true,
+  switchPorts: true, switchRoutingInterfaces: true, switchAcls: true, switchAccessPolicies: true,
+  switchSettings: true, networkStp: true, portSchedules: true, qosRules: true,
+  dhcpServerPolicy: true, stormControl: true, switchMtu: true, switchOspf: true,
+  switchLinkAggregations: true,
+  ssids: true, ssidFirewallRules: true, ssidTrafficShaping: true, ssidBonjourForwarding: true,
+  ssidDeviceTypeGroupPolicies: true, ssidHotspot20: true, ssidIdentityPsks: true,
+  ssidSchedules: true, ssidSplashSettings: true, ssidVpnSettings: true,
+  wirelessRfProfiles: true, bluetoothSettings: true, wirelessSettings: true,
+  alternateManagementInterface: true, wirelessBilling: true,
+  networkDetails: true, groupPolicies: true, syslogServers: true, networkSnmp: true, networkAlerts: true,
+  networkSettings: true, floorPlans: true, netflowSettings: true, trafficAnalysis: true,
+  vlanProfiles: true, networkWebhooks: true,
+  managementInterface: true, wirelessRadioSettings: true,
+  deviceSwitchOspf: true, deviceSwitchStp: true,
+  deviceApplianceUplink: true, deviceApplianceDhcpSubnets: true,
+};
 
 interface RestoreStepProps {
   data: MigrationData;
@@ -49,7 +78,7 @@ export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
             if (backupedDevice) {
                 log(`- Restoring configuration for ${migratedDevice.name} (${migratedDevice.serial})...`);
                 const success = await restoreDeviceConfiguration(
-                    destinationApiKey, destinationRegion, migratedDevice.serial, backupedDevice.config, log
+                    destinationApiKey, destinationRegion, migratedDevice.serial, backupedDevice.config, ALL_CATEGORIES, log
                 );
                 if (success) deviceSuccessCount++;
             } else {
@@ -67,7 +96,7 @@ export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
             if (networkConfig) {
                 log(`- Restoring configurations from source network ${netId}...`);
                 const restoredCount = await restoreNetworkConfiguration(
-                    destinationApiKey, destinationRegion, destinationNetwork!.id, networkConfig, log
+                    destinationApiKey, destinationRegion, destinationNetwork!.id, networkConfig, ALL_CATEGORIES, log
                 );
                 networkSuccessCount += restoredCount;
             } else {

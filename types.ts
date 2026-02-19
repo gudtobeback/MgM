@@ -413,52 +413,97 @@ export interface BackupFile {
 
 export interface RestoreCategories {
   // ── Organization ──────────────────────────────────
+  orgDetails: boolean;
   orgAdmins: boolean;
   orgPolicyObjects: boolean;
+  orgPolicyObjectGroups: boolean;
   orgSnmp: boolean;
   orgVpnFirewallRules: boolean;
   orgThirdPartyVpn: boolean;
+  orgAlertProfiles: boolean;
+  orgBrandingPolicies: boolean;
+  orgBrandingPoliciesPriorities: boolean;
+  orgConfigTemplates: boolean;
+  orgLoginSecurity: boolean;
+  orgSamlRoles: boolean;
+  orgApplianceSecurityIntrusion: boolean;
+  orgWebhooks: boolean;
 
   // ── Appliance (MX) ────────────────────────────────
   vlans: boolean;
   applianceFirewallL3: boolean;
   applianceFirewallL7: boolean;
+  cellularFirewallRules: boolean;
+  inboundFirewallRules: boolean;
+  oneToManyNat: boolean;
+  oneToOneNat: boolean;
+  portForwardingRules: boolean;
   applianceStaticRoutes: boolean;
   contentFiltering: boolean;
-  applianceSecurity: boolean;        // intrusion + malware
-  trafficShaping: boolean;           // traffic shaping + uplink selection
+  applianceSecurity: boolean;              // intrusion + malware
+  trafficShaping: boolean;                 // traffic shaping rules + uplink selection
+  trafficShapingGeneral: boolean;
+  customPerformanceClasses: boolean;
   applianceSettings: boolean;
+  applianceConnectivityMonitoring: boolean;
+  applianceUplinksSettings: boolean;
   siteToSiteVpn: boolean;
   bgpSettings: boolean;
 
   // ── Switch (MS) ───────────────────────────────────
-  switchPorts: boolean;              // device-level
-  switchRoutingInterfaces: boolean;  // device-level SVIs + static routes
+  switchPorts: boolean;                    // device-level
+  switchRoutingInterfaces: boolean;        // device-level SVIs + static routes
   switchAcls: boolean;
+  switchAccessPolicies: boolean;
   switchSettings: boolean;
+  networkStp: boolean;
   portSchedules: boolean;
   qosRules: boolean;
   dhcpServerPolicy: boolean;
   stormControl: boolean;
   switchMtu: boolean;
-  switchOspf: boolean;
+  switchOspf: boolean;                     // network-level
   switchLinkAggregations: boolean;
 
   // ── Wireless (MR) ─────────────────────────────────
   ssids: boolean;
-  ssidFirewallRules: boolean;        // per-SSID L3 + L7
+  ssidFirewallRules: boolean;              // per-SSID L3 + L7
   ssidTrafficShaping: boolean;
+  ssidBonjourForwarding: boolean;
+  ssidDeviceTypeGroupPolicies: boolean;
+  ssidHotspot20: boolean;
+  ssidIdentityPsks: boolean;
+  ssidSchedules: boolean;
+  ssidSplashSettings: boolean;
+  ssidVpnSettings: boolean;
   wirelessRfProfiles: boolean;
   bluetoothSettings: boolean;
   wirelessSettings: boolean;
+  alternateManagementInterface: boolean;
+  wirelessBilling: boolean;
 
   // ── Network General ───────────────────────────────
+  networkDetails: boolean;
   groupPolicies: boolean;
   syslogServers: boolean;
   networkSnmp: boolean;
   networkAlerts: boolean;
+  networkSettings: boolean;
+  floorPlans: boolean;
+  netflowSettings: boolean;
+  trafficAnalysis: boolean;
+  vlanProfiles: boolean;
+  networkWebhooks: boolean;
 
-  // ── Device ────────────────────────────────────────
+  // ── Device - General ──────────────────────────────
   managementInterface: boolean;
   wirelessRadioSettings: boolean;
+
+  // ── Device - Switch ───────────────────────────────
+  deviceSwitchOspf: boolean;
+  deviceSwitchStp: boolean;
+
+  // ── Device - Appliance ────────────────────────────
+  deviceApplianceUplink: boolean;
+  deviceApplianceDhcpSubnets: boolean;
 }
