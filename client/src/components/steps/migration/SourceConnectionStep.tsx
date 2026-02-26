@@ -170,7 +170,7 @@ export function SourceConnectionStep({
         </div>
 
         {/* Note */}
-        <AlertCard variant="success">
+        <AlertCard variant="note">
           <p>
             <strong>Note:</strong> Your API key is only used for this session
             and is never stored. Make sure you have administrator access to the

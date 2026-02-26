@@ -108,7 +108,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
             </div>
 
             {/* Warning */}
-            <AlertCard variant="error">
+            <AlertCard variant="alert">
               <p>
                 <strong>Warning: </strong>This action is irreversible. All
                 devices will be unclaimed from the source and moved. This will

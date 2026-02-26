@@ -21,6 +21,7 @@ import {
   Users,
   Settings2,
   Menu,
+  LogOut,
   X,
   LayoutGrid,
   ArrowRight,
@@ -113,6 +114,7 @@ interface SidebarProps {
   collapsed: boolean;
   onToggleCollapse: () => void;
   userRole?: string;
+  onLogout: () => void;
   userPermissions?: Record<string, boolean>;
 }
 
@@ -123,6 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
   userRole,
   userPermissions = {},
+  onLogout,
 }) => {
   const navigate = useNavigate();
   const isCompanyAdmin = userRole === "company_admin";
@@ -153,9 +156,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className={`flex flex-col h-full shrink-0 z-40 bg-white`}>
+    <aside className={`flex flex-col h-full shrink-0 z-40 bg-white border-r`}>
       {/* NAV */}
-      <nav className="flex-1 overflow-y-auto px-3 space-y-1">
+      <nav className="flex-1 flex flex-col gap-1 overflow-y-auto px-3 pb-3">
         <div className="h-18 flex items-center justify-between">
           {!collapsed && (
             <div className="ml-2 font-bold text-[20px] text-[#049FD9]">
@@ -171,79 +174,94 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
-        {navItems.map((item) => {
-          const groupActive = isGroupActive(item);
-          const isExpanded = expandedGroup === item.id;
-          const hasChildren = item.children && item.children.length > 0;
+        <div className="flex-1 flex flex-col gap-1">
+          {navItems.map((item) => {
+            const groupActive = isGroupActive(item);
+            const isExpanded = expandedGroup === item.id;
+            const hasChildren = item.children && item.children.length > 0;
 
-          const handleItemClick = () => {
-            if (hasChildren) {
-              setExpandedGroup(isExpanded ? null : item.id);
-              if (!isExpanded && item.children) {
-                handleNavigate(item.children[0].id);
+            const handleItemClick = () => {
+              if (hasChildren) {
+                setExpandedGroup(isExpanded ? null : item.id);
+                // if (!isExpanded && item.children) {
+                //   handleNavigate(item.children[0].id);
+                // }
+              } else {
+                handleNavigate(item.id);
               }
-            } else {
-              handleNavigate(item.id);
-            }
-          };
+            };
 
-          return (
-            <div key={item.id}>
-              <button
-                onClick={handleItemClick}
-                className={`flex items-center w-full p-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  collapsed ? "justify-center" : "gap-3"
-                } ${
-                  groupActive
-                    ? "bg-[#049FD9] text-white shadow-md"
-                    : "text-gray-600 hover:bg-white/60 hover:text-gray-900"
-                }`}
-              >
-                <span className="shrink-0">{item.icon}</span>
+            return (
+              <div key={item.id}>
+                <button
+                  onClick={handleItemClick}
+                  className={`flex items-center w-full p-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    collapsed ? "justify-center" : "gap-3"
+                  } ${
+                    groupActive
+                      ? "bg-[#049FD9] text-white shadow-md"
+                      : "text-gray-600 hover:bg-white/60 hover:text-gray-900"
+                  }`}
+                >
+                  <span className="shrink-0">{item.icon}</span>
 
-                {!collapsed && (
-                  <>
-                    <span className="flex-1 truncate text-left">
-                      {item.label}
-                    </span>
-                    {hasChildren && (
-                      <ChevronRight
-                        size={14}
-                        className={`transition-transform duration-200 ${
-                          isExpanded ? "rotate-45" : ""
-                        }`}
-                      />
-                    )}
-                  </>
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1 truncate text-left">
+                        {item.label}
+                      </span>
+                      {hasChildren && (
+                        <ChevronRight
+                          size={14}
+                          className={`transition-transform duration-200 ${
+                            isExpanded ? "rotate-45" : ""
+                          }`}
+                        />
+                      )}
+                    </>
+                  )}
+                </button>
+
+                {!collapsed && isExpanded && item.children && (
+                  <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-2">
+                    {item.children.map((child) => {
+                      const childActive = activeMode === child.id;
+                      return (
+                        <button
+                          key={child.id}
+                          onClick={() => handleNavigate(child.id)}
+                          className={`flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left ${
+                            childActive
+                              ? "bg-blue-50 text-[#049FD9] font-medium"
+                              : "text-gray-600 hover:bg-white/50 hover:text-gray-900"
+                          }`}
+                        >
+                          {childActive && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#049FD9] mr-2" />
+                          )}
+                          <span className="truncate">{child.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
-              </button>
+              </div>
+            );
+          })}
+        </div>
 
-              {!collapsed && isExpanded && item.children && (
-                <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-2">
-                  {item.children.map((child) => {
-                    const childActive = activeMode === child.id;
-                    return (
-                      <button
-                        key={child.id}
-                        onClick={() => handleNavigate(child.id)}
-                        className={`flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left ${
-                          childActive
-                            ? "bg-blue-50 text-[#049FD9] font-medium"
-                            : "text-gray-600 hover:bg-white/50 hover:text-gray-900"
-                        }`}
-                      >
-                        {childActive && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#049FD9] mr-2" />
-                        )}
-                        <span className="truncate">{child.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        <button
+          onClick={onLogout}
+          className={`flex items-center w-full p-2.5 text-sm font-medium text-gray-600 hover:bg-red-100 hover:text-red-500 rounded-lg transition-all duration-200 ${
+            collapsed ? "justify-center" : "gap-3"
+          } `}
+        >
+          <LogOut size={18} />
+
+          {!collapsed && (
+            <span className="flex-1 truncate text-left">Logout</span>
+          )}
+        </button>
       </nav>
     </aside>
   );

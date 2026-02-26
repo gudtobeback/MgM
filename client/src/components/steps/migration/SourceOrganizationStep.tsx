@@ -198,7 +198,7 @@ export function SourceOrganizationStep({
 
             {/* Note */}
             {(data.sourceOrg || data.sourceNetwork) && (
-              <AlertCard variant="success">
+              <AlertCard variant="note">
                 {data.sourceOrg && (
                   <p>
                     <strong>Organization:</strong> {data.sourceOrg.name}

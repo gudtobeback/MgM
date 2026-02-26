@@ -39,6 +39,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         userRole={user?.role}
         userPermissions={userPermissions}
+        onLogout={onLogout}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden bg-transparent">

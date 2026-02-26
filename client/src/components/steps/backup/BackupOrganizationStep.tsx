@@ -114,7 +114,7 @@ export function BackupOrganizationStep({
             </LabelInput>
 
             {selectedOrgId && data.organization && (
-              <AlertCard variant="success">
+              <AlertCard variant="note">
                 <p>
                   <strong>Selected: </strong>
                   {data.organization.name}

@@ -423,31 +423,26 @@ export function DestinationStep({
 
         {/* Selected summary */}
         {data.destinationNetwork && (
-          <div className="px-4 py-3 bg-blue-50 border border-blue-200 rounded-md text-[13px] text-[#1e3a5f] flex items-center gap-2.5">
-            <CheckCircle2 size={16} className="text-blue-600 shrink-0" />
+          <AlertCard variant="success">
+            <div className="font-semibold">{data.destinationNetwork.name}</div>
             <div>
-              <div className="font-semibold mb-[2px]">
-                {data.destinationNetwork.name}
-              </div>
-              <div className="text-[12px] text-blue-600">
-                {data.destinationOrg?.name}
-                {data.destinationDevices.length > 0 && (
-                  <span>
-                    {" "}
-                    &middot;{" "}
-                    {
-                      data.destinationDevices.filter(
-                        (d) =>
-                          d.model?.startsWith("C93") ||
-                          d.model?.startsWith("C9K"),
-                      ).length
-                    }{" "}
-                    Cat9K device(s) found
-                  </span>
-                )}
-              </div>
+              {data.destinationOrg?.name}
+              {data.destinationDevices.length > 0 && (
+                <span>
+                  {" "}
+                  &middot;{" "}
+                  {
+                    data.destinationDevices.filter(
+                      (d) =>
+                        d.model?.startsWith("C93") ||
+                        d.model?.startsWith("C9K"),
+                    ).length
+                  }{" "}
+                  Cat9K device(s) found
+                </span>
+              )}
             </div>
-          </div>
+          </AlertCard>
         )}
       </div>
     </div>

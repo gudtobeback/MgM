@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { User, Key, CreditCard, CheckCircle2, Loader2, Sparkles, Shield } from 'lucide-react';
-import { apiClient } from '../../services/apiClient';
-import { cn } from '../../lib/utils';
+import React, { useState, useEffect } from "react";
+import {
+  User,
+  Key,
+  CreditCard,
+  CheckCircle2,
+  Loader2,
+  Sparkles,
+  Shield,
+} from "lucide-react";
+import { apiClient } from "../../services/apiClient";
+import { cn } from "../../lib/utils";
 
 interface UserProfile {
   id: string;
@@ -18,127 +26,197 @@ interface ProfilePageProps {
 
 const TIERS = [
   {
-    id: 'free',
-    label: 'Free',
-    from: '#9ca3af', to: '#6b7280',
-    ring: 'ring-gray-300',
-    features: ['Migration wizard', 'Manual backups', '1 organization', '5 snapshots'],
+    id: "free",
+    label: "Free",
+    from: "#9ca3af",
+    to: "#6b7280",
+    ring: "ring-gray-300",
+    features: [
+      "Migration wizard",
+      "Manual backups",
+      "1 organization",
+      "5 snapshots",
+    ],
   },
   {
-    id: 'essentials',
-    label: 'Essentials',
-    from: '#38bdf8', to: '#0ea5e9',
-    ring: 'ring-cyan-400',
-    features: ['Everything in Free', 'Version control', 'Drift detection', '3 organizations', '30 snapshots'],
+    id: "essentials",
+    label: "Essentials",
+    from: "#38bdf8",
+    to: "#0ea5e9",
+    ring: "ring-cyan-400",
+    features: [
+      "Everything in Free",
+      "Version control",
+      "Drift detection",
+      "3 organizations",
+      "30 snapshots",
+    ],
   },
   {
-    id: 'professional',
-    label: 'Professional',
-    from: '#a78bfa', to: '#7c3aed',
-    ring: 'ring-violet-400',
-    features: ['Everything in Essentials', 'Compliance checks', 'Bulk operations', 'Security posture', '10 organizations'],
+    id: "professional",
+    label: "Professional",
+    from: "#a78bfa",
+    to: "#7c3aed",
+    ring: "ring-violet-400",
+    features: [
+      "Everything in Essentials",
+      "Compliance checks",
+      "Bulk operations",
+      "Security posture",
+      "10 organizations",
+    ],
   },
   {
-    id: 'enterprise',
-    label: 'Enterprise',
-    from: '#fbbf24', to: '#f59e0b',
-    ring: 'ring-amber-400',
-    features: ['Everything in Professional', 'Unlimited organizations', 'Scheduled snapshots', 'Change management', 'Documentation export', 'Cross-region sync'],
+    id: "enterprise",
+    label: "Enterprise",
+    from: "#fbbf24",
+    to: "#f59e0b",
+    ring: "ring-amber-400",
+    features: [
+      "Everything in Professional",
+      "Unlimited organizations",
+      "Scheduled snapshots",
+      "Change management",
+      "Documentation export",
+      "Cross-region sync",
+    ],
   },
   {
-    id: 'msp',
-    label: 'MSP',
-    from: '#3b82f6', to: '#4f46e5',
-    ring: 'ring-blue-500',
-    features: ['Everything in Enterprise', 'Multi-tenant management', 'White-label', 'Priority support'],
+    id: "msp",
+    label: "MSP",
+    from: "#3b82f6",
+    to: "#4f46e5",
+    ring: "ring-blue-500",
+    features: [
+      "Everything in Enterprise",
+      "Multi-tenant management",
+      "White-label",
+      "Priority support",
+    ],
   },
 ];
 
 // Shared input style
-const INPUT = 'w-full px-3 py-2.5 rounded-lg text-sm bg-white/50 border border-white/40 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all backdrop-blur-sm';
-const INPUT_DISABLED = 'w-full px-3 py-2.5 rounded-lg text-sm bg-white/20 border border-white/30 text-muted-foreground opacity-70 cursor-not-allowed';
+const INPUT =
+  "w-full px-3 py-2.5 rounded-lg text-sm bg-white/50 border border-white/40 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all backdrop-blur-sm";
+const INPUT_DISABLED =
+  "w-full px-3 py-2.5 rounded-lg text-sm bg-white/20 border border-white/30 text-muted-foreground opacity-70 cursor-not-allowed";
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
-  const [profile, setProfile]           = useState<UserProfile | null>(null);
-  const [loading, setLoading]           = useState(true);
-  const [saving, setSaving]             = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [changingTier, setChangingTier] = useState(false);
-  const [error, setError]               = useState('');
-  const [success, setSuccess]           = useState('');
-  const [nameForm, setNameForm]         = useState('');
-  const [pwForm, setPwForm]             = useState({ current: '', next: '', confirm: '' });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [nameForm, setNameForm] = useState("");
+  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
 
-  useEffect(() => { loadProfile(); }, []);
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
   const loadProfile = async () => {
     setLoading(true);
     try {
       const data = await apiClient.getCurrentUser();
       setProfile(data);
-      setNameForm(data.full_name || '');
+      setNameForm(data.full_name || "");
     } catch (err: any) {
-      setError(err.message || 'Failed to load profile');
+      setError(err.message || "Failed to load profile");
     } finally {
       setLoading(false);
     }
   };
 
   const saveName = async () => {
-    setSaving(true); setError(''); setSuccess('');
+    setSaving(true);
+    setError("");
+    setSuccess("");
     try {
       await apiClient.updateProfile({ fullName: nameForm });
-      setSuccess('Display name updated successfully.');
+      setSuccess("Display name updated successfully.");
       await loadProfile();
-    } catch (err: any) { setError(err.message); }
-    finally { setSaving(false); }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const savePassword = async () => {
-    if (pwForm.next !== pwForm.confirm) { setError('New passwords do not match.'); return; }
-    if (pwForm.next.length < 8)         { setError('Password must be at least 8 characters.'); return; }
-    setSaving(true); setError(''); setSuccess('');
+    if (pwForm.next !== pwForm.confirm) {
+      setError("New passwords do not match.");
+      return;
+    }
+    if (pwForm.next.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    setSuccess("");
     try {
-      await apiClient.updateProfile({ currentPassword: pwForm.current, newPassword: pwForm.next });
-      setPwForm({ current: '', next: '', confirm: '' });
-      setSuccess('Password changed successfully.');
-    } catch (err: any) { setError(err.message); }
-    finally { setSaving(false); }
+      await apiClient.updateProfile({
+        currentPassword: pwForm.current,
+        newPassword: pwForm.next,
+      });
+      setPwForm({ current: "", next: "", confirm: "" });
+      setSuccess("Password changed successfully.");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const changeTier = async (tierId: string) => {
     if (tierId === profile?.subscription_tier) return;
-    setChangingTier(true); setError(''); setSuccess('');
+    setChangingTier(true);
+    setError("");
+    setSuccess("");
     try {
       await apiClient.updateSubscription(tierId);
-      const t = TIERS.find(t => t.id === tierId);
+      const t = TIERS.find((t) => t.id === tierId);
       setSuccess(`Subscription changed to ${t?.label ?? tierId}.`);
-      setTimeout(() => setSuccess(''), 4000);
+      setTimeout(() => setSuccess(""), 4000);
       await loadProfile();
       onTierChange?.(tierId);
-    } catch (err: any) { setError(err.message); }
-    finally { setChangingTier(false); }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setChangingTier(false);
+    }
   };
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-muted-foreground animate-pulse">
-        <Loader2 size={40} className="text-blue-500 opacity-50 animate-spin mb-4" />
+        <Loader2
+          size={40}
+          className="text-blue-500 opacity-50 animate-spin mb-4"
+        />
         <p className="text-sm">Loading your profile...</p>
       </div>
     );
   }
 
-  const currentTier = TIERS.find(t => t.id === profile?.subscription_tier) ?? TIERS[0];
-  const initial     = (profile?.email?.[0] ?? '?').toUpperCase();
-  const displayName = profile?.full_name || profile?.email?.split('@')[0] || 'User';
+  const currentTier =
+    TIERS.find((t) => t.id === profile?.subscription_tier) ?? TIERS[0];
+  const initial = (profile?.email?.[0] ?? "?").toUpperCase();
+  const displayName =
+    profile?.full_name || profile?.email?.split("@")[0] || "User";
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
-
+    <div className="w-full flex flex-col gap-6">
       {/* ── Page header ───────────────────────────────────────────── */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">Account &amp; Profile</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Manage your account settings and subscription plan.</p>
+        <h1 className="text-2xl font-bold text-foreground tracking-tight">
+          Account &amp; Profile
+        </h1>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Manage your account settings and subscription plan.
+        </p>
       </div>
 
       {/* ── Toast messages ────────────────────────────────────────── */}
@@ -173,20 +251,33 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
             {/* Identity */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 flex-wrap">
-                <p className="text-xl font-bold text-foreground truncate">{displayName}</p>
+                <p className="text-xl font-bold text-foreground truncate">
+                  {displayName}
+                </p>
                 {/* Tier badge */}
                 <span
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white tracking-wide shadow-sm"
-                  style={{ background: `linear-gradient(135deg, ${currentTier.from}, ${currentTier.to})` }}
+                  style={{
+                    background: `linear-gradient(135deg, ${currentTier.from}, ${currentTier.to})`,
+                  }}
                 >
                   <Sparkles size={10} />
                   {currentTier.label}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground mt-0.5 truncate">{profile.email}</p>
+              <p className="text-sm text-muted-foreground mt-0.5 truncate">
+                {profile.email}
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Member since {new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                &nbsp;·&nbsp;Status: <span className="font-semibold text-green-600 capitalize">{profile.subscription_status}</span>
+                Member since{" "}
+                {new Date(profile.created_at).toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                })}
+                &nbsp;·&nbsp;Status:{" "}
+                <span className="font-semibold text-green-600 capitalize">
+                  {profile.subscription_status}
+                </span>
               </p>
             </div>
           </div>
@@ -195,33 +286,50 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
           <div className="glass-card p-6 space-y-5">
             <div className="flex items-center gap-2 mb-1">
               <User size={16} className="text-blue-500" />
-              <h2 className="font-semibold text-foreground">Profile Information</h2>
+              <h2 className="font-semibold text-foreground">
+                Profile Information
+              </h2>
             </div>
 
             {/* Email (read-only) */}
             <div>
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Email address</label>
-              <input type="email" value={profile.email} disabled className={INPUT_DISABLED} />
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                Email address
+              </label>
+              <input
+                type="email"
+                value={profile.email}
+                disabled
+                className={INPUT_DISABLED}
+              />
             </div>
 
             {/* Display name */}
             <div>
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Display name</label>
+              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                Display name
+              </label>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={nameForm}
-                  onChange={e => setNameForm(e.target.value)}
+                  onChange={(e) => setNameForm(e.target.value)}
                   placeholder="Enter your name"
                   className={INPUT}
                 />
                 <button
                   onClick={saveName}
-                  disabled={saving || nameForm === (profile.full_name ?? '')}
+                  disabled={saving || nameForm === (profile.full_name ?? "")}
                   className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-40 shrink-0"
-                  style={{ background: 'linear-gradient(135deg, #3b82f6, #4f46e5)' }}
+                  style={{
+                    background: "linear-gradient(135deg, #3b82f6, #4f46e5)",
+                  }}
                 >
-                  {saving ? <Loader2 size={14} className="animate-spin" /> : 'Save'}
+                  {saving ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    "Save"
+                  )}
                 </button>
               </div>
             </div>
@@ -235,17 +343,23 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
             </div>
 
             <div className="grid grid-cols-1 gap-3">
-              {([
-                { label: 'Current password',     key: 'current' as const },
-                { label: 'New password',          key: 'next'    as const },
-                { label: 'Confirm new password',  key: 'confirm' as const },
-              ] as const).map(({ label, key }) => (
+              {(
+                [
+                  { label: "Current password", key: "current" as const },
+                  { label: "New password", key: "next" as const },
+                  { label: "Confirm new password", key: "confirm" as const },
+                ] as const
+              ).map(({ label, key }) => (
                 <div key={key}>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">{label}</label>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                    {label}
+                  </label>
                   <input
                     type="password"
                     value={pwForm[key]}
-                    onChange={e => setPwForm(f => ({ ...f, [key]: e.target.value }))}
+                    onChange={(e) =>
+                      setPwForm((f) => ({ ...f, [key]: e.target.value }))
+                    }
                     className={INPUT}
                   />
                 </div>
@@ -256,9 +370,17 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
               onClick={savePassword}
               disabled={saving || !pwForm.current || !pwForm.next}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-40"
-              style={{ background: 'linear-gradient(135deg, #3b82f6, #4f46e5)' }}
+              style={{
+                background: "linear-gradient(135deg, #3b82f6, #4f46e5)",
+              }}
             >
-              {saving ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : 'Update Password'}
+              {saving ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Saving...
+                </>
+              ) : (
+                "Update Password"
+              )}
             </button>
           </div>
 
@@ -266,12 +388,16 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
           <div className="glass-card p-6">
             <div className="flex items-center gap-2 mb-1">
               <CreditCard size={16} className="text-indigo-500" />
-              <h2 className="font-semibold text-foreground">Subscription Plan</h2>
+              <h2 className="font-semibold text-foreground">
+                Subscription Plan
+              </h2>
             </div>
-            <p className="text-xs text-muted-foreground mb-5">Select a plan below. Changes take effect immediately.</p>
+            <p className="text-xs text-muted-foreground mb-5">
+              Select a plan below. Changes take effect immediately.
+            </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {TIERS.map(tier => {
+              {TIERS.map((tier) => {
                 const isActive = profile.subscription_tier === tier.id;
                 return (
                   <button
@@ -279,19 +405,25 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
                     onClick={() => changeTier(tier.id)}
                     disabled={changingTier || isActive}
                     className={cn(
-                      'relative p-4 rounded-xl text-left transition-all duration-200 border overflow-hidden group',
+                      "relative p-4 rounded-xl text-left transition-all duration-200 border overflow-hidden group",
                       isActive
-                        ? 'border-transparent shadow-md ring-2 ' + tier.ring
-                        : 'border-white/30 bg-white/20 hover:bg-white/40 hover:shadow-md hover:border-white/50'
+                        ? "border-transparent shadow-md ring-2 " + tier.ring
+                        : "border-white/30 bg-white/20 hover:bg-white/40 hover:shadow-md hover:border-white/50",
                     )}
-                    style={isActive ? {
-                      background: `linear-gradient(135deg, ${tier.from}18, ${tier.to}28)`,
-                    } : {}}
+                    style={
+                      isActive
+                        ? {
+                            background: `linear-gradient(135deg, ${tier.from}18, ${tier.to}28)`,
+                          }
+                        : {}
+                    }
                   >
                     {/* Gradient top bar */}
                     <div
                       className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
-                      style={{ background: `linear-gradient(90deg, ${tier.from}, ${tier.to})` }}
+                      style={{
+                        background: `linear-gradient(90deg, ${tier.from}, ${tier.to})`,
+                      }}
                     />
 
                     <div className="flex items-center justify-between mt-1 mb-3">
@@ -299,24 +431,39 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
                         {/* Mini tier avatar */}
                         <div
                           className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold"
-                          style={{ background: `linear-gradient(135deg, ${tier.from}, ${tier.to})` }}
+                          style={{
+                            background: `linear-gradient(135deg, ${tier.from}, ${tier.to})`,
+                          }}
                         >
                           {tier.id.slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="font-bold text-foreground text-sm">{tier.label}</span>
+                        <span className="font-bold text-foreground text-sm">
+                          {tier.label}
+                        </span>
                       </div>
                       {isActive && (
-                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold text-white"
-                          style={{ background: `linear-gradient(135deg, ${tier.from}, ${tier.to})` }}>
+                        <span
+                          className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold text-white"
+                          style={{
+                            background: `linear-gradient(135deg, ${tier.from}, ${tier.to})`,
+                          }}
+                        >
                           <CheckCircle2 size={9} /> Current
                         </span>
                       )}
                     </div>
 
                     <ul className="space-y-1.5">
-                      {tier.features.slice(0, 3).map(f => (
-                        <li key={f} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                          <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: tier.from }} />
+                      {tier.features.slice(0, 3).map((f) => (
+                        <li
+                          key={f}
+                          className="text-xs text-muted-foreground flex items-start gap-1.5"
+                        >
+                          <CheckCircle2
+                            size={11}
+                            className="shrink-0 mt-0.5"
+                            style={{ color: tier.from }}
+                          />
                           {f}
                         </li>
                       ))}
@@ -328,8 +475,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
                     </ul>
 
                     {!isActive && (
-                      <div className="mt-3 text-xs font-semibold text-center py-1.5 rounded-lg transition-colors group-hover:text-white"
-                        style={{ background: `linear-gradient(135deg, ${tier.from}20, ${tier.to}20)`, color: tier.from }}>
+                      <div
+                        className="mt-3 text-xs font-semibold text-center py-1.5 rounded-lg transition-colors group-hover:text-white"
+                        style={{
+                          background: `linear-gradient(135deg, ${tier.from}20, ${tier.to}20)`,
+                          color: tier.from,
+                        }}
+                      >
                         Switch to {tier.label}
                       </div>
                     )}

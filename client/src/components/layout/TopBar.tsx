@@ -166,14 +166,14 @@ export const TopBar: React.FC<TopBarProps> = ({
       </div>
 
       {/* CENTER */}
-      {showContext && (
+      {/* {showContext && (
         <div className="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 border border-white/50 backdrop-blur-md shadow-sm">
           <span className={`shrink-0 ${ctx.accent}`}>{ctx.icon}</span>
           <span className="text-sm font-semibold text-gray-700 tracking-tight">
             {ctx.label}
           </span>
         </div>
-      )}
+      )} */}
 
       {/* RIGHT */}
       <div className="flex items-center gap-3">
@@ -206,12 +206,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           onClick={() => navigate(TOOL_MODE_ROUTES.profile)}
           className="flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full hover:bg-white/70 transition-all duration-200 group"
         >
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md"
-            style={{
-              background: "linear-gradient(135deg, #6366f1, #4f46e5)",
-            }}
-          >
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold bg-[#049FD9] shadow-md">
             {initial}
           </div>
 
@@ -225,15 +220,6 @@ export const TopBar: React.FC<TopBarProps> = ({
             size={13}
             className="text-gray-400 hidden md:block group-hover:text-gray-700 transition-colors"
           />
-        </button>
-
-        <div className="w-px h-5 bg-gray-200" />
-
-        <button
-          onClick={onLogout}
-          className="flex items-center justify-center w-9 h-9 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-500 transition-all duration-200"
-        >
-          <LogOut size={16} />
         </button>
       </div>
     </header>

@@ -208,7 +208,7 @@ export function DestinationStep({ data, onUpdate }: DestinationStepProps) {
 
         {/* Selected summary */}
         {data.destinationNetwork && (
-          <AlertCard variant="success">
+          <AlertCard variant="note">
             <p>
               <strong>Organization - </strong>
               {data.destinationNetwork.name}

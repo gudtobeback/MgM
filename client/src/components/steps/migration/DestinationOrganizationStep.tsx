@@ -151,9 +151,7 @@ export function DestinationOrganizationStep({
             </p>
           </div>
         ) : error ? (
-          <div className="p-5 bg-[#FECFCF] border border-[#D86C6C] rounded-md text-sm">
-            {error}
-          </div>
+          <AlertCard variant="error">{error}</AlertCard>
         ) : (
           <div className="flex flex-col gap-6">
             <LabelInput
@@ -201,7 +199,7 @@ export function DestinationOrganizationStep({
 
             {/* Note */}
             {(data.destinationOrg || data.destinationNetwork) && (
-              <AlertCard variant="success">
+              <AlertCard variant="note">
                 {data.destinationOrg && (
                   <p>
                     <strong>Organization:</strong> {data.destinationOrg.name}

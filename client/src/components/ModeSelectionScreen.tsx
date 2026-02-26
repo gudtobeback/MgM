@@ -19,6 +19,7 @@ import {
   RefreshCw,
   Zap,
   Database,
+  EllipsisVertical,
 } from "lucide-react";
 import { Progress } from "antd";
 import { ToolMode, TOOL_MODE_ROUTES } from "../types/routes";
@@ -203,6 +204,44 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
     },
   ];
 
+  const quickAccessTools = [
+    {
+      name: "Samuel Goodwin",
+      function: "Full Migration",
+      time: "08:30",
+      description: "Migrate devices & configurations",
+      action: <EllipsisVertical size={12} />,
+    },
+    {
+      name: "Samuel Goodwin",
+      function: "Full Migration",
+      time: "08:30",
+      description: "Migrate devices & configurations",
+      action: <EllipsisVertical size={12} />,
+    },
+    {
+      name: "Samuel Goodwin",
+      function: "Full Migration",
+      time: "08:30",
+      description: "Migrate devices & configurations",
+      action: <EllipsisVertical size={12} />,
+    },
+    {
+      name: "Samuel Goodwin",
+      function: "Full Migration",
+      time: "08:30",
+      description: "Migrate devices & configurations",
+      action: <EllipsisVertical size={12} />,
+    },
+    {
+      name: "Samuel Goodwin",
+      function: "Full Migration",
+      time: "08:30",
+      description: "Migrate devices & configurations",
+      action: <EllipsisVertical size={12} />,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-8 w-full">
       {/* Welcome Section */}
@@ -252,6 +291,27 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
         <div className="col-span-12 md:col-span-8 flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <div className="text-md font-bold flex items-center gap-2">
             Quick Access Tools
+          </div>
+
+          <div className="flex flex-col gap-3 text-xs">
+            {quickAccessTools?.map((tools, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between px-4 py-2 border rounded-lg"
+              >
+                <p className="font-semibold">{tools?.name}</p>
+
+                <div className="px-2 py-1 text-[#049FD9] bg-[#CEF2FF] rounded-md">
+                  {tools?.function}
+                </div>
+
+                <p className="font-semibold">{tools?.time}</p>
+
+                <p className="text-black/60">{tools?.description}</p>
+
+                {tools?.action}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -313,6 +373,20 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
                 {connectedOrgs.length - 5 !== 1 ? "s" : ""}
               </p>
             )}
+          </div>
+
+          <div className="flex items-center justify-around gap-5">
+            <div className="space-y-3 p-3 text-center border rounded-lg w-full">
+              <p className="text-xs text-[#8E8E93]">Global</p>
+              <p className="font-semibold">12</p>
+              <p className="text-xs text-[#8E8E93]">1 Org</p>
+            </div>
+
+            <div className="space-y-3 p-3 text-center border rounded-lg w-full">
+              <p className="text-xs text-[#8E8E93]">India</p>
+              <p className="font-semibold">0</p>
+              <p className="text-xs text-[#8E8E93]">o Org</p>
+            </div>
           </div>
         </div>
       </div>

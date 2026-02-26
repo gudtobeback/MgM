@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../services/apiClient";
-import { Button } from "../ui/button";
 
-import { Label } from "../ui/label";
-import {
-  Building2,
-  Plus,
-  Trash2,
-  AlertCircle,
-  Search,
-  Globe,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { Building2, Plus, Trash2, AlertCircle, Globe, X } from "lucide-react";
 import CustomButton from "../ui/CustomButton";
 import CustomBadge from "../ui/CustomBadge";
 import LabelInput from "../ui/LabelInput";

@@ -164,7 +164,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
         )}
 
         {/* Note */}
-        <AlertCard variant="success">
+        <AlertCard variant="note">
           <p className="font-bold">Next Steps:</p>
 
           <ol className="list-decimal list-inside space-y-1">

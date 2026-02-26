@@ -253,7 +253,7 @@ export function ClaimStep({ data, onUpdate, onComplete }: ClaimStepProps) {
               </button>
 
               {claimState === "error" && errorMsg && (
-                <AlertCard variant="alert">{errorMsg}</AlertCard>
+                <AlertCard variant="error">{errorMsg}</AlertCard>
               )}
             </div>
 
