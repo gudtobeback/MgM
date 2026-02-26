@@ -1,29 +1,24 @@
 import React, { useState } from "react";
-import { Button } from "../ui/button";
+
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { ParsedCat9KConfig } from "../../services/cat9kParser";
+
+import CustomButton from "../../../components/ui/CustomButton";
+
+import StepBar from "../../../components/steps/StepBar";
+import { ClaimStep } from "../../../components/steps/cat9k/ClaimStep";
+import { ApplyStep } from "../../../components/steps/cat9k/ApplyStep";
+import { UploadStep } from "../../../components/steps/cat9k/UploadStep";
+import { ReviewStep } from "../../../components/steps/cat9k/ReviewStep";
+import { ResultsStep } from "../../../components/steps/cat9k/ResultsStep";
+import { DestinationStep } from "../../../components/steps/cat9k/DestinationStep";
+
+import { ParsedCat9KConfig } from "../../../services/cat9kParser";
+
 import {
   MerakiOrganization,
   MerakiNetwork,
   MerakiDeviceDetails,
-} from "../../types/types";
-import { UploadStep } from "./steps/UploadStep";
-import { ReviewStep } from "./steps/ReviewStep";
-import { DestinationStep } from "./steps/DestinationStep";
-import { ClaimStep } from "./steps/ClaimStep";
-import { ApplyStep } from "./steps/ApplyStep";
-import { ResultsStep } from "./steps/ResultsStep";
-import CustomButton from "../ui/CustomButton";
-import StepBar from "../ui/StepBar";
-
-const STEPS = [
-  { id: 1, name: "Upload", description: "Upload or paste config" },
-  { id: 2, name: "Review", description: "Review parsed items" },
-  { id: 3, name: "Destination", description: "Select target network" },
-  { id: 4, name: "Claim", description: "Register & claim device" },
-  { id: 5, name: "Apply", description: "Push configuration" },
-  { id: 6, name: "Results", description: "View results" },
-];
+} from "../../../types/types";
 
 export interface Cat9KResults {
   portsPushed: number;
@@ -63,6 +58,15 @@ interface Cat9KMigrationWizardProps {
   connectedOrgs?: any[];
   selectedOrgId?: string;
 }
+
+const STEPS = [
+  { id: 1, name: "Upload", description: "Upload or paste config" },
+  { id: 2, name: "Review", description: "Review parsed items" },
+  { id: 3, name: "Destination", description: "Select target network" },
+  { id: 4, name: "Claim", description: "Register & claim device" },
+  { id: 5, name: "Apply", description: "Push configuration" },
+  { id: 6, name: "Results", description: "View results" },
+];
 
 export function Cat9KMigrationWizard({
   connectedOrgs = [],
@@ -147,9 +151,6 @@ export function Cat9KMigrationWizard({
     }
   }
 
-  // Steps 5-6 are auto/results — hide the navigation
-  const isAutoStep = currentStep >= 5;
-
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -190,6 +191,9 @@ export function Cat9KMigrationWizard({
         return null;
     }
   };
+
+  // Steps 5-6 are auto/results — hide the navigation
+  const isAutoStep = currentStep >= 5;
 
   return (
     <div className="w-full">

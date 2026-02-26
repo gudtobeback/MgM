@@ -1,37 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+
+import { Progress } from "antd";
 import {
-  ArrowRightLeft,
   HardDriveDownload,
   Activity,
-  ShieldCheck,
-  BarChart3,
   Building2,
-  ChevronRight,
-  Shield,
-  Layers,
   ServerCog,
-  GitBranch,
   HardDriveUpload,
   Plus,
-  Wifi,
   Globe,
   RefreshCw,
-  Zap,
-  Database,
   EllipsisVertical,
 } from "lucide-react";
-import { Progress } from "antd";
-import { ToolMode, TOOL_MODE_ROUTES } from "../types/routes";
-import GaugeChart from "./GaugeChart";
-import CustomButton from "./ui/CustomButton";
+
+import CustomButton from "../../components/ui/CustomButton";
+
+import { ToolMode, TOOL_MODE_ROUTES } from "../../types/routes";
 
 interface ModeSelectionScreenProps {
-  onSelectMode?: (mode: ToolMode) => void; // deprecated, kept for compatibility
-  selectedOrgName?: string;
   userEmail?: string;
   connectedOrgs?: any[];
-  onRefreshOrgs?: () => Promise<void>;
 }
 
 // ── Tool cards ────────────────────────────────────────────────────────────────
@@ -148,27 +137,17 @@ function formatDate(): string {
 
 // ── Main component ────────────────────────────────────────────────────────────
 export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
-  onSelectMode,
-  selectedOrgName,
   userEmail,
   connectedOrgs = [],
-  onRefreshOrgs,
 }) => {
   const navigate = useNavigate();
+
   const firstName = userEmail
     ? userEmail.split("@")[0].replace(/[._]/g, " ")
     : null;
 
-  const [isSyncing, setIsSyncing] = React.useState(false);
-
-  const handleSync = async () => {
-    if (!onRefreshOrgs || isSyncing) return;
-    setIsSyncing(true);
-    try {
-      await onRefreshOrgs();
-    } finally {
-      setIsSyncing(false);
-    }
+  const handleNavigate = (mode: ToolMode) => {
+    navigate(TOOL_MODE_ROUTES[mode]);
   };
 
   // ── Derived summary from real orgs ──────────────────────────────────────────
@@ -176,7 +155,9 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
     (s, o) => s + (o.device_count ?? 0),
     0,
   );
+
   const uniqueRegions = new Set(connectedOrgs.map((o) => o.meraki_region)).size;
+
   const SUMMARY = [
     {
       value: String(connectedOrgs?.length),
@@ -247,7 +228,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
       {/* Welcome Section */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-2">
-          <p className="font-semibold">Welcome back, admin</p>
+          <p className="font-semibold">Welcome back, {firstName}</p>
           <p className="text-xs text-black/60">
             Unified Meraki Management — {connectedOrgs?.length || 0}{" "}
             organization connected
@@ -255,7 +236,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
         </div>
 
         <CustomButton
-          onClick={() => onSelectMode("organizations")}
+          onClick={() => handleNavigate("organizations")}
           className="px-6 py-3 text-sm"
         >
           <Plus size={20} /> Add Organization
@@ -398,8 +379,8 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
         <div className="grid grid-cols-20 gap-5">
           {TOOLS.map((tool, index) => (
             <button
-              key={tool.id}
-              onClick={() => navigate(TOOL_MODE_ROUTES[tool.id])}
+              key={tool.id || index}
+              onClick={() => handleNavigate(tool.id)}
               className={`col-span-20 sm:col-span-10 lg:col-span-5 flex items-start gap-3 p-4 text-left rounded-lg border border-[#EFEFEF] hover:shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all`}
             >
               <div

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Alert, AlertDescription } from "../ui/alert";
+
 import {
   Loader2,
   CheckCircle2,
@@ -17,11 +15,11 @@ import {
   unclaimDevicesFromInventory,
   addDevicesToNetwork,
   getNetworkDevices,
-} from "../../services/merakiService";
-import { MigrationData } from "../MigrationWizard";
-import { MerakiDeviceDetails } from "../../types/types";
-import CustomButton from "../ui/CustomButton";
-import AlertCard from "../ui/AlertCard";
+} from "../../../services/merakiService";
+import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
+import { MerakiDeviceDetails } from "../../../types/types";
+import CustomButton from "../../ui/CustomButton";
+import AlertCard from "../../ui/AlertCard";
 
 // Tracks how far migration progressed — used to skip completed stages on retry
 // and to know how far to unwind on rollback.
@@ -437,6 +435,9 @@ export function MigrationStep({
                     : "Migrating Devices"}
           </p>
 
+          {rollbackDone && (
+            <CheckCircle2 size={24} className="text-green-500" />
+          )}
           {isComplete && <CheckCircle2 size={24} className="text-green-500" />}
           {(error || rollbackDone) && !isComplete && (
             <XCircle size={24} className="text-red-500" />

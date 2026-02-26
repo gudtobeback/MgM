@@ -4,7 +4,6 @@ import { apiClient } from "../../services/apiClient";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Loader2, ArrowRight, Sparkles } from "lucide-react";
-import { cn } from "../../lib/utils";
 import { Checkbox } from "../../components/ui/checkbox";
 import CustomButton from "../../components/ui/CustomButton";
 

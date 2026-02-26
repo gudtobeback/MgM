@@ -1,5 +1,5 @@
 import React from "react";
-import { Cat9KData } from "../Cat9KMigrationWizard";
+import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
 import { Checkbox } from "antd";
 
 interface ReviewStepProps {

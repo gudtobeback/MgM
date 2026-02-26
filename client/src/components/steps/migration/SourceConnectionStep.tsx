@@ -1,56 +1,9 @@
-import { Label } from "../../ui/label";
-import { Card } from "../../ui/card";
-
-import { Globe, Key } from "lucide-react";
 import { Input, Select } from "antd";
-import LabelInput from "../../ui/LabelInput";
-import AlertCard from "../../ui/AlertCard";
 
-export const MERAKI_REGIONS = [
-  {
-    code: "com",
-    name: "Global (Americas)",
-    dashboard: "dashboard.meraki.com",
-    confirmed: true,
-  },
-  {
-    code: "in",
-    name: "India",
-    dashboard: "dashboard.meraki.in",
-    confirmed: true,
-  },
-  {
-    code: "cn",
-    name: "China",
-    dashboard: "dashboard.meraki.cn",
-    confirmed: false,
-  },
-  {
-    code: "ca",
-    name: "Canada",
-    dashboard: "dashboard.meraki.ca",
-    confirmed: false,
-  },
-  {
-    code: "uk",
-    name: "United Kingdom",
-    dashboard: "dashboard.meraki.uk",
-    confirmed: false,
-  },
-  {
-    code: "eu",
-    name: "Europe",
-    dashboard: "dashboard.meraki.eu",
-    confirmed: false,
-  },
-  {
-    code: "au",
-    name: "Australia",
-    dashboard: "dashboard.meraki.au",
-    confirmed: false,
-  },
-  { code: "custom", name: "Custom URL", dashboard: "", confirmed: true },
-];
+import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+
+import { MERAKI_REGIONS } from "@/src/constants";
 
 interface SourceConnectionStepProps {
   data: any;
@@ -101,73 +54,66 @@ export function SourceConnectionStep({
           </div>
         </div>
 
-        <div className="grid grid-cols-12 gap-6">
-          <LabelInput id="region" label="Region" colSpan="col-span-12" required>
-            <Select
-              id="region"
-              placeholder="Select Region"
-              options={MERAKI_REGIONS.map((r) => ({
-                value: r.code,
-                label: `${r.name} ${!r.confirmed && r.code !== "custom" ? " ⚠" : ""}`,
-              }))}
-              value={data.sourceRegion || "com"}
-              onChange={handleRegionChange}
-            />
+        <LabelInput id="region" label="Region" required>
+          <Select
+            id="region"
+            placeholder="Select Region"
+            options={MERAKI_REGIONS.map((r) => ({
+              value: r.code,
+              label: `${r.name} ${!r.confirmed && r.code !== "custom" ? " ⚠" : ""}`,
+            }))}
+            value={data.sourceRegion || "com"}
+            onChange={handleRegionChange}
+          />
 
-            {!isCustom && !selectedRegion.confirmed && (
-              <p className="mt-1 text-xs text-amber-600">
-                ⚠ This region domain is not officially confirmed. Verify{" "}
-                <strong>{selectedRegion.dashboard}</strong> is active before
-                proceeding.
-              </p>
-            )}
-          </LabelInput>
-
-          {isCustom && (
-            <LabelInput
-              id="source-custom-url"
-              label="Custom API Base URL"
-              colSpan="col-span-12"
-              required
-            >
-              <Input
-                id="source-custom-url"
-                placeholder="https://api.meraki.example/api/v1"
-                value={
-                  data.sourceRegion === "custom"
-                    ? (data.sourceCustomApiBase ?? "")
-                    : ""
-                }
-                onChange={(e) =>
-                  onUpdate({
-                    sourceCustomApiBase: e.target.value,
-                    // sourceRegion: e.target.value || "custom",
-                  })
-                }
-              />
-
-              <p className="text-xs">
-                Enter the full API base URL for your Meraki region (e.g.
-                https://api.meraki.cn/api/v1).
-              </p>
-            </LabelInput>
+          {!isCustom && !selectedRegion.confirmed && (
+            <p className="mt-1 text-xs text-amber-600">
+              ⚠ This region domain is not officially confirmed. Verify{" "}
+              <strong>{selectedRegion.dashboard}</strong> is active before
+              proceeding.
+            </p>
           )}
+        </LabelInput>
 
+        {isCustom && (
           <LabelInput
-            id="source-api-key"
-            label="API Key"
+            id="source-custom-url"
+            label="Custom API Base URL"
             colSpan="col-span-12"
             required
           >
             <Input
-              id="source-api-key"
-              type="password"
-              placeholder="Enter source API key"
-              value={data.sourceApiKey}
-              onChange={(e) => onUpdate({ sourceApiKey: e.target.value })}
+              id="source-custom-url"
+              placeholder="https://api.meraki.example/api/v1"
+              value={
+                data.sourceRegion === "custom"
+                  ? (data.sourceCustomApiBase ?? "")
+                  : ""
+              }
+              onChange={(e) =>
+                onUpdate({
+                  sourceCustomApiBase: e.target.value,
+                  // sourceRegion: e.target.value || "custom",
+                })
+              }
             />
+
+            <p className="text-xs">
+              Enter the full API base URL for your Meraki region (e.g.
+              https://api.meraki.cn/api/v1).
+            </p>
           </LabelInput>
-        </div>
+        )}
+
+        <LabelInput id="source-api-key" label="API Key" required>
+          <Input
+            id="source-api-key"
+            type="password"
+            placeholder="Enter source API key"
+            value={data.sourceApiKey}
+            onChange={(e) => onUpdate({ sourceApiKey: e.target.value })}
+          />
+        </LabelInput>
 
         {/* Note */}
         <AlertCard variant="note">

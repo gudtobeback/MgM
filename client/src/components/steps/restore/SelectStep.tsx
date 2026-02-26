@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { RestoreData } from "../RestoreWizard";
+import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
 import { RestoreCategories } from "../../../types/types";
 
 interface SelectStepProps {

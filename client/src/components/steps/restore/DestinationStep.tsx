@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-import { MERAKI_REGIONS } from "../../steps/migration/SourceConnectionStep";
+import { MERAKI_REGIONS } from "@/src/constants";
 import {
   getOrganizations,
   getOrgNetworks,
   getNetworkDevices,
 } from "../../../services/merakiService";
 import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
-import { RestoreData } from "../RestoreWizard";
+import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 import { Input, Select } from "antd";

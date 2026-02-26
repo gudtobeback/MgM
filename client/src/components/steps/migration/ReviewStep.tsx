@@ -1,19 +1,14 @@
 import React from "react";
-import { Card } from "../ui/card";
 
-import { Label } from "../ui/label";
-import { Alert, AlertDescription } from "../ui/alert";
-import {
-  Loader2,
-  ArrowRight,
-  Building,
-  Server,
-  AlertTriangle,
-} from "lucide-react";
-import { MigrationData } from "../MigrationWizard";
-import LabelInput from "../ui/LabelInput";
 import { Input } from "antd";
-import AlertCard from "../ui/AlertCard";
+import { Loader2, ArrowRight } from "lucide-react";
+
+import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+
+import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
+
+import { MERAKI_REGIONS } from "@/src/constants";
 
 interface ReviewStepProps {
   data: MigrationData;
@@ -22,6 +17,16 @@ interface ReviewStepProps {
 }
 
 export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
+  const soucrce_region =
+    MERAKI_REGIONS.find((r) => r.code === data.sourceRegion) ??
+    MERAKI_REGIONS[0];
+  const isSourceRegionCustom = data.sourceRegion === "custom";
+
+  const destination_region =
+    MERAKI_REGIONS.find((r) => r.code === data.destinationRegion) ??
+    MERAKI_REGIONS[1];
+  const isDestinationRegionCustom = data.destinationRegion === "custom";
+
   return (
     <div className="flex flex-col bg-white">
       {/* Heading */}
@@ -55,7 +60,11 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
 
                   <div className="flex flex-col gap-1 font-medium text-xs">
                     <p className="text-[#8B8B8B]">DASHBOARD</p>
-                    <p>dashboard.meraki.com</p>
+                    <p>
+                      {isSourceRegionCustom
+                        ? "Custom API endpoint"
+                        : soucrce_region.dashboard}
+                    </p>
                   </div>
 
                   <div className="flex flex-col gap-1 font-medium text-xs">
@@ -91,7 +100,11 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
 
                   <div className="flex flex-col gap-1 font-medium text-xs">
                     <p className="text-[#8B8B8B]">DASHBOARD</p>
-                    <p>dashboard.meraki.in</p>
+                    <p>
+                      {isDestinationRegionCustom
+                        ? "Custom API endpoint"
+                        : destination_region.dashboard}
+                    </p>
                   </div>
 
                   <div className="flex flex-col gap-1 font-medium text-xs">

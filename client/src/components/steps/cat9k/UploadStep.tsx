@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import { Upload, FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, FileText } from "lucide-react";
 import { parseCat9KConfig } from "../../../services/cat9kParser";
-import { Cat9KData } from "../Cat9KMigrationWizard";
+import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
 import CustomButton from "../../ui/CustomButton";
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";

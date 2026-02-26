@@ -84,7 +84,6 @@ class ApiClient {
   }
 
   // ============ Authentication ============
-
   async register(
     email: string,
     password: string,

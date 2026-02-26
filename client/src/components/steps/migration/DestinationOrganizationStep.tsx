@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
-import { Card } from "../../ui/card";
-import { Label } from "../../ui/label";
 
-import { Building2, CheckCircle2, Loader2, NetworkIcon } from "lucide-react";
-// FIX: Use correct relative path for merakiService import.
+import { Select } from "antd";
+import { Loader2 } from "lucide-react";
+
+import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+
 import {
   getOrganizations,
   getOrgNetworks,
 } from "../../../services/merakiService";
 import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
-import LabelInput from "../../ui/LabelInput";
-import { Select } from "antd";
-import AlertCard from "../../ui/AlertCard";
 
 interface DestinationOrganizationStepProps {
   data: {

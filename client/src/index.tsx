@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { ConfigProvider, theme } from "antd";
 import "./index.css";
 import App from "./App";
 
@@ -11,9 +12,15 @@ if (!rootElement) {
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
-  <React.StrictMode>
+  <ConfigProvider
+    theme={{
+      token: {
+        fontFamily: "Inter, sans-serif",
+      },
+    }}
+  >
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </ConfigProvider>,
 );

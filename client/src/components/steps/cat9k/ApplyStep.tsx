@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Loader2, PauseCircle, CheckCircle2 } from "lucide-react";
+
 import {
   getSwitchPorts,
   updateSwitchPort,
@@ -7,7 +8,7 @@ import {
   updateNetworkSwitchAccessControlLists,
 } from "../../../services/merakiService";
 import { extractPortNumber } from "../../../services/cat9kParser";
-import { Cat9KData, Cat9KResults } from "../Cat9KMigrationWizard";
+import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
 
 interface ApplyStepProps {
   data: Cat9KData;

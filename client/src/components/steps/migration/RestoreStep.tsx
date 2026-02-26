@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card } from "../../ui/card";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import {
   restoreDeviceConfiguration,
   restoreNetworkConfiguration,
 } from "../../../services/merakiService";
-import { MigrationData } from "../../MigrationWizard";
-import {
-  DeviceBackup,
-  NetworkConfigBackup,
-  RestoreCategories,
-} from "../../../types/types";
+import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
+import { NetworkConfigBackup, RestoreCategories } from "../../../types/types";
 
 // Default categories: restore everything in migration flow
 const ALL_CATEGORIES: RestoreCategories = {

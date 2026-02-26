@@ -5,7 +5,7 @@ import {
   restoreNetworkConfiguration,
   restoreDeviceConfiguration,
 } from "../../../services/merakiService";
-import { RestoreData } from "../RestoreWizard";
+import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
 
 interface RestoreExecStepProps {
   data: RestoreData;

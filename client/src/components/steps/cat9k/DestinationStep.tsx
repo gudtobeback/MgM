@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Globe,
-  Key,
-  ChevronDown,
-  Loader2,
-  CheckCircle2,
-  AlertCircle,
-  Building2,
-} from "lucide-react";
-import { MERAKI_REGIONS } from "../../steps/migration/SourceConnectionStep";
+
+import { Input, Select } from "antd";
+
+import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+import CustomButton from "../../ui/CustomButton";
+
+import { MERAKI_REGIONS } from "@/src/constants";
+
 import {
   getOrganizations,
   getOrgNetworks,
@@ -16,11 +15,7 @@ import {
 } from "../../../services/merakiService";
 import { apiClient } from "../../../services/apiClient";
 import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
-import { Cat9KData } from "../Cat9KMigrationWizard";
-import CustomButton from "../../ui/CustomButton";
-import { Input, Select } from "antd";
-import LabelInput from "../../ui/LabelInput";
-import AlertCard from "../../ui/AlertCard";
+import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
 
 interface DestinationStepProps {
   data: Cat9KData;

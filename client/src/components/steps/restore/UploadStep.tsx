@@ -13,7 +13,7 @@ import {
   DeviceConfigBackup,
   DeviceBackup,
 } from "../../../types/types";
-import { RestoreData } from "../RestoreWizard";
+import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
 import AlertCard from "../../ui/AlertCard";
 
 interface UploadStepProps {

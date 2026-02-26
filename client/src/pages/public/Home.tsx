@@ -1,7 +1,5 @@
 import React from "react";
 
-import { ArrowRight, Play, Check } from "lucide-react";
-
 import Header from "../../components/home/Header";
 import HeroSection from "../../components/home/sections/HeroSection";
 import ChallengesSection from "../../components/home/sections/ChallengesSection";

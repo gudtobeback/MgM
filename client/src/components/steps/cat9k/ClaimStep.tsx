@@ -1,21 +1,18 @@
 import React, { useState, useRef } from "react";
-import {
-  Plus,
-  Trash2,
-  Loader2,
-  CheckCircle2,
-  AlertCircle,
-  Terminal,
-} from "lucide-react";
+
+import { Input } from "antd";
+import { Plus, Trash2, Loader2, Terminal } from "lucide-react";
+
+import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
+
+import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+import CustomButton from "../../ui/CustomButton";
+
 import {
   claimNetworkDevices,
   getNetworkDevices,
 } from "../../../services/merakiService";
-import { Cat9KData } from "../Cat9KMigrationWizard";
-import LabelInput from "../../ui/LabelInput";
-import { Alert, Input } from "antd";
-import AlertCard from "../../ui/AlertCard";
-import CustomButton from "../../ui/CustomButton";
 
 interface ClaimStepProps {
   data: Cat9KData;

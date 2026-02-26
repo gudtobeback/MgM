@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { Button } from "./ui/button";
+
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { BackupConnectionStep } from "./steps/backup/BackupConnectionStep";
-import { BackupOrganizationStep } from "./steps/backup/BackupOrganizationStep";
-import { BackupDeviceSelectionStep } from "./steps/backup/BackupDeviceSelectionStep";
-import { BackupExecutionStep } from "./steps/backup/BackupExecutionStep";
-import { BackupResultsStep } from "./steps/backup/BackupResultsStep";
-import { MerakiDeviceDetails, MerakiOrganization } from "../types/types";
-import CustomButton from "./ui/CustomButton";
-import StepBar from "./ui/StepBar";
+
+import CustomButton from "../../../components/ui/CustomButton";
+
+import StepBar from "../../../components/steps/StepBar";
+import { BackupResultsStep } from "../../../components/steps/backup/BackupResultsStep";
+import { BackupExecutionStep } from "../../../components/steps/backup/BackupExecutionStep";
+import { BackupConnectionStep } from "../../../components/steps/backup/BackupConnectionStep";
+import { BackupOrganizationStep } from "../../../components/steps/backup/BackupOrganizationStep";
+import { BackupDeviceSelectionStep } from "../../../components/steps/backup/BackupDeviceSelectionStep";
+
+import { MerakiDeviceDetails, MerakiOrganization } from "../../../types/types";
 
 const STEPS = [
   { id: 1, name: "Connect", description: "Connect to Meraki dashboard" },

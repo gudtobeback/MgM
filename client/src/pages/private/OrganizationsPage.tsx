@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { apiClient } from "../../services/apiClient";
 
-import { Building2, Plus, Trash2, AlertCircle, Globe, X } from "lucide-react";
-import CustomButton from "../ui/CustomButton";
-import CustomBadge from "../ui/CustomBadge";
-import LabelInput from "../ui/LabelInput";
 import { Input, Select } from "antd";
+import { Building2, Plus, Trash2, AlertCircle, Globe, X } from "lucide-react";
+
+import LabelInput from "../../components/ui/LabelInput";
+import CustomBadge from "../../components/ui/CustomBadge";
+import CustomButton from "../../components/ui/CustomButton";
+
+import { apiClient } from "../../services/apiClient";
 
 interface Organization {
   id: string;

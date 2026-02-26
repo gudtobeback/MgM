@@ -28,9 +28,6 @@ interface TopBarProps {
   user: any;
   toolMode: ToolMode;
   selectedOrgName?: string;
-  onToggleSidebar: () => void;
-  onNavigate?: (mode: ToolMode) => void;
-  onLogout: () => void;
 }
 
 const PAGE_CONTEXT: Record<
@@ -142,7 +139,6 @@ export const TopBar: React.FC<TopBarProps> = ({
   user,
   toolMode,
   selectedOrgName,
-  onLogout,
 }) => {
   const navigate = useNavigate();
 

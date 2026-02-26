@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import { Button } from "../ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+
+import CustomButton from "../../../components/ui/CustomButton";
+
+import StepBar from "../../../components/steps/StepBar";
+import { UploadStep } from "../../../components/steps/restore/UploadStep";
+import { SelectStep } from "../../../components/steps/restore/SelectStep";
+import { ResultsStep } from "../../../components/steps/restore/ResultsStep";
+import { DestinationStep } from "../../../components/steps/restore/DestinationStep";
+import { RestoreExecStep } from "../../../components/steps/restore/RestoreExecStep";
+
 import {
   BackupFile,
   MerakiOrganization,
   MerakiNetwork,
   MerakiDeviceDetails,
   RestoreCategories,
-} from "../../types/types";
-import { UploadStep } from "./steps/UploadStep";
-import { SelectStep } from "./steps/SelectStep";
-import { DestinationStep } from "./steps/DestinationStep";
-import { RestoreExecStep } from "./steps/RestoreExecStep";
-import { ResultsStep } from "./steps/ResultsStep";
-import CustomButton from "../ui/CustomButton";
-import StepBar from "../ui/StepBar";
+} from "../../../types/types";
 
 const STEPS = [
   { id: 1, name: "Upload", description: "Upload ZIP or JSON backup" },
@@ -211,8 +213,6 @@ export function RestoreWizard() {
 
   return (
     <div className="w-full">
-
-
       {/* Step indicator */}
       <div className="bg-white p-6 -mx-6">
         <StepBar steps={STEPS} currentStep={currentStep} />

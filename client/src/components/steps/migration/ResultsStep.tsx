@@ -1,21 +1,20 @@
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { Alert, AlertDescription } from "../ui/alert";
 import {
   CheckCircle2,
   Download,
   FileArchive,
-  Info,
   RefreshCw,
   XCircle,
   ShieldCheck,
   HardDriveUpload,
   DatabaseZap,
 } from "lucide-react";
-import { MigrationData } from "../MigrationWizard";
-import CustomButton from "../ui/CustomButton";
-import AlertCard from "../ui/AlertCard";
+
+import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
+
+import { Card } from "../../ui/card";
+import { Badge } from "../../ui/badge";
+import AlertCard from "../../ui/AlertCard";
+import CustomButton from "../../ui/CustomButton";
 
 interface ResultsStepProps {
   data: MigrationData;

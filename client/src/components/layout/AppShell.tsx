@@ -16,7 +16,6 @@ interface AppShellProps {
 
 export const AppShell: React.FC<AppShellProps> = ({
   user,
-  selectedOrgId,
   selectedOrgName,
   onNavigate,
   onLogout,
@@ -50,7 +49,6 @@ export const AppShell: React.FC<AppShellProps> = ({
             toolMode={currentToolMode}
             selectedOrgName={selectedOrgName}
             onNavigate={onNavigate}
-            onLogout={onLogout}
           />
         </div>
 

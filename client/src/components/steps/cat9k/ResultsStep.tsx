@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle2, RotateCcw } from "lucide-react";
-import { Cat9KData } from "../Cat9KMigrationWizard";
+import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
 import CustomButton from "../../ui/CustomButton";
 
 interface ResultsStepProps {

@@ -14,13 +14,23 @@ import {
   ORG_REQUIRED_ROUTES,
   ROUTE_TO_TOOL_MODE,
 } from "./types/routes";
+
 import { AuthScreen } from "./pages/auth/AuthScreen";
 import { AppShell } from "./components/layout/AppShell";
-import { ModeSelectionScreen } from "./components/ModeSelectionScreen";
-import { MigrationWizard } from "./components/MigrationWizard";
-import { BackupWizard } from "./components/BackupWizard";
+
+// ------- Pages ---------- //
+import { OrganizationsPage } from "./pages/private/OrganizationsPage";
+import { ModeSelectionScreen } from "./pages/private/ModeSelectionScreen";
+
+// Migartion
+import { MigrationWizard } from "./pages/private/migration/MigrationWizard";
+import { Cat9KMigrationWizard } from "./pages/private/migration/Cat9KMigrationWizard";
+
+// Backup and Recovery
+import { BackupWizard } from "./pages/private/backup_and_recovery/BackupWizard";
+import { RestoreWizard } from "./pages/private/backup_and_recovery/RestoreWizard";
+
 import { VersionControlPage } from "./components/version-control/VersionControlPage";
-import { OrganizationsPage } from "./components/organizations/OrganizationsPage";
 import { DriftDetectionPage } from "./components/drift/DriftDetectionPage";
 import { CompliancePage } from "./components/compliance/CompliancePage";
 import { BulkOperationsPage } from "./components/bulk-ops/BulkOperationsPage";
@@ -30,13 +40,9 @@ import { ChangeManagementPage } from "./components/change-management/ChangeManag
 import { DocumentationPage } from "./components/docs/DocumentationPage";
 import { SchedulerPage } from "./components/scheduler/SchedulerPage";
 import { CrossRegionPage } from "./components/cross-region/CrossRegionPage";
-import { ProfilePage } from "./components/profile/ProfilePage";
-import { Cat9KMigrationWizard } from "./components/cat9k/Cat9KMigrationWizard";
-import { RestoreWizard } from "./components/restore/RestoreWizard";
+import { ProfilePage } from "./pages/private/ProfilePage";
 import { SuperAdminApp } from "./components/super-admin/SuperAdminApp";
 import { TeamManagementPage } from "./components/team/TeamManagementPage";
-
-import { toast } from "sonner";
 
 import Home from "./pages/public/Home";
 
@@ -215,55 +221,6 @@ function App() {
     setUser(apiClient.getUser());
   };
 
-  // Render ModeSelectionScreen element
-  const renderModeSelection = () => (
-    <ModeSelectionScreen
-      onSelectMode={handleNavigate}
-      selectedOrgName={selectedOrgName}
-      userEmail={user?.email}
-      connectedOrgs={connectedOrgs}
-      onRefreshOrgs={async () => {
-        try {
-          const orgs = await apiClient.listOrganizations();
-          if (orgs.length === 0) {
-            toast.info("No organizations to sync.");
-            return;
-          }
-
-          const results = await Promise.allSettled(
-            orgs.map((o: any) => apiClient.refreshOrganization(o.id)),
-          );
-
-          const failed = results.filter((r) => r.status === "rejected");
-          const succeeded = results.filter((r) => r.status === "fulfilled");
-
-          const updated = await apiClient.listOrganizations();
-          setConnectedOrgs(updated);
-
-          const totalDevices = updated.reduce(
-            (s: number, o: any) => s + (o.device_count ?? 0),
-            0,
-          );
-
-          if (failed.length === 0) {
-            toast.success(
-              `Synced ${succeeded.length} org${succeeded.length !== 1 ? "s" : ""} — ${totalDevices} device${totalDevices !== 1 ? "s" : ""} found`,
-            );
-          } else {
-            const reason =
-              (failed[0] as PromiseRejectedResult).reason?.message ??
-              "Unknown error";
-            toast.error(
-              `Sync failed for ${failed.length} org${failed.length !== 1 ? "s" : ""}: ${reason}`,
-            );
-          }
-        } catch (err: any) {
-          toast.error(`Sync error: ${err?.message ?? "Unknown error"}`);
-        }
-      }}
-    />
-  );
-
   if (isInitializing) {
     return (
       <div style={{ minHeight: "100vh", backgroundColor: "var(--color-bg)" }} />
@@ -288,7 +245,6 @@ function App() {
           element={
             <AppShell
               user={user}
-              selectedOrgId={selectedOrgId}
               selectedOrgName={selectedOrgName}
               onNavigate={handleNavigate}
               onLogout={handleLogout}
@@ -299,7 +255,12 @@ function App() {
           {/* Non-protected routes */}
           <Route
             path={TOOL_MODE_ROUTES.selection}
-            element={renderModeSelection()}
+            element={
+              <ModeSelectionScreen
+                userEmail={user?.email}
+                connectedOrgs={connectedOrgs}
+              />
+            }
           />
           <Route
             path={TOOL_MODE_ROUTES.migration}

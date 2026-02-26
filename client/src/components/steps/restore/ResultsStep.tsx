@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle2, RotateCcw } from "lucide-react";
-import { RestoreData } from "../RestoreWizard";
+import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
 import CustomButton from "../../ui/CustomButton";
 
 interface ResultsStepProps {

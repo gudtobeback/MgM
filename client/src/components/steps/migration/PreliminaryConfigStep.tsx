@@ -14,7 +14,7 @@ import {
   updateVpnFirewallRules,
   getOrganizationPolicyObjects,
 } from "../../../services/merakiService";
-import { MigrationData } from "../../MigrationWizard";
+import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
 
 interface PreliminaryConfigStepProps {
   data: MigrationData;

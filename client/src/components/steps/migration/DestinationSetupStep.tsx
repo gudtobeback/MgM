@@ -1,14 +1,11 @@
-import { Label } from "../../ui/label";
-import { Card } from "../../ui/card";
-import { Alert, AlertDescription } from "../../ui/alert";
-
-import { Button } from "../../ui/button";
-import { Globe, Key, ExternalLink, Info } from "lucide-react";
-import { MERAKI_REGIONS } from "./SourceConnectionStep";
-import LabelInput from "../../ui/LabelInput";
 import { Input, Select } from "antd";
-import CustomButton from "../../ui/CustomButton";
+import { ExternalLink } from "lucide-react";
+
 import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+import CustomButton from "../../ui/CustomButton";
+
+import { MERAKI_REGIONS } from "@/src/constants";
 
 interface DestinationSetupStepProps {
   data: any;
@@ -168,6 +165,29 @@ export function DestinationSetupStep({
             and is never stored. Make sure you have administrator access to
             create and manage devices in the destination organization.
           </p>
+        </AlertCard>
+
+        {/* Howto get api key */}
+        <AlertCard>
+          <p className="font-semibold text-sm">How to get your API key</p>
+
+          <ol className="list-decimal list-inside space-y-1 text-sm">
+            <li>
+              Log in to{" "}
+              <strong>
+                {isCustom ? "your Meraki dashboard" : selectedRegion.dashboard}
+              </strong>
+            </li>
+            <li>
+              Go to <strong>Organization → Settings</strong>
+            </li>
+            <li>
+              Scroll to <strong>Dashboard API access</strong> and enable it
+            </li>
+            <li>
+              Click <strong>Generate new API key</strong>, then paste it above
+            </li>
+          </ol>
         </AlertCard>
       </div>
     </div>
