@@ -9,7 +9,6 @@ interface AppShellProps {
   user: any;
   selectedOrgId?: string | null;
   selectedOrgName?: string;
-  onNavigate: (mode: ToolMode) => void;
   onLogout: () => void;
   userPermissions?: Record<string, boolean>;
 }
@@ -17,7 +16,6 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({
   user,
   selectedOrgName,
-  onNavigate,
   onLogout,
   userPermissions,
 }) => {
@@ -32,7 +30,6 @@ export const AppShell: React.FC<AppShellProps> = ({
     <div className="flex h-screen">
       <Sidebar
         activeMode={currentToolMode}
-        onNavigate={onNavigate}
         selectedOrgName={selectedOrgName}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
@@ -48,13 +45,12 @@ export const AppShell: React.FC<AppShellProps> = ({
             user={user}
             toolMode={currentToolMode}
             selectedOrgName={selectedOrgName}
-            onNavigate={onNavigate}
           />
         </div>
 
         {/* Main content — only this area scrolls, scrollbar hidden */}
         <main className="flex-1 overflow-y-auto no-scrollbar min-w-0 bg-[#F9F9F9]">
-          <div className="min-h-full p-6">
+          <div className="min-h-full">
             <Outlet />
           </div>
         </main>

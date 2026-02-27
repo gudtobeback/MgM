@@ -224,7 +224,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
   ];
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-8 p-6 w-full">
       {/* Welcome Section */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-2">

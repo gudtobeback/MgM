@@ -197,13 +197,13 @@ export function Cat9KMigrationWizard({
 
   return (
     <div className="w-full">
+      <div className="p-4 font-medium">Cat9K → Meraki</div>
+
       {/* Step indicator */}
-      <div className="bg-white p-6 -mx-6">
-        <StepBar steps={STEPS} currentStep={currentStep} />
-      </div>
+      <StepBar steps={STEPS} currentStep={currentStep} />
 
       {/* Step content */}
-      <div className="p-8">
+      <div className="px-16 py-8">
         <div className="rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] overflow-hidden">
           {renderStep()}
 

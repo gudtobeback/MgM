@@ -261,14 +261,12 @@ export function MigrationWizard() {
 
   return (
     <div className="w-full">
-      {/* <div className="pb-6 font-semibold">Full Migration</div> */}
+      <div className="p-4 font-medium">Full Migration</div>
 
-      <div className="bg-white p-6 -mx-6">
-        <StepBar steps={steps} currentStep={currentStep} />
-      </div>
+      <StepBar steps={steps} currentStep={currentStep} />
 
       {/* ── Step content ─────────────────────────────────────────────── */}
-      <div className="p-8">
+      <div className="px-16 py-8">
         <div className="rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] overflow-hidden">
           {renderStep()}
 

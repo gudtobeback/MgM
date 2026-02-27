@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import "./index.css";
 import App from "./App";
+import { AuthProvider } from "./context/AuthContext";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -19,8 +20,10 @@ root.render(
       },
     }}
   >
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
   </ConfigProvider>,
 );

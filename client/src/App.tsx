@@ -206,10 +206,6 @@ function App() {
     navigate("/home");
   };
 
-  const handleNavigate = (mode: ToolMode) => {
-    navigate(TOOL_MODE_ROUTES[mode]);
-  };
-
   const handleSelectOrg = (orgId: string, orgName: string) => {
     setSelectedOrgId(orgId);
     setSelectedOrgName(orgName);
@@ -246,7 +242,6 @@ function App() {
             <AppShell
               user={user}
               selectedOrgName={selectedOrgName}
-              onNavigate={handleNavigate}
               onLogout={handleLogout}
               userPermissions={userPermissions}
             />

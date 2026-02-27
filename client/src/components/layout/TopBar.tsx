@@ -1,8 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Menu,
-  LogOut,
   ChevronDown,
   Building2,
   ArrowRightLeft,

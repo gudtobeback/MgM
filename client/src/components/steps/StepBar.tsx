@@ -25,7 +25,10 @@ export default function StepBar({ steps, currentStep }: StepBarProps) {
     activeIndex <= 0 ? 0 : Math.round((activeIndex / (totalSteps - 1)) * 100);
 
   return (
-    <nav aria-label="Migration steps" className="w-full">
+    <nav
+      aria-label="Migration steps"
+      className="w-full py-6 bg-white border-t border-b"
+    >
       {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
       <div
         style={{

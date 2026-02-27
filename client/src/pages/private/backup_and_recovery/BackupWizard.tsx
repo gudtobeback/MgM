@@ -121,12 +121,12 @@ export function BackupWizard() {
 
   return (
     <div className="w-full">
-      {/* Step indicator */}
-      <div className="bg-white p-6 -mx-6">
-        <StepBar steps={STEPS} currentStep={currentStep} />
-      </div>
+      <div className="p-4 font-medium">Backup Config</div>
 
-      <div className="p-8">
+      {/* Step indicator */}
+      <StepBar steps={STEPS} currentStep={currentStep} />
+
+      <div className="px-16 py-8">
         {/* Step content */}
         <div className="rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] overflow-hidden">
           {renderStep()}

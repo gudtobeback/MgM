@@ -109,7 +109,6 @@ const PERMISSION_GATE: Record<string, ToolMode[]> = {
 
 interface SidebarProps {
   activeMode: ToolMode;
-  onNavigate: (mode: ToolMode) => void;
   selectedOrgName?: string;
   collapsed: boolean;
   onToggleCollapse: () => void;
@@ -156,24 +155,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className={`flex flex-col h-full shrink-0 z-40 bg-white border-r`}>
-      {/* NAV */}
-      <nav className="flex-1 flex flex-col gap-1 overflow-y-auto px-3 pb-3">
-        <div className="h-18 flex items-center justify-between">
-          {!collapsed && (
-            <div className="ml-2 font-bold text-[20px] text-[#049FD9]">
-              Meraki
-            </div>
-          )}
+    <nav className="flex flex-col h-full overflow-y-auto bg-white">
+      <header className="shrink-0 flex items-center justify-between h-18 px-3">
+        {!collapsed && (
+          <div className="ml-2 font-bold text-[20px] text-[#049FD9]">
+            Meraki
+          </div>
+        )}
 
-          <button
-            onClick={onToggleCollapse}
-            className="w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
-          >
-            {collapsed ? <ArrowRight size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
+        <button
+          onClick={onToggleCollapse}
+          className="w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+        >
+          {collapsed ? <ArrowRight size={18} /> : <Menu size={18} />}
+        </button>
+      </header>
 
+      <div
+        className={`flex flex-col justify-between h-full gap-3 pl-0 p-3 border-r`}
+      >
         <div className="flex-1 flex flex-col gap-1">
           {navItems.map((item) => {
             const groupActive = isGroupActive(item);
@@ -192,77 +192,87 @@ export const Sidebar: React.FC<SidebarProps> = ({
             };
 
             return (
-              <div key={item.id}>
-                <button
-                  onClick={handleItemClick}
-                  className={`flex items-center w-full p-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    collapsed ? "justify-center" : "gap-3"
-                  } ${
-                    groupActive
-                      ? "bg-[#049FD9] text-white shadow-md"
-                      : "text-gray-600 hover:bg-white/60 hover:text-gray-900"
+              <div key={item.id} className="flex items-stretch gap-2 group">
+                <div
+                  className={`px-0.5 rounded-r-md ${
+                    groupActive ? "bg-[#049FD9]" : "group-hover:bg-gray-400"
                   }`}
-                >
-                  <span className="shrink-0">{item.icon}</span>
+                ></div>
 
-                  {!collapsed && (
-                    <>
-                      <span className="flex-1 truncate text-left">
-                        {item.label}
-                      </span>
-                      {hasChildren && (
-                        <ChevronRight
-                          size={14}
-                          className={`transition-transform duration-200 ${
-                            isExpanded ? "rotate-45" : ""
-                          }`}
-                        />
-                      )}
-                    </>
+                <div className="w-full">
+                  <button
+                    onClick={handleItemClick}
+                    className={`flex items-center w-full p-2.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                      collapsed ? "justify-center" : "gap-3"
+                    } ${
+                      groupActive
+                        ? "bg-[#049FD9] text-white shadow-md"
+                        : "text-gray-600 hover:bg-white/60 hover:text-gray-900"
+                    }`}
+                  >
+                    <span className="shrink-0">{item.icon}</span>
+
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1 truncate text-left">
+                          {item.label}
+                        </span>
+                        {hasChildren && (
+                          <ChevronRight
+                            size={14}
+                            className={`transition-transform duration-200 ${
+                              isExpanded ? "rotate-45" : ""
+                            }`}
+                          />
+                        )}
+                      </>
+                    )}
+                  </button>
+
+                  {!collapsed && isExpanded && item.children && (
+                    <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-2">
+                      {item.children.map((child) => {
+                        const childActive = activeMode === child.id;
+                        return (
+                          <button
+                            key={child.id}
+                            onClick={() => handleNavigate(child.id)}
+                            className={`flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left ${
+                              childActive
+                                ? "bg-blue-50 text-[#049FD9] font-medium"
+                                : "text-gray-600 hover:bg-white/50 hover:text-gray-900"
+                            }`}
+                          >
+                            {childActive && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#049FD9] mr-2" />
+                            )}
+                            <span className="truncate">{child.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   )}
-                </button>
-
-                {!collapsed && isExpanded && item.children && (
-                  <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-2">
-                    {item.children.map((child) => {
-                      const childActive = activeMode === child.id;
-                      return (
-                        <button
-                          key={child.id}
-                          onClick={() => handleNavigate(child.id)}
-                          className={`flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left ${
-                            childActive
-                              ? "bg-blue-50 text-[#049FD9] font-medium"
-                              : "text-gray-600 hover:bg-white/50 hover:text-gray-900"
-                          }`}
-                        >
-                          {childActive && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#049FD9] mr-2" />
-                          )}
-                          <span className="truncate">{child.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                </div>
               </div>
             );
           })}
         </div>
 
-        <button
-          onClick={onLogout}
-          className={`flex items-center w-full p-2.5 text-sm font-medium text-gray-600 hover:bg-red-100 hover:text-red-500 rounded-lg transition-all duration-200 ${
-            collapsed ? "justify-center" : "gap-3"
-          } `}
-        >
-          <LogOut size={18} />
+        <div className="pl-3">
+          <button
+            onClick={onLogout}
+            className={`flex items-center w-full p-2.5 text-sm font-medium text-gray-600 hover:bg-red-100 hover:text-red-500 rounded-lg transition-all duration-200 ${
+              collapsed ? "justify-center" : "gap-3"
+            } `}
+          >
+            <LogOut size={18} />
 
-          {!collapsed && (
-            <span className="flex-1 truncate text-left">Logout</span>
-          )}
-        </button>
-      </nav>
-    </aside>
+            {!collapsed && (
+              <span className="flex-1 truncate text-left">Logout</span>
+            )}
+          </button>
+        </div>
+      </div>
+    </nav>
   );
 };
