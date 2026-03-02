@@ -76,7 +76,7 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
                 <span className="text-3xl">All</span>
               ) : (
                 <>
-                  <span className="text-3xl">{selectedDevices.length}</span>
+                  <span className="text-3xl">{selectedDevices.length} </span>
                   <span className="text-muted-foreground">devices</span>
                 </>
               )}
@@ -133,13 +133,13 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
         </div>
 
         {!isFullBackup && selectedDevices.length > 0 && (
-          <Card className="p-6">
-            <h3 className="mb-4">Backed Up Devices</h3>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+          <div className="flex flex-col gap-3 p-5 w-full rounded-lg border overflow-hidden">
+            <p>Backed Up Devices</p>
+            <div className="flex flex-col max-h-64 overflow-y-auto">
               {selectedDevices.map((device: any) => (
                 <div
                   key={device.id || device.serial}
-                  className="flex items-center justify-between p-3 bg-muted/50 rounded"
+                  className="flex items-center justify-between p-3 bg-muted/50 border-b"
                 >
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -150,16 +150,17 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
                       </p>
                     </div>
                   </div>
+
                   <Badge
                     variant="default"
-                    className="bg-purple-600 dark:bg-purple-600"
+                    className="text-white bg-purple-600 dark:bg-purple-600"
                   >
                     Success
                   </Badge>
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
         )}
 
         <AlertCard variant="success">

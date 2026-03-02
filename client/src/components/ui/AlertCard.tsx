@@ -3,40 +3,46 @@ import {
   CircleCheck,
   CircleAlert,
   TriangleAlert,
-  CirclePlus,
+  Info,
+  XCircle,
 } from "lucide-react";
 
 type AlertCardProps = {
   children: React.ReactNode;
-  variant?: string;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+  variant?: "note" | "success" | "warning" | "alert" | "error" | "info";
+};
 
 export default function AlertCard({
   children,
   variant = "info",
 }: AlertCardProps) {
-  const colorScheme = {
-    note: "text-[#025115] bg-[#CFFED7] border border-[#6CD87D]",
-    success: "text-[#025115] bg-[#CFFED7] border border-[#6CD87D]",
-    warning: "text-amber-800 bg-[#FFEDD5] border border-[#FF9500]",
-    alert: "text-red-800 bg-[#FECFCF] border border-[#D86C6C]",
-    error: "text-red-800 bg-[#FECFCF] border border-[#D86C6C]",
-    info: "text-black/90 bg-[#F1F1F1] border border-[#D9D9D9]",
+  const styles = {
+    success: "text-green-800 bg-green-50 border border-green-200",
+
+    note: "text-emerald-800 bg-emerald-50 border border-emerald-200",
+
+    warning: "text-amber-800 bg-amber-50 border border-amber-200",
+
+    alert: "text-red-800 bg-red-50 border border-red-200",
+
+    error: "text-red-900 bg-red-100 border border-red-300",
+
+    info: "text-blue-800 bg-blue-50 border border-blue-200",
   };
 
-  const icon = {
-    success: <CircleCheck size={18} color="#025115" />,
-    alert: <CircleAlert size={18} className="text-red-800" />,
-    warning: <TriangleAlert size={18} className="text-amber-800" />,
-    error: <CirclePlus size={18} className="text-red-800 rotate-44" />,
+  const icons = {
+    success: <CircleCheck size={18} className="text-green-600" />,
+    warning: <TriangleAlert size={18} className="text-amber-600" />,
+    alert: <CircleAlert size={18} className="text-red-600" />,
+    error: <XCircle size={18} className="text-red-700" />,
   };
 
   return (
     <div
-      className={`px-4 py-3 w-full text-[13px] rounded-md ${colorScheme[variant]}`}
+      className={`w-full rounded-md border px-4 py-3 text-[13px] ${styles[variant]}`}
     >
-      <div className="flex items-center gap-3">
-        {icon[variant] || ""}
+      <div className="flex items-start gap-3">
+        {icons[variant] || ""}
         <div className="flex flex-col gap-1">{children}</div>
       </div>
     </div>

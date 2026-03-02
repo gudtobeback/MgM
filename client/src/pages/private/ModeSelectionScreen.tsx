@@ -235,16 +235,16 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
           </p>
         </div>
 
-        <CustomButton
+        {/* <CustomButton
           onClick={() => handleNavigate("organizations")}
           className="px-6 py-3 text-sm"
         >
           <Plus size={20} /> Add Organization
-        </CustomButton>
+        </CustomButton> */}
       </div>
 
       {/* Summay Cards */}
-      <div className="grid grid-cols-4 gap-6">
+      {/* <div className="grid grid-cols-4 gap-6">
         {SUMMARY.map((s, i) => (
           <div
             key={s.label}
@@ -264,11 +264,11 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* Hero Row: Quick Access Tools + Device Distribution */}
-      <div className="grid grid-cols-12 gap-6">
-        {/* Quick Access Tools */}
+      {/* <div className="grid grid-cols-12 gap-6">
+        Quick Access Tools
         <div className="col-span-12 md:col-span-8 flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <div className="text-md font-bold flex items-center gap-2">
             Quick Access Tools
@@ -296,7 +296,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
           </div>
         </div>
 
-        {/* Device Distribution */}
+        Device Distribution
         <div className="col-span-12 md:col-span-4 flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <div className="text-md font-bold flex items-center gap-2">
             Device Distribution
@@ -370,7 +370,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Platform Tools */}
       <div className="flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">

@@ -4,6 +4,7 @@ import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 
 import { MERAKI_REGIONS } from "@/src/constants";
+import DomainCard from "../DomainCard";
 
 interface SourceConnectionStepProps {
   data: any;
@@ -43,16 +44,10 @@ export function SourceConnectionStep({
       {/* Form */}
       <div className="flex flex-col gap-6 p-6">
         {/* Title */}
-        <div className="flex items-center gap-3 px-4 py-2 bg-[#F6FDFF] rounded-lg border border-[#87D2ED] w-fit">
-          <div className="size-7.5 bg-[#049FD9] rounded-full"></div>
-
-          <div className="flex flex-col justify-between">
-            <p className="text-sm font-medium">Source Dashboard</p>
-            <p className="text-sm text-[#232C32]">
-              {isCustom ? "Custom API endpoint" : selectedRegion.dashboard}
-            </p>
-          </div>
-        </div>
+        <DomainCard
+          title="Source Dashboard"
+          subTitle={isCustom ? "Custom API endpoint" : selectedRegion.dashboard}
+        />
 
         <LabelInput id="region" label="Region" required>
           <Select

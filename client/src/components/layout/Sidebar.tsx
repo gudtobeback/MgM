@@ -39,11 +39,11 @@ interface NavItem {
 /* ---- NAV ITEMS (unchanged) ---- */
 const NAV_ITEMS: NavItem[] = [
   { id: "selection", label: "Dashboard", icon: <LayoutGrid size={18} /> },
-  {
-    id: "organizations",
-    label: "Organizations",
-    icon: <Building2 size={18} />,
-  },
+  // {
+  //   id: "organizations",
+  //   label: "Organizations",
+  //   icon: <Building2 size={18} />,
+  // },
   {
     id: "migration",
     label: "Migration",

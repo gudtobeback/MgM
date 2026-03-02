@@ -12,13 +12,15 @@ import { BackupOrganizationStep } from "../../../components/steps/backup/BackupO
 import { BackupDeviceSelectionStep } from "../../../components/steps/backup/BackupDeviceSelectionStep";
 
 import { MerakiDeviceDetails, MerakiOrganization } from "../../../types/types";
+import BackupMethodSelection from "@/src/components/steps/backup/BackupMethodSelection";
 
 const STEPS = [
   { id: 1, name: "Connect", description: "Connect to Meraki dashboard" },
   { id: 2, name: "Organization", description: "Select organization" },
-  { id: 3, name: "Devices", description: "Select devices to backup" },
-  { id: 4, name: "Backup", description: "Execute backup" },
-  { id: 5, name: "Download", description: "Download backup file" },
+  { id: 3, name: "Backup Method", description: "Select Backup Method" },
+  { id: 4, name: "Devices", description: "Select devices to backup" },
+  { id: 5, name: "Backup Execution", description: "Execute backup" },
+  { id: 6, name: "Download", description: "Download backup file" },
 ];
 
 interface BackupData {
@@ -42,6 +44,10 @@ export function BackupWizard() {
     backupBlob: null,
     backupFilename: "",
   });
+
+  const [backupType, setBackupType] = useState<"selective" | "full" | null>(
+    null,
+  );
 
   const handleNext = () => {
     if (currentStep < STEPS.length) setCurrentStep((s) => s + 1);
@@ -75,6 +81,8 @@ export function BackupWizard() {
       case 2:
         return !!backupData.organization;
       case 3:
+        return false;
+      case 4:
         return backupData.selectedDevices.length > 0;
       default:
         return false;
@@ -82,7 +90,7 @@ export function BackupWizard() {
   }
 
   // Steps 4–5 run automatically (no manual Next button)
-  const isAutoStep = currentStep >= 4;
+  const isAutoStep = currentStep >= 5;
 
   const renderStep = () => {
     switch (currentStep) {
@@ -99,20 +107,30 @@ export function BackupWizard() {
         );
       case 3:
         return (
+          <BackupMethodSelection
+            data={backupData}
+            handleNext={handleNext}
+            setBackupType={setBackupType}
+            setCurrentStep={setCurrentStep}
+          />
+        );
+      case 4:
+        return (
           <BackupDeviceSelectionStep
             data={backupData}
             onUpdate={updateBackupData}
           />
         );
-      case 4:
+      case 5:
         return (
           <BackupExecutionStep
             data={backupData}
+            backupType={backupType}
             onComplete={handleNext}
             onUpdate={updateBackupData}
           />
         );
-      case 5:
+      case 6:
         return <BackupResultsStep data={backupData} onReset={handleReset} />;
       default:
         return null;

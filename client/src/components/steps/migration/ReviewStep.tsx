@@ -9,6 +9,7 @@ import LabelInput from "../../ui/LabelInput";
 import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
 
 import { MERAKI_REGIONS } from "@/src/constants";
+import DomainCard from "../DomainCard";
 
 interface ReviewStepProps {
   data: MigrationData;
@@ -48,37 +49,30 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
         ) : (
           <div className="flex flex-col gap-6">
             {/* Title */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               {/* Source */}
-              <div className="p-4 bg-[#F6FDFF] rounded-lg border border-[#87D2ED] w-fit">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-7.5 bg-[#049FD9] rounded-full"></div>
-
-                    <p className="text-sm font-medium">Source</p>
-                  </div>
-
-                  <div className="flex flex-col gap-1 font-medium text-xs">
-                    <p className="text-[#8B8B8B]">DASHBOARD</p>
-                    <p>
-                      {isSourceRegionCustom
-                        ? "Custom API endpoint"
-                        : soucrce_region.dashboard}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-1 font-medium text-xs">
-                    <p className="text-[#8B8B8B]">ORGANIZATION</p>
-                    <p>{data.sourceOrg?.name}</p>
-                  </div>
-
-                  <div className="flex flex-col gap-1 font-medium text-xs">
-                    <p className="text-[#8B8B8B]">NETWORK</p>
-                    <p>{data.sourceNetwork?.name}</p>
-                  </div>
+              <DomainCard title="Source" className="w-[250px]">
+                <div className="flex flex-col gap-1 font-medium text-xs">
+                  <p className="text-[#8B8B8B]">DASHBOARD</p>
+                  <p>
+                    {isSourceRegionCustom
+                      ? "Custom API endpoint"
+                      : soucrce_region.dashboard}
+                  </p>
                 </div>
-              </div>
 
+                <div className="flex flex-col gap-1 font-medium text-xs">
+                  <p className="text-[#8B8B8B]">ORGANIZATION</p>
+                  <p>{data.sourceOrg?.name}</p>
+                </div>
+
+                <div className="flex flex-col gap-1 font-medium text-xs">
+                  <p className="text-[#8B8B8B]">NETWORK</p>
+                  <p>{data.sourceNetwork?.name}</p>
+                </div>
+              </DomainCard>
+
+              {/* Arrow */}
               <div className="flex flex-col items-center gap-3">
                 <div className="font-semibold">
                   {data.devicesToMigrate.length} Devices
@@ -90,38 +84,34 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
               </div>
 
               {/* Destination */}
-              <div className="p-4 bg-[#F8FFF6] rounded-lg border border-[#87ED87] w-fit">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-7.5 bg-[#0BD904] rounded-full"></div>
-
-                    <p className="text-sm font-medium">Destination</p>
-                  </div>
-
-                  <div className="flex flex-col gap-1 font-medium text-xs">
-                    <p className="text-[#8B8B8B]">DASHBOARD</p>
-                    <p>
-                      {isDestinationRegionCustom
-                        ? "Custom API endpoint"
-                        : destination_region.dashboard}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-1 font-medium text-xs">
-                    <p className="text-[#8B8B8B]">ORGANIZATION</p>
-                    <p>{data.destinationOrg?.name}</p>
-                  </div>
-
-                  <div className="flex flex-col gap-1 font-medium text-xs">
-                    <p className="text-[#8B8B8B]">NETWORK</p>
-                    <p>{data.destinationNetwork?.name}</p>
-                  </div>
+              <DomainCard
+                title="Destination"
+                variant="green"
+                className="w-[250px]"
+              >
+                <div className="flex flex-col gap-1 font-medium text-xs">
+                  <p className="text-[#8B8B8B]">DASHBOARD</p>
+                  <p>
+                    {isDestinationRegionCustom
+                      ? "Custom API endpoint"
+                      : destination_region.dashboard}
+                  </p>
                 </div>
-              </div>
+
+                <div className="flex flex-col gap-1 font-medium text-xs">
+                  <p className="text-[#8B8B8B]">ORGANIZATION</p>
+                  <p>{data.destinationOrg?.name}</p>
+                </div>
+
+                <div className="flex flex-col gap-1 font-medium text-xs">
+                  <p className="text-[#8B8B8B]">NETWORK</p>
+                  <p>{data.destinationNetwork?.name}</p>
+                </div>
+              </DomainCard>
             </div>
 
             {/* Warning */}
-            <AlertCard variant="alert">
+            <AlertCard variant="warning">
               <p>
                 <strong>Warning: </strong>This action is irreversible. All
                 devices will be unclaimed from the source and moved. This will
