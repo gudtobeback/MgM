@@ -10,6 +10,14 @@ import {
 } from "lucide-react";
 import { apiClient } from "../../services/apiClient";
 import { cn } from "../../lib/utils";
+import { apiEndpoints } from "@/src/services/api";
+import { useAuth } from "@/src/context/AuthContext";
+import AlertCard from "@/src/components/ui/AlertCard";
+import LabelInput from "@/src/components/ui/LabelInput";
+import { Input, message } from "antd";
+import CustomButton from "@/src/components/ui/CustomButton";
+
+const { Password } = Input;
 
 interface UserProfile {
   id: string;
@@ -18,10 +26,6 @@ interface UserProfile {
   subscription_tier: string;
   subscription_status: string;
   created_at: string;
-}
-
-interface ProfilePageProps {
-  onTierChange?: (newTier: string) => void;
 }
 
 const TIERS = [
@@ -102,26 +106,36 @@ const INPUT =
 const INPUT_DISABLED =
   "w-full px-3 py-2.5 rounded-lg text-sm bg-white/20 border border-white/30 text-muted-foreground opacity-70 cursor-not-allowed";
 
-export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+export const ProfilePage = () => {
+  const { user, setUser } = useAuth();
+
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [changingTier, setChangingTier] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [nameForm, setNameForm] = useState("");
+  // const [success, setSuccess] = useState("");
+  const [nameForm, setNameForm] = useState(user?.full_name ?? "");
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = (content) => {
+    messageApi.open({
+      type: "success",
+      content: content,
+    });
+  };
 
   const loadProfile = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
-      const data = await apiClient.getCurrentUser();
-      setProfile(data);
+      const res = await apiEndpoints.getCurrentUser();
+
+      const data = res.data;
+
+      setUser(data);
       setNameForm(data.full_name || "");
+      // console.log("User: ", data);
     } catch (err: any) {
       setError(err.message || "Failed to load profile");
     } finally {
@@ -132,10 +146,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
   const saveName = async () => {
     setSaving(true);
     setError("");
-    setSuccess("");
+
     try {
       await apiClient.updateProfile({ fullName: nameForm });
-      setSuccess("Display name updated successfully.");
+      success("Display name updated successfully.");
+
       await loadProfile();
     } catch (err: any) {
       setError(err.message);
@@ -155,14 +170,16 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
     }
     setSaving(true);
     setError("");
-    setSuccess("");
+
     try {
       await apiClient.updateProfile({
         currentPassword: pwForm.current,
         newPassword: pwForm.next,
       });
+
       setPwForm({ current: "", next: "", confirm: "" });
-      setSuccess("Password changed successfully.");
+
+      success("Password changed successfully.");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -171,17 +188,21 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
   };
 
   const changeTier = async (tierId: string) => {
-    if (tierId === profile?.subscription_tier) return;
+    if (tierId === user?.subscription_tier) return;
+
     setChangingTier(true);
     setError("");
-    setSuccess("");
+
     try {
-      await apiClient.updateSubscription(tierId);
+      await apiEndpoints.updateSubscription({ tier: tierId });
       const t = TIERS.find((t) => t.id === tierId);
-      setSuccess(`Subscription changed to ${t?.label ?? tierId}.`);
-      setTimeout(() => setSuccess(""), 4000);
+
+      messageApi.open({
+        type: "success",
+        content: `Subscription changed to ${t?.label ?? tierId}.`,
+      });
+
       await loadProfile();
-      onTierChange?.(tierId);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -202,296 +223,252 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onTierChange }) => {
   }
 
   const currentTier =
-    TIERS.find((t) => t.id === profile?.subscription_tier) ?? TIERS[0];
-  const initial = (profile?.email?.[0] ?? "?").toUpperCase();
-  const displayName =
-    profile?.full_name || profile?.email?.split("@")[0] || "User";
+    TIERS.find((t) => t.id === user?.subscription_tier) ?? TIERS[0];
+  const initial = (user?.email?.[0] ?? "?").toUpperCase();
+  const displayName = user?.full_name || user?.email?.split("@")[0] || "User";
 
   return (
     <div className="w-full flex flex-col gap-6 p-6">
-      {/* ── Page header ───────────────────────────────────────────── */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          Account &amp; Profile
-        </h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Manage your account settings and subscription plan.
-        </p>
+      {contextHolder}
+
+      {/* Welcome Section */}
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2">
+          <p className="font-semibold">Account & Profile</p>
+          <p className="text-xs text-black/60">
+            Manage your account settings and subscription plan.
+          </p>
+        </div>
       </div>
 
       {/* ── Toast messages ────────────────────────────────────────── */}
       {error && (
-        <div className="flex items-start gap-3 px-5 py-4 rounded-xl bg-red-50/80 border border-red-200/80 text-red-700 text-sm shadow-sm backdrop-blur-sm">
-          <Shield size={16} className="shrink-0 mt-0.5 text-red-500" />
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="flex items-start gap-3 px-5 py-4 rounded-xl bg-green-50/80 border border-green-200/80 text-green-700 text-sm shadow-sm backdrop-blur-sm">
-          <CheckCircle2 size={16} className="shrink-0 mt-0.5 text-green-500" />
-          {success}
-        </div>
+        <AlertCard variant="error">
+          <p className="font-semibold">{error}</p>
+        </AlertCard>
       )}
 
-      {profile && (
-        <>
-          {/* ── Hero: avatar + identity + current plan ────────────── */}
-          <div className="glass-card p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-            {/* Large avatar */}
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shrink-0"
-              style={{
-                background: `linear-gradient(135deg, ${currentTier.from}, ${currentTier.to})`,
-                boxShadow: `0 0 0 3px rgba(255,255,255,0.8), 0 0 0 5px ${currentTier.from}50`,
-              }}
-            >
-              {initial}
-            </div>
+      {/* ── Hero: avatar + identity + current plan ────────────── */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all">
+        {/* Large avatar */}
+        <div
+          className="w-16 h-16 rounded-lg flex items-center justify-center text-white text-2xl font-bold shrink-0 bg-[#049FD9]"
+          style={{
+            boxShadow: `0 0 0 3px rgba(255,255,255,0.8), 0 0 0 5px #049FD950`,
+          }}
+        >
+          {initial}
+        </div>
 
-            {/* Identity */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 flex-wrap">
-                <p className="text-xl font-bold text-foreground truncate">
-                  {displayName}
-                </p>
-                {/* Tier badge */}
-                <span
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white tracking-wide shadow-sm"
-                  style={{
-                    background: `linear-gradient(135deg, ${currentTier.from}, ${currentTier.to})`,
-                  }}
-                >
-                  <Sparkles size={10} />
-                  {currentTier.label}
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-0.5 truncate">
-                {profile.email}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Member since{" "}
-                {new Date(profile.created_at).toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })}
-                &nbsp;·&nbsp;Status:{" "}
-                <span className="font-semibold text-green-600 capitalize">
-                  {profile.subscription_status}
-                </span>
-              </p>
-            </div>
-          </div>
-
-          {/* ── Profile information ───────────────────────────────── */}
-          <div className="glass-card p-6 space-y-5">
-            <div className="flex items-center gap-2 mb-1">
-              <User size={16} className="text-blue-500" />
-              <h2 className="font-semibold text-foreground">
-                Profile Information
-              </h2>
-            </div>
-
-            {/* Email (read-only) */}
-            <div>
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                Email address
-              </label>
-              <input
-                type="email"
-                value={profile.email}
-                disabled
-                className={INPUT_DISABLED}
-              />
-            </div>
-
-            {/* Display name */}
-            <div>
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                Display name
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={nameForm}
-                  onChange={(e) => setNameForm(e.target.value)}
-                  placeholder="Enter your name"
-                  className={INPUT}
-                />
-                <button
-                  onClick={saveName}
-                  disabled={saving || nameForm === (profile.full_name ?? "")}
-                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-40 shrink-0"
-                  style={{
-                    background: "linear-gradient(135deg, #3b82f6, #4f46e5)",
-                  }}
-                >
-                  {saving ? (
-                    <Loader2 size={14} className="animate-spin" />
-                  ) : (
-                    "Save"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Change password ───────────────────────────────────── */}
-          <div className="glass-card p-6 space-y-5">
-            <div className="flex items-center gap-2 mb-1">
-              <Key size={16} className="text-amber-500" />
-              <h2 className="font-semibold text-foreground">Change Password</h2>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3">
-              {(
-                [
-                  { label: "Current password", key: "current" as const },
-                  { label: "New password", key: "next" as const },
-                  { label: "Confirm new password", key: "confirm" as const },
-                ] as const
-              ).map(({ label, key }) => (
-                <div key={key}>
-                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                    {label}
-                  </label>
-                  <input
-                    type="password"
-                    value={pwForm[key]}
-                    onChange={(e) =>
-                      setPwForm((f) => ({ ...f, [key]: e.target.value }))
-                    }
-                    className={INPUT}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={savePassword}
-              disabled={saving || !pwForm.current || !pwForm.next}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-40"
-              style={{
-                background: "linear-gradient(135deg, #3b82f6, #4f46e5)",
-              }}
-            >
-              {saving ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" /> Saving...
-                </>
-              ) : (
-                "Update Password"
-              )}
-            </button>
-          </div>
-
-          {/* ── Subscription plan selector ────────────────────────── */}
-          <div className="glass-card p-6">
-            <div className="flex items-center gap-2 mb-1">
-              <CreditCard size={16} className="text-indigo-500" />
-              <h2 className="font-semibold text-foreground">
-                Subscription Plan
-              </h2>
-            </div>
-            <p className="text-xs text-muted-foreground mb-5">
-              Select a plan below. Changes take effect immediately.
+        {/* Identity */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 flex-wrap">
+            <p className="text-xl font-bold text-foreground truncate">
+              {displayName}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {TIERS.map((tier) => {
-                const isActive = profile.subscription_tier === tier.id;
-                return (
-                  <button
-                    key={tier.id}
-                    onClick={() => changeTier(tier.id)}
-                    disabled={changingTier || isActive}
-                    className={cn(
-                      "relative p-4 rounded-xl text-left transition-all duration-200 border overflow-hidden group",
-                      isActive
-                        ? "border-transparent shadow-md ring-2 " + tier.ring
-                        : "border-white/30 bg-white/20 hover:bg-white/40 hover:shadow-md hover:border-white/50",
-                    )}
-                    style={
-                      isActive
-                        ? {
-                            background: `linear-gradient(135deg, ${tier.from}18, ${tier.to}28)`,
-                          }
-                        : {}
-                    }
-                  >
-                    {/* Gradient top bar */}
-                    <div
-                      className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
-                      style={{
-                        background: `linear-gradient(90deg, ${tier.from}, ${tier.to})`,
-                      }}
-                    />
-
-                    <div className="flex items-center justify-between mt-1 mb-3">
-                      <div className="flex items-center gap-2">
-                        {/* Mini tier avatar */}
-                        <div
-                          className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold"
-                          style={{
-                            background: `linear-gradient(135deg, ${tier.from}, ${tier.to})`,
-                          }}
-                        >
-                          {tier.id.slice(0, 2).toUpperCase()}
-                        </div>
-                        <span className="font-bold text-foreground text-sm">
-                          {tier.label}
-                        </span>
-                      </div>
-                      {isActive && (
-                        <span
-                          className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold text-white"
-                          style={{
-                            background: `linear-gradient(135deg, ${tier.from}, ${tier.to})`,
-                          }}
-                        >
-                          <CheckCircle2 size={9} /> Current
-                        </span>
-                      )}
-                    </div>
-
-                    <ul className="space-y-1.5">
-                      {tier.features.slice(0, 3).map((f) => (
-                        <li
-                          key={f}
-                          className="text-xs text-muted-foreground flex items-start gap-1.5"
-                        >
-                          <CheckCircle2
-                            size={11}
-                            className="shrink-0 mt-0.5"
-                            style={{ color: tier.from }}
-                          />
-                          {f}
-                        </li>
-                      ))}
-                      {tier.features.length > 3 && (
-                        <li className="text-xs text-muted-foreground pl-4">
-                          +{tier.features.length - 3} more features
-                        </li>
-                      )}
-                    </ul>
-
-                    {!isActive && (
-                      <div
-                        className="mt-3 text-xs font-semibold text-center py-1.5 rounded-lg transition-colors group-hover:text-white"
-                        style={{
-                          background: `linear-gradient(135deg, ${tier.from}20, ${tier.to}20)`,
-                          color: tier.from,
-                        }}
-                      >
-                        Switch to {tier.label}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            {/* Tier badge */}
+            <span
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white tracking-wide shadow-sm"
+              style={{
+                background: `linear-gradient(135deg, ${currentTier.from}, ${currentTier.to})`,
+              }}
+            >
+              <Sparkles size={10} />
+              {currentTier.label}
+            </span>
           </div>
-        </>
-      )}
+
+          <p className="text-sm text-muted-foreground mt-0.5 truncate">
+            {user.email}
+          </p>
+
+          <p className="text-xs text-muted-foreground mt-1">
+            Member since{" "}
+            {new Date(user.created_at).toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
+            &nbsp;·&nbsp;Status:{" "}
+            <span className="font-semibold text-green-600 capitalize">
+              {user.subscription_status}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {/* ── Profile information ───────────────────────────────── */}
+      <div className="flex flex-col gap-5 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all">
+        <p className="font-semibold text-foreground">Profile Information</p>
+
+        {/* Email (read-only) */}
+        <LabelInput id="email" label="Email Address">
+          <Input id="email" type="email" value={user.email} disabled />
+        </LabelInput>
+
+        {/* Display name */}
+        <LabelInput id="name" label="Full Name">
+          <Input
+            id="name"
+            placeholder="Enter your name"
+            value={nameForm}
+            onChange={(e) => setNameForm(e.target.value)}
+          />
+        </LabelInput>
+
+        <CustomButton
+          onClick={saveName}
+          disabled={saving || nameForm === (user.full_name ?? "")}
+          className="self-end"
+        >
+          {saving ? <Loader2 size={14} className="animate-spin" /> : "Save"}
+        </CustomButton>
+      </div>
+
+      {/* ── Change password ───────────────────────────────────── */}
+      <div className="flex flex-col gap-5 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all">
+        <p className="font-semibold text-foreground">Change Password</p>
+
+        <div className="grid grid-cols-1 gap-5">
+          {(
+            [
+              { label: "Current password", key: "current" as const },
+              { label: "New password", key: "next" as const },
+              { label: "Confirm new password", key: "confirm" as const },
+            ] as const
+          ).map(({ label, key }) => (
+            <div key={key}>
+              <LabelInput id={key} label={label}>
+                <Password
+                  id={key}
+                  value={pwForm[key]}
+                  onChange={(e) =>
+                    setPwForm((f) => ({ ...f, [key]: e.target.value }))
+                  }
+                />
+              </LabelInput>
+            </div>
+          ))}
+        </div>
+
+        <CustomButton
+          onClick={savePassword}
+          disabled={saving || !pwForm.current || !pwForm.next}
+          className="self-end"
+        >
+          {saving ? (
+            <>
+              <Loader2 size={14} className="animate-spin" /> Saving...
+            </>
+          ) : (
+            "Update Password"
+          )}
+        </CustomButton>
+      </div>
+
+      {/* ── Subscription plan selector ────────────────────────── */}
+      <div className="p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all">
+        <p className="font-semibold text-foreground">Subscription Plan</p>
+
+        <p className="text-xs text-muted-foreground mb-5">
+          Select a plan below. Changes take effect immediately.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {TIERS.map((tier) => {
+            const isActive = user.subscription_tier === tier.id;
+
+            return (
+              <button
+                key={tier.id}
+                onClick={() => changeTier(tier.id)}
+                disabled={changingTier || isActive}
+                className={cn(
+                  "relative p-4 rounded-xl text-left transition-all duration-200 border overflow-hidden group",
+                  isActive
+                    ? "border-transparent shadow-md ring-2 " + tier.ring
+                    : "border-white/30 bg-white/20 hover:bg-white/40 hover:shadow-md hover:border-white/50",
+                )}
+                style={
+                  isActive
+                    ? {
+                        background: `linear-gradient(135deg, ${tier.from}18, ${tier.to}28)`,
+                      }
+                    : {}
+                }
+              >
+                {/* Gradient top bar */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                  style={{
+                    background: `linear-gradient(90deg, ${tier.from}, ${tier.to})`,
+                  }}
+                />
+
+                <div className="flex items-center justify-between mt-1 mb-3">
+                  <div className="flex items-center gap-2">
+                    {/* Mini tier avatar */}
+                    <div
+                      className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold"
+                      style={{
+                        background: `linear-gradient(135deg, ${tier.from}, ${tier.to})`,
+                      }}
+                    >
+                      {tier.id.slice(0, 2).toUpperCase()}
+                    </div>
+                    <span className="font-bold text-foreground text-sm">
+                      {tier.label}
+                    </span>
+                  </div>
+                  {isActive && (
+                    <span
+                      className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold text-white"
+                      style={{
+                        background: `linear-gradient(135deg, ${tier.from}, ${tier.to})`,
+                      }}
+                    >
+                      <CheckCircle2 size={9} /> Current
+                    </span>
+                  )}
+                </div>
+
+                <ul className="space-y-1.5">
+                  {tier.features.slice(0, 3).map((f) => (
+                    <li
+                      key={f}
+                      className="text-xs text-muted-foreground flex items-start gap-1.5"
+                    >
+                      <CheckCircle2
+                        size={11}
+                        className="shrink-0 mt-0.5"
+                        style={{ color: tier.from }}
+                      />
+                      {f}
+                    </li>
+                  ))}
+                  {tier.features.length > 3 && (
+                    <li className="text-xs text-muted-foreground pl-4">
+                      +{tier.features.length - 3} more features
+                    </li>
+                  )}
+                </ul>
+
+                {!isActive && (
+                  <div
+                    className="mt-3 text-xs font-semibold text-center py-1.5 rounded-lg transition-colors group-hover:text-white"
+                    style={{
+                      background: `linear-gradient(135deg, ${tier.from}20, ${tier.to}20)`,
+                      color: tier.from,
+                    }}
+                  >
+                    Switch to {tier.label}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

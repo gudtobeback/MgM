@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-  useLocation,
-  Outlet,
-} from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import { apiClient } from "./services/apiClient";
 import {
   ToolMode,
@@ -14,6 +7,8 @@ import {
   ORG_REQUIRED_ROUTES,
   ROUTE_TO_TOOL_MODE,
 } from "./types/routes";
+
+import { Building2 } from "lucide-react";
 
 import { AuthScreen } from "./pages/auth/AuthScreen";
 import { AppShell } from "./components/layout/AppShell";
@@ -45,67 +40,35 @@ import { SuperAdminApp } from "./components/super-admin/SuperAdminApp";
 import { TeamManagementPage } from "./components/team/TeamManagementPage";
 
 import Home from "./pages/public/Home";
+import { useAuth } from "./context/AuthContext";
+
+import { useOrganization } from "./context/OrganizationContext";
 
 /**
  * Protected Route Wrapper Component
  * Checks if user has required organization for org-dependent routes
  * Derives toolMode from URL location to avoid prop drilling
  */
-function ProtectedRouteWrapper({ connectedOrgs }: { connectedOrgs: any[] }) {
+function ProtectedRouteWrapper() {
+  const { orgsLoading, organizations } = useOrganization();
+
   const location = useLocation();
   const toolMode = ROUTE_TO_TOOL_MODE[location.pathname] as ToolMode;
 
-  if (ORG_REQUIRED_ROUTES.includes(toolMode) && connectedOrgs.length === 0) {
+  if (ORG_REQUIRED_ROUTES.includes(toolMode) && organizations.length === 0) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div
-          className="text-center p-10 rounded-xl border max-w-md w-full"
-          style={{
-            backgroundColor: "var(--color-surface)",
-            borderColor: "var(--color-border-primary)",
-            boxShadow: "var(--shadow-md)",
-          }}
-        >
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ backgroundColor: "var(--color-primary-light)" }}
-          >
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="var(--color-primary)"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
-          </div>
-          <h2
-            className="text-lg font-semibold mb-2"
-            style={{ color: "var(--color-text-primary)" }}
-          >
-            No Organizations Connected
-          </h2>
-          <p
-            className="text-sm mb-6"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            Connect a Meraki organization to access this feature.
+      <div className="p-6">
+        <div className="flex flex-col items-center justify-center h-100 gap-3 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
+          <Building2 size={24} className="text-muted-foreground" />
+
+          <p className="font-semibold text-md text-foreground">
+            No organizations connected
           </p>
-          <a
-            href={TOOL_MODE_ROUTES.organizations}
-            className="inline-block px-5 py-2 text-sm font-medium rounded text-white transition-colors"
-            style={{
-              backgroundColor: "var(--color-primary)",
-              borderRadius: "var(--radius-md)",
-            }}
-          >
-            Connect Organization
-          </a>
+
+          <p className="-m-2 text-xs text-black/60">
+            Add your Meraki organization to get started with monitoring and
+            snapshots.
+          </p>
         </div>
       </div>
     );
@@ -118,114 +81,44 @@ function ProtectedRouteWrapper({ connectedOrgs }: { connectedOrgs: any[] }) {
  * Main App Component with Routing
  */
 function App() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { authLoading, user, accessToken } = useAuth();
 
-  const [user, setUser] = useState<any | null>(null);
+  const {
+    orgsLoading,
+    organizations,
+    selectedOrgId,
+    selectedOrgName,
+
+    effectiveOrgId,
+    effectiveOrgName,
+  } = useOrganization();
+
   const [isInitializing, setIsInitializing] = useState(true);
-  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
-  const [selectedOrgName, setSelectedOrgName] = useState<string>("");
-  const [connectedOrgs, setConnectedOrgs] = useState<any[]>([]);
   const [userPermissions, setUserPermissions] = useState<
     Record<string, boolean>
   >(() => apiClient.getUserPermissions());
 
-  // Memoize effective org values
-  const effectiveOrgId = selectedOrgId ?? String(connectedOrgs[0]?.id ?? "");
-  const effectiveOrgName =
-    selectedOrgName || connectedOrgs[0]?.meraki_org_name || "";
-
-  const fetchOrgs = async (currentSelectedId?: string | null) => {
-    try {
-      const orgs = await apiClient.listOrganizations();
-      setConnectedOrgs(orgs);
-      // Auto-select the first org if nothing is selected yet
-      if (orgs.length > 0 && !currentSelectedId) {
-        setSelectedOrgId(String(orgs[0].id));
-        setSelectedOrgName(orgs[0].meraki_org_name);
-      }
-      // Background: refresh device counts from Meraki, then update state
-      if (orgs.length > 0) {
-        Promise.allSettled(
-          orgs.map((o: any) => apiClient.refreshOrganization(o.id)),
-        )
-          .then(() =>
-            apiClient
-              .listOrganizations()
-              .then(setConnectedOrgs)
-              .catch(() => {}),
-          )
-          .catch(() => {});
-      }
-    } catch {
-      setConnectedOrgs([]);
-    }
-  };
-
   useEffect(() => {
-    if (apiClient.isAuthenticated()) {
-      setUser(apiClient.getUser());
-      fetchOrgs(selectedOrgId);
-      setUserPermissions(apiClient.getUserPermissions());
-      apiClient
-        .fetchAndCachePermissions()
-        .then((perms) => setUserPermissions(perms))
-        .catch(() => {});
-    }
-    setIsInitializing(false);
-  }, []);
-
-  // Redirect logic based on auth state
-  useEffect(() => {
-    const pathname = location.pathname;
-    const isAuthPage = pathname === "/auth";
-    const isHomePage = pathname === "/home" || pathname === "/";
-
-    if (!user && !isInitializing && !isAuthPage && !isHomePage) {
-      // Not authenticated and trying to access protected route
-      navigate("/auth");
-    } else if (user && isAuthPage) {
-      // Authenticated but on auth page, redirect to selection
-      navigate(TOOL_MODE_ROUTES.selection);
-    }
-  }, [user, isInitializing, location.pathname, navigate]);
-
-  const handleLogin = (loggedInUser: any) => {
-    setUser(loggedInUser);
-    fetchOrgs(null);
+    setUserPermissions(apiClient.getUserPermissions());
     apiClient
       .fetchAndCachePermissions()
       .then((perms) => setUserPermissions(perms))
       .catch(() => {});
-  };
 
-  const handleLogout = () => {
-    apiClient.logout();
-    setUser(null);
-    setUserPermissions({});
-    navigate("/home");
-  };
+    setIsInitializing(false);
+  }, [accessToken]);
 
-  const handleSelectOrg = (orgId: string, orgName: string) => {
-    setSelectedOrgId(orgId);
-    setSelectedOrgName(orgName);
-    fetchOrgs(orgId);
-    navigate(TOOL_MODE_ROUTES.selection);
-  };
-
-  const handleTierChange = () => {
-    setUser(apiClient.getUser());
-  };
-
-  if (isInitializing) {
+  if (authLoading) {
     return (
-      <div style={{ minHeight: "100vh", backgroundColor: "var(--color-bg)" }} />
+      <div className="flex items-center justify-center h-screen w-full font-semibold text-lg">
+        Restoring Session...
+      </div>
     );
   }
 
   // Super admins get their own portal
   if (user?.role === "super_admin") {
-    return <SuperAdminApp onLogout={handleLogout} />;
+    return <SuperAdminApp />;
   }
 
   return (
@@ -233,7 +126,7 @@ function App() {
       {/* Public routes */}
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/auth" element={<AuthScreen onSuccess={handleLogin} />} />
+      <Route path="/auth" element={<AuthScreen />} />
 
       {/* Authenticated routes */}
       {user && (
@@ -242,7 +135,6 @@ function App() {
             <AppShell
               user={user}
               selectedOrgName={selectedOrgName}
-              onLogout={handleLogout}
               userPermissions={userPermissions}
             />
           }
@@ -253,7 +145,7 @@ function App() {
             element={
               <ModeSelectionScreen
                 userEmail={user?.email}
-                connectedOrgs={connectedOrgs}
+                connectedOrgs={organizations}
               />
             }
           />
@@ -265,7 +157,7 @@ function App() {
           <Route path={TOOL_MODE_ROUTES.restore} element={<RestoreWizard />} />
           <Route
             path={TOOL_MODE_ROUTES.organizations}
-            element={<OrganizationsPage onSelectOrg={handleSelectOrg} />}
+            element={<OrganizationsPage />}
           />
           <Route
             path={TOOL_MODE_ROUTES.dashboard}
@@ -279,15 +171,12 @@ function App() {
             path={TOOL_MODE_ROUTES.cat9k}
             element={
               <Cat9KMigrationWizard
-                connectedOrgs={connectedOrgs}
+                connectedOrgs={organizations}
                 selectedOrgId={effectiveOrgId}
               />
             }
           />
-          <Route
-            path={TOOL_MODE_ROUTES.profile}
-            element={<ProfilePage onTierChange={handleTierChange} />}
-          />
+          <Route path={TOOL_MODE_ROUTES.profile} element={<ProfilePage />} />
           <Route
             path={TOOL_MODE_ROUTES.team}
             element={<TeamManagementPage />}
@@ -295,7 +184,7 @@ function App() {
 
           {/* Protected routes requiring organization */}
           <Route
-            element={<ProtectedRouteWrapper connectedOrgs={connectedOrgs} />}
+            element={<ProtectedRouteWrapper connectedOrgs={organizations} />}
           >
             <Route
               path={TOOL_MODE_ROUTES["version-control"]}

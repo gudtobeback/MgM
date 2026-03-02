@@ -9,14 +9,13 @@ interface AppShellProps {
   user: any;
   selectedOrgId?: string | null;
   selectedOrgName?: string;
-  onLogout: () => void;
+
   userPermissions?: Record<string, boolean>;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
   user,
   selectedOrgName,
-  onLogout,
   userPermissions,
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -35,7 +34,6 @@ export const AppShell: React.FC<AppShellProps> = ({
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         userRole={user?.role}
         userPermissions={userPermissions}
-        onLogout={onLogout}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden bg-transparent">

@@ -1,4 +1,13 @@
-
+export interface Organization {
+  id: string;
+  meraki_org_id: string;
+  meraki_org_name: string;
+  meraki_region: "com" | "in";
+  is_active: boolean;
+  last_synced_at: string | null;
+  device_count: number;
+  created_at: string;
+}
 
 // --- Core Application Types ---
 
@@ -9,10 +18,10 @@ export interface User {
 
 // FIX: Add missing ChatMessage and Sender types for the AI assistant feature.
 export enum Sender {
-  User = 'user',
-  AI = 'ai',
-  System = 'system',
-  Webex = 'webex',
+  User = "user",
+  AI = "ai",
+  System = "system",
+  Webex = "webex",
 }
 
 export interface ChatMessage {
@@ -26,7 +35,6 @@ export interface ChatMessage {
   originalVideoUrl?: string;
 }
 
-
 // --- Application Configuration Types ---
 export interface NetworkConfiguration {
   id?: number;
@@ -34,7 +42,7 @@ export interface NetworkConfiguration {
   name: string;
   apiKey: string;
   orgId: string;
-  region: 'com' | 'in';
+  region: "com" | "in";
   // FIX: Add optional geminiApiKey to support AI features.
   geminiApiKey?: string;
 }
@@ -46,7 +54,6 @@ export interface DefaultTemplate {
   name: string;
   content: string;
 }
-
 
 // --- Meraki Base Types ---
 
@@ -92,12 +99,33 @@ export interface MerakiDeviceDetails extends MerakiDevice {
 // --- Meraki Configuration Types (Generated from API calls) ---
 // Note: Many of these are partial definitions for brevity. `[key: string]: any` is used for flexibility.
 
-export interface PolicyObject { id: string; name: string; [key: string]: any; }
-export interface VpnPeer { name: string; publicIp: string; [key: string]: any; }
-export interface VpnFirewallRule { [key: string]: any; }
-export interface WebhookHttpServer { id: string; name: string; url: string; [key: string]: any; }
-export interface NetworkSnmpSettings { [key: string]: any; }
-export interface Floorplan { floorplanId: string; name: string; [key: string]: any; }
+export interface PolicyObject {
+  id: string;
+  name: string;
+  [key: string]: any;
+}
+export interface VpnPeer {
+  name: string;
+  publicIp: string;
+  [key: string]: any;
+}
+export interface VpnFirewallRule {
+  [key: string]: any;
+}
+export interface WebhookHttpServer {
+  id: string;
+  name: string;
+  url: string;
+  [key: string]: any;
+}
+export interface NetworkSnmpSettings {
+  [key: string]: any;
+}
+export interface Floorplan {
+  floorplanId: string;
+  name: string;
+  [key: string]: any;
+}
 
 export interface GroupPolicy {
   groupPolicyId?: string;
@@ -111,20 +139,20 @@ export interface SwitchPortSettings {
   tags?: string[];
   enabled?: boolean;
   poeEnabled?: boolean;
-  type?: 'access' | 'trunk';
+  type?: "access" | "trunk";
   vlan?: number;
   voiceVlan?: number;
   allowedVlans?: string;
   isolationEnabled?: boolean;
   rstpEnabled?: boolean;
-  stpGuard?: 'disabled' | 'root guard' | 'bpdu guard';
+  stpGuard?: "disabled" | "root guard" | "bpdu guard";
   linkNegotiation?: string;
   [key: string]: any;
 }
 
 export interface ManagementInterfaceSettings {
-  wan1?: { [key: string]: any; };
-  wan2?: { [key: string]: any; };
+  wan1?: { [key: string]: any };
+  wan2?: { [key: string]: any };
 }
 
 export interface DeviceWirelessRadioSettings {
@@ -133,7 +161,7 @@ export interface DeviceWirelessRadioSettings {
 }
 
 export interface ApplianceUplinkSettings {
-  interfaces: { [key: string]: any; }
+  interfaces: { [key: string]: any };
 }
 
 export interface SwitchStack {
@@ -219,7 +247,7 @@ export interface ApplianceVlan {
 
 export interface MerakiL3FirewallRule {
   comment: string;
-  policy: 'allow' | 'deny';
+  policy: "allow" | "deny";
   protocol: string;
   destPort: string;
   destCidr: string;
@@ -229,13 +257,13 @@ export interface MerakiL3FirewallRule {
 }
 
 export interface MerakiL7FirewallRule {
-  policy: 'allow' | 'deny';
+  policy: "allow" | "deny";
   type: string;
   value: any;
 }
 
 export interface SiteToSiteVpnSettings {
-  mode: 'none' | 'spoke' | 'hub';
+  mode: "none" | "spoke" | "hub";
   hubs: any[];
   subnets: any[];
 }
@@ -243,39 +271,39 @@ export interface SiteToSiteVpnSettings {
 export interface BgpSettings {
   enabled: boolean;
   asNumber: number;
-  [key:string]: any;
+  [key: string]: any;
 }
 
 export interface IntrusionSettings {
-  mode: 'detection' | 'prevention' | 'disabled';
-  [key:string]: any;
+  mode: "detection" | "prevention" | "disabled";
+  [key: string]: any;
 }
 
 export interface MalwareSettings {
-  mode: 'enabled' | 'disabled';
-  [key:string]: any;
+  mode: "enabled" | "disabled";
+  [key: string]: any;
 }
 
 export interface ContentFilteringSettings {
-  [key:string]: any;
+  [key: string]: any;
 }
 
 export interface OrganizationAdmin {
   id: string;
   name: string;
   email: string;
-  orgAccess: 'full' | 'read-only' | 'none';
+  orgAccess: "full" | "read-only" | "none";
   [key: string]: any;
 }
 
 export interface SnmpSettings {
-    v2cEnabled: boolean;
-    v3Enabled: boolean;
-    [key: string]: any;
+  v2cEnabled: boolean;
+  v3Enabled: boolean;
+  [key: string]: any;
 }
 
 export interface AlertSettings {
-  defaultDestinations: { [key: string]: any; };
+  defaultDestinations: { [key: string]: any };
   alerts: any[];
 }
 
@@ -318,74 +346,89 @@ export interface QosRule {
   [key: string]: any;
 }
 
-export interface DhcpServerPolicy { [key: string]: any; }
-export interface DscpToCosMappings { [key: string]: any; }
-export interface StormControlSettings { [key: string]: any; }
-export interface MtuSettings { [key: string]: any; }
-export interface ApplianceSettings { [key: string]: any; }
-export interface UplinkSelection { [key: string]: any; }
-export interface TrafficShapingRules { [key: string]: any; }
-export interface SsidTrafficShapingRules { [key: string]: any; }
-
+export interface DhcpServerPolicy {
+  [key: string]: any;
+}
+export interface DscpToCosMappings {
+  [key: string]: any;
+}
+export interface StormControlSettings {
+  [key: string]: any;
+}
+export interface MtuSettings {
+  [key: string]: any;
+}
+export interface ApplianceSettings {
+  [key: string]: any;
+}
+export interface UplinkSelection {
+  [key: string]: any;
+}
+export interface TrafficShapingRules {
+  [key: string]: any;
+}
+export interface SsidTrafficShapingRules {
+  [key: string]: any;
+}
 
 // --- Backup & Restore Types ---
 
 export interface OrgConfigBackup {
-    policyObjects?: PolicyObject[];
-    thirdPartyVpnPeers?: VpnPeer[];
-    vpnFirewallRules?: VpnFirewallRule[];
-    // Deprecated, but kept for potential old backup compatibility
-    admins?: OrganizationAdmin[];
-    snmp?: SnmpSettings;
-    alerts?: AlertSettings;
-    configTemplates?: ConfigTemplate[];
+  policyObjects?: PolicyObject[];
+  thirdPartyVpnPeers?: VpnPeer[];
+  vpnFirewallRules?: VpnFirewallRule[];
+  // Deprecated, but kept for potential old backup compatibility
+  admins?: OrganizationAdmin[];
+  snmp?: SnmpSettings;
+  alerts?: AlertSettings;
+  configTemplates?: ConfigTemplate[];
 }
 
 export interface NetworkConfigBackup {
-    // Network-wide
-    webhooks?: WebhookHttpServer[];
-    syslogServers?: { servers: SyslogServer[] };
-    snmp?: NetworkSnmpSettings;
-    networkAlerts?: AlertSettings;
-    floorplans?: Floorplan[];
-    groupPolicies?: GroupPolicy[];
+  // Network-wide
+  webhooks?: WebhookHttpServer[];
+  syslogServers?: { servers: SyslogServer[] };
+  snmp?: NetworkSnmpSettings;
+  networkAlerts?: AlertSettings;
+  floorplans?: Floorplan[];
+  groupPolicies?: GroupPolicy[];
 
-    // Appliance (MX)
-    applianceSettings?: ApplianceSettings;
-    applianceVlansSettings?: { vlansEnabled: boolean };
-    applianceVlans?: ApplianceVlan[];
-    staticRoutes?: ApplianceStaticRoute[]; // Appliance static routes
-    intrusionSettings?: IntrusionSettings;
-    malwareSettings?: MalwareSettings;
-    applianceL3FirewallRules?: { rules: MerakiL3FirewallRule[] };
-    applianceL7FirewallRules?: { rules: MerakiL7FirewallRule[] };
-    contentFiltering?: ContentFilteringSettings;
-    siteToSiteVpnSettings?: SiteToSiteVpnSettings;
-    uplinkSelection?: UplinkSelection;
-    trafficShapingRules?: TrafficShapingRules;
-    bgpSettings?: BgpSettings;
+  // Appliance (MX)
+  applianceSettings?: ApplianceSettings;
+  applianceVlansSettings?: { vlansEnabled: boolean };
+  applianceVlans?: ApplianceVlan[];
+  staticRoutes?: ApplianceStaticRoute[]; // Appliance static routes
+  intrusionSettings?: IntrusionSettings;
+  malwareSettings?: MalwareSettings;
+  applianceL3FirewallRules?: { rules: MerakiL3FirewallRule[] };
+  applianceL7FirewallRules?: { rules: MerakiL7FirewallRule[] };
+  contentFiltering?: ContentFilteringSettings;
+  siteToSiteVpnSettings?: SiteToSiteVpnSettings;
+  uplinkSelection?: UplinkSelection;
+  trafficShapingRules?: TrafficShapingRules;
+  bgpSettings?: BgpSettings;
 
-    // Switch (MS)
-    portSchedules?: PortSchedule[];
-    qosRules?: QosRule[];
-    accessPolicies?: AccessPolicy[];
-    switchAcls?: AccessControlLists;
-    dhcpServerPolicy?: DhcpServerPolicy;
-    dscpToCosMappings?: DscpToCosMappings;
-    stormControl?: StormControlSettings;
-    switchMtu?: MtuSettings;
-    switchLinkAggregations?: LinkAggregation[];
-    switchOspf?: OspfSettings;
-    switchSettings?: SwitchSettings;
+  // Switch (MS)
+  portSchedules?: PortSchedule[];
+  qosRules?: QosRule[];
+  accessPolicies?: AccessPolicy[];
+  switchAcls?: AccessControlLists;
+  dhcpServerPolicy?: DhcpServerPolicy;
+  dscpToCosMappings?: DscpToCosMappings;
+  stormControl?: StormControlSettings;
+  switchMtu?: MtuSettings;
+  switchLinkAggregations?: LinkAggregation[];
+  switchOspf?: OspfSettings;
+  switchSettings?: SwitchSettings;
 
-    // Wireless (MR)
-    ssids?: WirelessSsid[];
-    ssidFirewallL3Rules?: Record<number, SsidFirewallL3Rules>;
-    ssidFirewallL7Rules?: Record<number, SsidFirewallL7Rules>;
-    ssidTrafficShaping?: Record<number, SsidTrafficShapingRules>;
-    wirelessRfProfiles?: RfProfile[];
-    bluetoothSettings?: WirelessBluetoothSettings;
-    wirelessSettings?: WirelessSettings;
+  // Wireless (MR)
+  ssids?: WirelessSsid[];
+  ssidFirewallL3Rules?: Record<number, SsidFirewallL3Rules>;
+  ssidFirewallL7Rules?: Record<number, SsidFirewallL7Rules>;
+  ssidTrafficShaping?: Record<number, SsidTrafficShapingRules>;
+  wirelessRfProfiles?: RfProfile[];
+  bluetoothSettings?: WirelessBluetoothSettings;
+  wirelessSettings?: WirelessSettings;
 }
 
 export interface DeviceConfigBackup {
@@ -440,8 +483,8 @@ export interface RestoreCategories {
   portForwardingRules: boolean;
   applianceStaticRoutes: boolean;
   contentFiltering: boolean;
-  applianceSecurity: boolean;              // intrusion + malware
-  trafficShaping: boolean;                 // traffic shaping rules + uplink selection
+  applianceSecurity: boolean; // intrusion + malware
+  trafficShaping: boolean; // traffic shaping rules + uplink selection
   trafficShapingGeneral: boolean;
   customPerformanceClasses: boolean;
   applianceSettings: boolean;
@@ -451,8 +494,8 @@ export interface RestoreCategories {
   bgpSettings: boolean;
 
   // ── Switch (MS) ───────────────────────────────────
-  switchPorts: boolean;                    // device-level
-  switchRoutingInterfaces: boolean;        // device-level SVIs + static routes
+  switchPorts: boolean; // device-level
+  switchRoutingInterfaces: boolean; // device-level SVIs + static routes
   switchAcls: boolean;
   switchAccessPolicies: boolean;
   switchSettings: boolean;
@@ -462,12 +505,12 @@ export interface RestoreCategories {
   dhcpServerPolicy: boolean;
   stormControl: boolean;
   switchMtu: boolean;
-  switchOspf: boolean;                     // network-level
+  switchOspf: boolean; // network-level
   switchLinkAggregations: boolean;
 
   // ── Wireless (MR) ─────────────────────────────────
   ssids: boolean;
-  ssidFirewallRules: boolean;              // per-SSID L3 + L7
+  ssidFirewallRules: boolean; // per-SSID L3 + L7
   ssidTrafficShaping: boolean;
   ssidBonjourForwarding: boolean;
   ssidDeviceTypeGroupPolicies: boolean;

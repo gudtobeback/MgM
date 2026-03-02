@@ -143,7 +143,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   const email: string = user?.email || "";
   const initial = email[0]?.toUpperCase() || "?";
   const displayName = email.split("@")[0] || email;
-  const tier = user?.subscriptionTier || "free";
+  const tier = user?.subscription_tier || "free";
   const tierStyle = TIER_STYLES[tier] ?? TIER_STYLES.free;
   const ctx = PAGE_CONTEXT[toolMode];
   const showContext = !!ctx && toolMode !== "selection";
@@ -170,7 +170,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       )} */}
 
       {/* RIGHT */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-5">
         {selectedOrgName && (
           <button
             onClick={() => navigate(TOOL_MODE_ROUTES.organizations)}
@@ -196,9 +196,11 @@ export const TopBar: React.FC<TopBarProps> = ({
           {tierStyle.label}
         </span>
 
+        <div className="w-px h-5 bg-gray-200 hidden md:block" />
+
         <button
           onClick={() => navigate(TOOL_MODE_ROUTES.profile)}
-          className="flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full hover:bg-white/70 transition-all duration-200 group"
+          className="flex items-center gap-2 pl-1.5 pr-3 py-1 border border-[#B0AFAF] rounded-lg hover:bg-white/70 transition-all duration-200 group"
         >
           <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold bg-[#049FD9] shadow-md">
             {initial}
@@ -209,11 +211,6 @@ export const TopBar: React.FC<TopBarProps> = ({
               {displayName}
             </div>
           </div>
-
-          <ChevronDown
-            size={13}
-            className="text-gray-400 hidden md:block group-hover:text-gray-700 transition-colors"
-          />
         </button>
       </div>
     </header>

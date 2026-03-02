@@ -6,12 +6,12 @@ import { Label } from "../../components/ui/label";
 import { Loader2, ArrowRight, Sparkles } from "lucide-react";
 import { Checkbox } from "../../components/ui/checkbox";
 import CustomButton from "../../components/ui/CustomButton";
+import { apiEndpoints } from "@/src/services/api";
+import { useAuth } from "@/src/context/AuthContext";
 
-interface AuthScreenProps {
-  onSuccess: (user: any) => void;
-}
+export const AuthScreen = () => {
+  const { login } = useAuth();
 
-export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess }) => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
@@ -20,22 +20,30 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const loginRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
-      let result;
+      let res;
       if (isLogin) {
-        result = await apiClient.login(email, password);
+        res = await apiEndpoints.login({ email, password });
       } else {
-        result = await apiClient.register(email, password, fullName);
+        res = await apiEndpoints.register({ email, password, fullName });
       }
-      onSuccess(result.user);
-      // Navigate to selection after successful login
+
+      const data = res.data;
+
+      if (data?.accessToken) {
+        login(data?.user, data?.accessToken, data?.refreshToken);
+      }
+
+      console.log("Logged User Data: ", data?.user);
       navigate("/selection");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed");
+    } catch (error) {
+      setError(error?.message);
+      console.error("Error Logging In: ", error);
     } finally {
       setLoading(false);
     }
@@ -110,7 +118,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess }) => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={loginRegister} className="space-y-5">
             {!isLogin && (
               <div className="animate-fade-in space-y-2">
                 <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">

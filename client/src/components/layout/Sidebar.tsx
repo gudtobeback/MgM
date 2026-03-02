@@ -27,6 +27,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { ToolMode, TOOL_MODE_ROUTES } from "../../types/routes";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface NavItem {
   id: ToolMode;
@@ -113,7 +114,6 @@ interface SidebarProps {
   collapsed: boolean;
   onToggleCollapse: () => void;
   userRole?: string;
-  onLogout: () => void;
   userPermissions?: Record<string, boolean>;
 }
 
@@ -124,11 +124,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
   userRole,
   userPermissions = {},
-  onLogout,
 }) => {
   const navigate = useNavigate();
   const isCompanyAdmin = userRole === "company_admin";
   const isSuperAdmin = userRole === "super_admin";
+
+  const { logout } = useAuth();
 
   const isModeAllowed = (mode: ToolMode): boolean => {
     if (isSuperAdmin) return true;
@@ -260,7 +261,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <div className="pl-3">
           <button
-            onClick={onLogout}
+            onClick={logout}
             className={`flex items-center w-full p-2.5 text-sm font-medium text-gray-600 hover:bg-red-100 hover:text-red-500 rounded-lg transition-all duration-200 ${
               collapsed ? "justify-center" : "gap-3"
             } `}

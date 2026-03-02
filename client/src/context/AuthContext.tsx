@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { apiEndpoints } from "../services/api";
 
 /* =========================
    Types
@@ -6,19 +7,18 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 type User = any; // 🔥 Replace with your real User type later
 
-type AcademicYear = any; // Replace with proper type if you have one
-
 type AuthContextType = {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction>;
   accessToken: string | null;
-  academicYear: AcademicYear | null;
+  refreshToken: string | null;
+
+  login: (userData: User, accessToken: string, refreshToken: string) => void;
+  logout: () => void;
+
   authLoading: boolean;
   justLoggedIn: boolean;
-
-  login: (userData: User, tokenValue: string) => void;
-  logout: () => void;
   setJustLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  handleAcademicYearChange: (option: AcademicYear) => void;
 };
 
 type AuthProviderProps = {
@@ -49,9 +49,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
 
-    sessionStorage.setItem("user", JSON.stringify(userData));
-    sessionStorage.setItem("accessToken", accessToken);
-    sessionStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
 
     setJustLoggedIn(true);
   };
@@ -61,35 +61,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
-    sessionStorage.clear();
+    localStorage.clear();
   };
 
-  // Restore session
-  useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
-    const storedAccessToken = sessionStorage.getItem("accessToken");
-    const storedRefreshToken = sessionStorage.getItem("accessToken");
+  const restoreSession = async () => {
+    try {
+      const res = await apiEndpoints.refreshAccessToken({
+        refreshToken: localStorage.getItem("refreshToken"),
+      });
 
-    if (storedAccessToken && storedRefreshToken && storedUser) {
-      setUser(JSON.parse(storedUser));
-      setAccessToken(storedAccessToken);
-      setRefreshToken(storedRefreshToken);
+      const data = res.data;
+
+      login(data?.user, data?.accessToken, data?.refreshToken);
+      // console.log("Refreshed User Data: ", data?.user)
+    } catch (error) {
+      console.error("Error refreshing session: ", error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setLoading(false);
+  useEffect(() => {
+    restoreSession();
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         accessToken,
         refreshToken,
 
-        authLoading,
-        justLoggedIn,
         login,
         logout,
+
+        authLoading,
+        justLoggedIn,
         setJustLoggedIn,
       }}
     >

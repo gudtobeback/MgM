@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Input, Select } from "antd";
 import { Building2, Plus, Trash2, AlertCircle, Globe, X } from "lucide-react";
@@ -9,26 +9,12 @@ import CustomButton from "../../components/ui/CustomButton";
 
 import { apiClient } from "../../services/apiClient";
 
-interface Organization {
-  id: string;
-  meraki_org_id: string;
-  meraki_org_name: string;
-  meraki_region: string;
-  is_active: boolean;
-  last_synced_at: string | null;
-  device_count: number;
-  created_at: string;
-}
+import { useOrganization } from "@/src/context/OrganizationContext";
 
-interface OrganizationsPageProps {
-  onSelectOrg?: (orgId: string, orgName: string) => void;
-}
+export const OrganizationsPage = () => {
+  const { orgsLoading, organizations, handleSelectOrg, fetchOrganizations } =
+    useOrganization();
 
-export const OrganizationsPage: React.FC<OrganizationsPageProps> = ({
-  onSelectOrg,
-}) => {
-  const [orgs, setOrgs] = useState<Organization[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -38,23 +24,6 @@ export const OrganizationsPage: React.FC<OrganizationsPageProps> = ({
     merakiApiKey: "",
     merakiRegion: "com" as "com" | "in",
   });
-  console.log("Payload: ", form);
-
-  useEffect(() => {
-    loadOrgs();
-  }, []);
-
-  const loadOrgs = async () => {
-    try {
-      setLoading(true);
-      const data = await apiClient.listOrganizations();
-      setOrgs(data);
-    } catch (err) {
-      setError("Failed to load organizations");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const changeFormDetails = (field: string, value: any, option?: any) => {
     setForm((prev: any) => ({ ...prev, [field]: value }));
@@ -73,7 +42,7 @@ export const OrganizationsPage: React.FC<OrganizationsPageProps> = ({
         merakiRegion: "com",
       });
       setShowAddForm(false);
-      await loadOrgs();
+      fetchOrganizations();
     } catch (err: any) {
       setError(err.message || "Failed to add organization");
     } finally {
@@ -85,7 +54,7 @@ export const OrganizationsPage: React.FC<OrganizationsPageProps> = ({
     if (!window.confirm(`Remove "${orgName}" from your dashboard?`)) return;
     try {
       await apiClient.removeOrganization(orgId);
-      setOrgs((prev) => prev.filter((o) => o.id !== orgId));
+      fetchOrganizations();
     } catch (err: any) {
       setError(err.message || "Failed to remove organization");
     }
@@ -228,12 +197,12 @@ export const OrganizationsPage: React.FC<OrganizationsPageProps> = ({
       )}
 
       {/* Organizations List */}
-      {loading ? (
+      {orgsLoading ? (
         <div className="flex flex-col items-center justify-center gap-3 py-20 animate-pulse">
           <Building2 size={30} className="opacity-50" />
           <p>Loading Organizations...</p>
         </div>
-      ) : orgs.length === 0 ? (
+      ) : organizations.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-100 gap-3 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <Building2 size={24} className="text-muted-foreground" />
 
@@ -248,12 +217,10 @@ export const OrganizationsPage: React.FC<OrganizationsPageProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-12 gap-4">
-          {orgs.map((org) => (
+          {organizations.map((org) => (
             <div
               key={org.id}
-              onClick={() =>
-                onSelectOrg && onSelectOrg(org.id, org.meraki_org_name)
-              }
+              onClick={() => handleSelectOrg(org.id, org.meraki_org_name)}
               className="col-span-12 md:col-span-3 p-5 flex flex-col gap-3 bg-white border-t-[3px] border-black rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] hover:scale-[101%] transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
