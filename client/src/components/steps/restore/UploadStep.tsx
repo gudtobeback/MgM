@@ -1,20 +1,25 @@
 import React, { useState, useRef } from "react";
+
+import JSZip from "jszip";
 import {
   UploadCloud,
   FileJson,
   Archive,
-  AlertTriangle,
   CheckCircle2,
+  HardDriveDownload,
 } from "lucide-react";
-import JSZip from "jszip";
+
+import StepHeadingCard from "../StepHeadingCard";
+
+import AlertCard from "../../ui/AlertCard";
+
 import {
+  RestoreData,
   BackupFile,
   NetworkConfigBackup,
   DeviceConfigBackup,
   DeviceBackup,
 } from "../../../types/types";
-import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
-import AlertCard from "../../ui/AlertCard";
 
 interface UploadStepProps {
   data: RestoreData;
@@ -214,17 +219,21 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
     : null;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Upload Backup File</p>
-        <p className="text-[12px] text-[#232C32]">
-          Upload a <strong>.zip</strong> (full backup) or <strong>.json</strong>{" "}
-          (selective backup) created by the Backup tool.
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Upload Backup File"
+        subHeading={
+          <>
+            Upload a <strong>.zip</strong> (full backup) or{" "}
+            <strong>.json</strong> (selective backup) created by the Backup
+            tool.
+          </>
+        }
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Drop zone */}
         <div
           onDragOver={(e) => {

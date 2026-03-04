@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 
+import { Input, Select } from "antd";
+import { HardDriveDownload } from "lucide-react";
+
+import StepHeadingCard from "../StepHeadingCard";
+
+import AlertCard from "../../ui/AlertCard";
+import LabelInput from "../../ui/LabelInput";
+import CustomButton from "../../ui/CustomButton";
+
 import { MERAKI_REGIONS } from "@/src/constants";
+
+import {
+  RestoreData,
+  MerakiOrganization,
+  MerakiNetwork,
+} from "../../../types/types";
+
 import {
   getOrganizations,
   getOrgNetworks,
   getNetworkDevices,
 } from "../../../services/merakiService";
-import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
-import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
-import AlertCard from "../../ui/AlertCard";
-import LabelInput from "../../ui/LabelInput";
-import { Input, Select } from "antd";
-import CustomButton from "../../ui/CustomButton";
 
 interface DestinationStepProps {
   data: RestoreData;
@@ -105,19 +115,16 @@ export function DestinationStep({ data, onUpdate }: DestinationStepProps) {
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 border-b-2 p-6">
-        <p className="text-[16px] font-semibold">
-          Select Destination Meraki Network
-        </p>
-        <p className="text-[12px] text-[#232C32]">
-          Connect to the Meraki dashboard where you want to restore the
-          configuration.
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Select Destination Meraki Network"
+        subHeading="Connect to the Meraki dashboard where you want to restore the
+          configuration."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Region */}
         <LabelInput id="region" label="Region" required>
           <Select

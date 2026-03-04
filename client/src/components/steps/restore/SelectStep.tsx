@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
-import { RestoreCategories } from "../../../types/types";
+
+import { ChevronDown, ChevronRight, HardDriveDownload } from "lucide-react";
+
+import StepHeadingCard from "../StepHeadingCard";
+
+import { RestoreData, RestoreCategories } from "../../../types/types";
 
 interface SelectStepProps {
   data: RestoreData;
@@ -683,17 +686,15 @@ export function SelectStep({ data, onUpdate }: SelectStepProps) {
   const hasAnySelected = Object.values(data.restoreCategories).some((v) => v);
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 border-b-2 p-6">
-        <p className="text-[16px] font-semibold">Select What to Restore</p>
-        <p className="text-[12px] text-[#232C32]">
-          Choose the network from the backup and which configuration categories
-          to restore.
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Select What to Restore"
+        subHeading="Choose the network from the backup and which configuration categories to restore."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {networkIds.length > 1 && (
           <div className="mb-[22px]">
             <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.05em] text-gray-500">

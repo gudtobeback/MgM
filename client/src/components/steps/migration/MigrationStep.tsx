@@ -9,6 +9,13 @@ import {
   AlertTriangle,
   Undo2,
 } from "lucide-react";
+
+import LogsCard from "../LogsCard";
+import StepHeadingCard from "../StepHeadingCard";
+
+import AlertCard from "../../ui/AlertCard";
+import CustomButton from "../../ui/CustomButton";
+
 import {
   removeDeviceFromNetwork,
   claimDevicesToInventory,
@@ -16,10 +23,8 @@ import {
   addDevicesToNetwork,
   getNetworkDevices,
 } from "../../../services/merakiService";
-import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
-import { MerakiDeviceDetails } from "../../../types/types";
-import CustomButton from "../../ui/CustomButton";
-import AlertCard from "../../ui/AlertCard";
+
+import { MerakiDeviceDetails, MigrationData } from "../../../types/types";
 
 // Tracks how far migration progressed — used to skip completed stages on retry
 // and to know how far to unwind on rollback.
@@ -415,61 +420,54 @@ export function MigrationStep({
     "Stage 3 — Claim to destination",
     "Stage 4 — Add to destination network",
   ];
+
   const failedStageText =
     stageReached.current < 4 ? stageLabel[stageReached.current + 1] : "";
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <div className="flex items-center gap-2">
-          <p className="font-semibold text-[16px]">
-            {isComplete
-              ? "Migration Phase Complete"
-              : isRollingBack
-                ? "Rolling Back..."
-                : rollbackDone
-                  ? "Rollback Complete"
-                  : error
-                    ? "Migration Failed"
-                    : "Migrating Devices"}
-          </p>
-
-          {rollbackDone && (
-            <CheckCircle2 size={24} className="text-green-500" />
-          )}
-          {isComplete && <CheckCircle2 size={24} className="text-green-500" />}
-          {(error || rollbackDone) && !isComplete && (
-            <XCircle size={24} className="text-red-500" />
-          )}
-          {(isMigrating || isRollingBack) && (
-            <Loader2 size={24} className="animate-spin text-[#2563eb]" />
-          )}
-        </div>
-        <p className="text-[12px] text-[#232C32]">
-          {isMigrating
+      <StepHeadingCard
+        icon={
+          isMigrating || isRollingBack ? (
+            <Loader2 size={30} className="animate-spin text-[#049FD9]" />
+          ) : isComplete || rollbackDone ? (
+            <CheckCircle2 size={30} className="text-green-500" />
+          ) : (
+            error && <XCircle size={30} className="text-red-500" />
+          )
+        }
+        heading={
+          isComplete
+            ? "Migration Phase Complete"
+            : isRollingBack
+              ? "Rolling Back..."
+              : rollbackDone
+                ? "Rollback Complete"
+                : error
+                  ? "Migration Failed"
+                  : "Migrating Devices"
+        }
+        subHeading={
+          isMigrating
             ? "Moving devices from source to destination dashboard. Do not close this window."
             : isRollingBack
               ? "Reversing completed stages. This may take up to 40 seconds."
               : rollbackDone
                 ? "Devices have been rolled back to the source dashboard."
-                : "The migration process has paused."}
-        </p>
-      </div>
+                : "The migration process has paused."
+        }
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Logs */}
-        <div className="flex flex-col gap-3">
-          <p className="text-sm text-[#333232]">Live Migration Log</p>
-
-          <div className="h-80 p-4 font-mono text-sm text-[#D5D5D5] bg-black border border-[#B3B3B3] rounded-md overflow-y-auto">
-            {logs.map((entry, index) => (
-              <div key={index} className="whitespace-pre-wrap leading-relaxed">
-                {entry}
-              </div>
-            ))}
-          </div>
-        </div>
+        <LogsCard logName="Live Migration Log">
+          {logs.map((entry, index) => (
+            <div key={index} className="whitespace-pre-wrap leading-relaxed">
+              {entry}
+            </div>
+          ))}
+        </LogsCard>
 
         {showRetry && (
           <>

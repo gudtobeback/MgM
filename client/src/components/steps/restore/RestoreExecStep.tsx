@@ -1,11 +1,17 @@
 import React, { useEffect, useRef } from "react";
+
 import { Loader2 } from "lucide-react";
+
+import LogsCard from "../LogsCard";
+import StepHeadingCard from "../StepHeadingCard";
+
+import { RestoreData } from "../../../types/types";
+
 import {
   restoreOrganizationConfiguration,
   restoreNetworkConfiguration,
   restoreDeviceConfiguration,
 } from "../../../services/merakiService";
-import { RestoreData } from "../../../pages/private/backup_and_recovery/RestoreWizard";
 
 interface RestoreExecStepProps {
   data: RestoreData;
@@ -130,26 +136,17 @@ export function RestoreExecStep({
   const log = data.results?.log ?? [];
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <div className="flex items-center gap-2">
-          <p className="font-semibold text-[16px]">Restoring Configuration</p>
+      <StepHeadingCard
+        icon={<Loader2 size={30} className="animate-spin text-[#049FD9]" />}
+        heading="Restoring Configuration"
+        subHeading={`Pushing selected categories to ${data.destinationNetwork?.name ?? "the target network"}…`}
+      />
 
-          <Loader2 size={24} className="animate-spin text-[#2563eb]" />
-        </div>
-
-        <p className="text-[12px] text-[#232C32]">
-          Pushing selected categories to{" "}
-          {data.destinationNetwork?.name ?? "the target network"}…
-        </p>
-      </div>
-
-      {/* Logs */}
-      <div className="flex flex-col gap-3 p-6">
-        <p className="text-sm text-[#333232]">Live Restore Log</p>
-
-        <div className="h-80 p-4 font-mono text-sm text-[#D5D5D5] bg-black border border-[#B3B3B3] rounded-md overflow-y-auto">
+      <div className="step-card-inner-layout">
+        {/* Logs */}
+        <LogsCard logName="Live Restore Log">
           {log.map((line, i) => (
             <div
               key={i}
@@ -171,7 +168,7 @@ export function RestoreExecStep({
           {log.length === 0 && (
             <div className="text-[#64748b]">Initializing…</div>
           )}
-        </div>
+        </LogsCard>
       </div>
     </div>
   );

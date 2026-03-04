@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 
 import { Loader2, CheckCircle2 } from "lucide-react";
 
+import LogsCard from "../LogsCard";
+import StepHeadingCard from "../StepHeadingCard";
+
 import {
   createSelectiveBackup,
   createExhaustiveBackup,
@@ -12,6 +15,7 @@ interface BackupExecutionStepProps {
   onComplete: () => void;
   onUpdate: (data: any) => void;
   backupType: any;
+  setLogTimer: any;
 }
 
 export function BackupExecutionStep({
@@ -91,52 +95,42 @@ export function BackupExecutionStep({
   }, []);
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Execute Backup</p>
-        <p className="text-[12px] text-[#232C32]">
-          Choose the type of backup you want to perform for "
-          {data.organization?.name}".
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={
+          isBackingUp ? (
+            <Loader2 size={30} className="animate-spin text-[#049FD9]" />
+          ) : (
+            isComplete && <CheckCircle2 size={30} className="text-green-500" />
+          )
+        }
+        heading={
+          isComplete
+            ? "Backup Complete"
+            : isBackingUp
+              ? "Executing Backup"
+              : "Execute Backup"
+        }
+        subHeading={`Choose the type of backup you want to perform for "${data.organization?.name}".`}
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Logs */}
-        <div className="flex flex-col gap-3">
-          <p className="flex items-center gap-3 text-sm text-[#333232]">
-            {isComplete
-              ? "Backup Complete"
-              : isBackingUp
-                ? "Live Backup Log"
-                : "Backup Log"}
-
-            {isComplete && (
-              <CheckCircle2 size={24} className="text-green-500" />
-            )}
-            {isBackingUp && (
-              <Loader2 size={24} className="animate-spin text-purple-600" />
-            )}
-          </p>
-
-          <div className="h-80 p-4 font-mono text-sm text-[#D5D5D5] bg-black border border-[#B3B3B3] rounded-md overflow-y-auto">
-            {logs.length > 0 ? (
-              logs.map((log, index) => (
-                <div
-                  key={index}
-                  className="whitespace-pre-wrap leading-relaxed"
-                >
-                  {log}
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-400">Starting backup...</div>
-            )}
-            {error && (
-              <div className="text-red-600 mt-2 font-semibold">{error}</div>
-            )}
-          </div>
-        </div>
+        <LogsCard logName="Live Backup Log">
+          {logs.length > 0 ? (
+            logs.map((log, index) => (
+              <div key={index} className="whitespace-pre-wrap leading-relaxed">
+                {log}
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-400">Starting backup...</div>
+          )}
+          {error && (
+            <div className="text-red-600 mt-2 font-semibold">{error}</div>
+          )}
+        </LogsCard>
       </div>
     </div>
   );

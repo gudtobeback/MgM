@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Select } from "antd";
 import { Loader2 } from "lucide-react";
 
+import StepHeadingCard from "../StepHeadingCard";
+
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 
@@ -10,6 +12,7 @@ import {
   getOrganizations,
   getOrgNetworks,
 } from "../../../services/merakiService";
+
 import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
 
 interface DestinationOrganizationStepProps {
@@ -129,19 +132,14 @@ export function DestinationOrganizationStep({
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">
-          Select Destination Organization & Network
-        </p>
-        <p className="text-[12px] text-[#232C32]">
-          Choose the organization from your source dashboard that you want to
-          migrate.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Select Destination Organization & Network"
+        subHeading="Choose the organization from your source dashboard that you want to migrate."
+      />
 
-      <div className="p-6">
+      <div className="step-card-inner-layout">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full">
             <Loader2 className="w-8 h-8 animate-spin text-green-600" />

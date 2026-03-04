@@ -3,13 +3,15 @@ import React from "react";
 import { Input } from "antd";
 import { Loader2, ArrowRight } from "lucide-react";
 
+import DomainCard from "../DomainCard";
+import StepHeadingCard from "../StepHeadingCard";
+
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 
-import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
-
 import { MERAKI_REGIONS } from "@/src/constants";
-import DomainCard from "../DomainCard";
+
+import { MigrationData } from "../../../types/types";
 
 interface ReviewStepProps {
   data: MigrationData;
@@ -29,19 +31,17 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
   const isDestinationRegionCustom = data.destinationRegion === "custom";
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Review Migration Plan</p>
-        <p className="text-[12px] text-[#232C32]">
-          Review all settings before we begin the migration process.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Review Migration Plan"
+        subHeading="Review all settings before we begin the migration process."
+      />
 
-      <div className="p-6">
+      <div className="step-card-inner-layout">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
+            <Loader2 className="w-8 h-8 animate-spin text-[#049FD9]" />
             <p className="mt-4 text-muted-foreground">
               Analyzing source organization and preparing migration plan...
             </p>
@@ -53,7 +53,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
               {/* Source */}
               <DomainCard title="Source" className="w-[250px]">
                 <div className="flex flex-col gap-1 font-medium text-xs">
-                  <p className="text-[#8B8B8B]">DASHBOARD</p>
+                  <p className="text-[#049FD9]">DASHBOARD</p>
                   <p>
                     {isSourceRegionCustom
                       ? "Custom API endpoint"
@@ -62,12 +62,12 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
                 </div>
 
                 <div className="flex flex-col gap-1 font-medium text-xs">
-                  <p className="text-[#8B8B8B]">ORGANIZATION</p>
+                  <p className="text-[#049FD9]">ORGANIZATION</p>
                   <p>{data.sourceOrg?.name}</p>
                 </div>
 
                 <div className="flex flex-col gap-1 font-medium text-xs">
-                  <p className="text-[#8B8B8B]">NETWORK</p>
+                  <p className="text-[#049FD9]">NETWORK</p>
                   <p>{data.sourceNetwork?.name}</p>
                 </div>
               </DomainCard>
@@ -79,7 +79,10 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
                 </div>
                 <ArrowRight
                   size={40}
-                  className="p-2 text-white bg-[#5D626B] rounded-full"
+                  className="p-2 text-white rounded-full"
+                  style={{
+                    backgroundImage: `linear-gradient(to right, #049FD9, #10B981)`,
+                  }}
                 />
               </div>
 
@@ -90,7 +93,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
                 className="w-[250px]"
               >
                 <div className="flex flex-col gap-1 font-medium text-xs">
-                  <p className="text-[#8B8B8B]">DASHBOARD</p>
+                  <p className="text-[#059669]">DASHBOARD</p>
                   <p>
                     {isDestinationRegionCustom
                       ? "Custom API endpoint"
@@ -99,12 +102,12 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
                 </div>
 
                 <div className="flex flex-col gap-1 font-medium text-xs">
-                  <p className="text-[#8B8B8B]">ORGANIZATION</p>
+                  <p className="text-[#059669]">ORGANIZATION</p>
                   <p>{data.destinationOrg?.name}</p>
                 </div>
 
                 <div className="flex flex-col gap-1 font-medium text-xs">
-                  <p className="text-[#8B8B8B]">NETWORK</p>
+                  <p className="text-[#059669]">NETWORK</p>
                   <p>{data.destinationNetwork?.name}</p>
                 </div>
               </DomainCard>

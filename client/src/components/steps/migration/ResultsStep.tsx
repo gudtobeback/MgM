@@ -9,12 +9,12 @@ import {
   DatabaseZap,
 } from "lucide-react";
 
-import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
-
 import { Card } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import AlertCard from "../../ui/AlertCard";
 import CustomButton from "../../ui/CustomButton";
+
+import { MigrationData } from "../../../types/types";
 
 interface ResultsStepProps {
   data: MigrationData;
@@ -55,7 +55,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
   const hasMigrationErrors = migrationErrors.length > 0;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       <div className="text-center py-6">
         <div
           className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${hasMigrationErrors ? "bg-orange-100" : "bg-green-100"}`}
@@ -75,7 +75,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
 
       <div className="flex flex-col items-center gap-6 p-6">
         <div className="grid md:grid-cols-3 gap-4 w-full">
-          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border w-full">
+          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
             <div className="flex items-center gap-2">
               <ShieldCheck size={20} />
               Backup
@@ -84,7 +84,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
             <p className="text-2xl font-bold">Complete</p>
           </div>
 
-          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border w-full">
+          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
             <div className="flex items-center gap-2">
               <HardDriveUpload size={20} />
               Migration
@@ -99,7 +99,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
             )}
           </div>
 
-          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border w-full">
+          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
             <div className="flex items-center gap-2">
               <DatabaseZap size={20} />
               Restore
@@ -115,7 +115,7 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
         </div>
 
         {/* Download Full backup */}
-        <div className="flex flex-col gap-5 p-6 rounded-lg border w-full">
+        <div className="flex flex-col gap-5 p-6 rounded-lg border border-[#87D2ED] w-full">
           <p>Backup File Information</p>
 
           <div className="flex items-center gap-4">

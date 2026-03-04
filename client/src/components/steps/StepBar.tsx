@@ -8,7 +8,7 @@ type StepBarProps = {
 
 export default function StepBar({ steps, currentStep }: StepBarProps) {
   const ACTIVE_COLOR = "#049FD9";
-  const COMPLETED_COLOR = "#10D830";
+  const COMPLETED_COLOR = "#059669";
   const INACTIVE_COLOR = "#9FA3AA";
 
   const activeIndex = steps.findIndex((s: any) => s.id === currentStep);
@@ -27,7 +27,7 @@ export default function StepBar({ steps, currentStep }: StepBarProps) {
   return (
     <nav
       aria-label="Migration steps"
-      className="w-full py-6 bg-white border-t border-b"
+      className="py-6 bg-white border border-[#87D2ED] rounded-lg overflow-hidden"
     >
       {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
       <div
@@ -39,8 +39,8 @@ export default function StepBar({ steps, currentStep }: StepBarProps) {
         <Progress
           percent={percentage}
           strokeColor={{
-            "0%": "#5BA4CF",
-            "100%": "#52C17A",
+            "0%": "#059669",
+            "100%": "#049FD9",
           }}
           trailColor="#e5e7eb"
           strokeWidth={8}

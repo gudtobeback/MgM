@@ -1,12 +1,14 @@
 import { Input, Select } from "antd";
 import { ExternalLink } from "lucide-react";
 
+import DomainCard from "../DomainCard";
+import StepHeadingCard from "../StepHeadingCard";
+
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 import CustomButton from "../../ui/CustomButton";
 
 import { MERAKI_REGIONS } from "@/src/constants";
-import DomainCard from "../DomainCard";
 
 interface DestinationSetupStepProps {
   data: any;
@@ -37,19 +39,14 @@ export function DestinationSetupStep({
     : `https://${selectedRegion.dashboard}`;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">
-          Connect to Destination Dashboard
-        </p>
-        <p className="text-[12px] text-[#232C32]">
-          Select the Meraki region and enter your API key for the dashboard you
-          want to migrate to.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Connect to Destination Dashboard"
+        subHeading="Select the Meraki region and enter your API key for the dashboard you want to migrate to."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Title */}
         <DomainCard
           title="Destination Dashboard"

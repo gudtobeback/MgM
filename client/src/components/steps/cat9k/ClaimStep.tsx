@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import { Input } from "antd";
 import { Plus, Trash2, Loader2, Terminal } from "lucide-react";
 
-import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
+import StepHeadingCard from "../StepHeadingCard";
 
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
@@ -13,6 +13,8 @@ import {
   claimNetworkDevices,
   getNetworkDevices,
 } from "../../../services/merakiService";
+
+import { Cat9KData } from "../../../types/types";
 
 interface ClaimStepProps {
   data: Cat9KData;
@@ -165,19 +167,14 @@ export function ClaimStep({ data, onUpdate, onComplete }: ClaimStepProps) {
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Header */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="text-[16px] font-semibold">
-          Claim Device(s) to Meraki Dashboard
-        </p>
-        <p className="text-[12px] text-[#232C32]">
-          Before pushing configuration, the Catalyst 9K switch must be
-          registered with Meraki and claimed to the destination network.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Claim Device(s) to Meraki Dashboard"
+        subHeading="Before pushing configuration, the Catalyst 9K switch must be registered with Meraki and claimed to the destination network."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* CLI Box */}
         <div className="bg-slate-900 border border-slate-800 rounded-md px-5 py-4">
           <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-3">

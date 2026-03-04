@@ -1,11 +1,17 @@
 import React, { useRef, useState } from "react";
+
+import { Input } from "antd";
 import { Upload, FileText } from "lucide-react";
-import { parseCat9KConfig } from "../../../services/cat9kParser";
-import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
-import CustomButton from "../../ui/CustomButton";
+
+import StepHeadingCard from "../StepHeadingCard";
+
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
-import { Input } from "antd";
+import CustomButton from "../../ui/CustomButton";
+
+import { parseCat9KConfig } from "../../../services/cat9kParser";
+
+import { Cat9KData } from "../../../types/types";
 
 const { TextArea } = Input;
 
@@ -58,21 +64,21 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
   const parsed = data.parsedConfig;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">
-          Upload IOS-XE Running Configuration
-        </p>
-        <p className="text-[12px] text-[#232C32]">
-          Upload a <code>.txt</code> or <code>.cfg</code> file from your Cisco
-          Catalyst 9000 switch, or paste the running-config directly. The parser
-          will extract VLANs, switch port configurations, RADIUS servers, and
-          ACLs.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Upload IOS-XE Running Configuration"
+        subHeading={
+          <>
+            Upload a <code>.txt</code> or <code>.cfg</code> file from your Cisco
+            Catalyst 9000 switch, or paste the running-config directly. The
+            parser will extract VLANs, switch port configurations, RADIUS
+            servers, and ACLs.
+          </>
+        }
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Drop zone */}
         <div
           onDragOver={(e) => {

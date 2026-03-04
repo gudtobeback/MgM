@@ -1,14 +1,21 @@
 import { useState, useEffect } from "react";
-import { Card } from "../../ui/card";
-import { Label } from "../../ui/label";
 
-import { Building2, CheckCircle2, Loader2 } from "lucide-react";
-// FIX: Use correct relative path for merakiService import.
-import { getOrganizations } from "../../../services/merakiService";
-import { MerakiOrganization } from "../../../types/types";
+import { Select } from "antd";
+import {
+  Building2,
+  CheckCircle2,
+  HardDriveDownload,
+  Loader2,
+} from "lucide-react";
+
+import StepHeadingCard from "../StepHeadingCard";
+
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
-import { Select } from "antd";
+
+import { getOrganizations } from "../../../services/merakiService";
+
+import { MerakiOrganization } from "../../../types/types";
 
 interface BackupOrganizationStepProps {
   data: {
@@ -79,19 +86,18 @@ export function BackupOrganizationStep({
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Select Organization</p>
-        <p className="text-[12px] text-[#232C32]">
-          Choose the organization you want to backup
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Select Organization"
+        subHeading="Choose the organization you want to backup"
+      />
 
-      <div className="p-6">
+      <div className="step-card-inner-layout">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-[#049FD9]" />
             <p className="mt-4 text-muted-foreground">
               Fetching organizations...
             </p>

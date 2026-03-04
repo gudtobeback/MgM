@@ -1,17 +1,15 @@
-import { Card } from "../../ui/card";
-import { Button } from "../../ui/button";
 import { Badge } from "../../ui/badge";
-import { Alert, AlertDescription } from "../../ui/alert";
+
 import {
   CheckCircle2,
   Download,
   FileArchive,
-  Info,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import CustomButton from "../../ui/CustomButton";
+
 import AlertCard from "../../ui/AlertCard";
+import CustomButton from "../../ui/CustomButton";
 
 interface BackupResultsStepProps {
   data: any;
@@ -48,13 +46,10 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       <div className="text-center py-6">
-        <div className="w-20 h-20 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2
-            size={40}
-            className="text-purple-600 dark:text-purple-400"
-          />
+        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+          <CheckCircle2 size={40} className="text-green-600" />
         </div>
         <h2 className="text-2xl font-bold">Backup Completed Successfully!</h2>
         <p className="text-muted-foreground mt-2">
@@ -63,9 +58,9 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
         </p>
       </div>
 
-      <div className="flex flex-col items-center gap-6 p-6">
+      <div className="step-card-inner-layout">
         <div className="grid md:grid-cols-3 gap-4 w-full">
-          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border w-full">
+          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
             <div className="flex items-center gap-2">
               <ShieldCheck size={20} />
               Devices Backed Up
@@ -83,7 +78,7 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
             </p>
           </div>
 
-          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border w-full">
+          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
             <div className="flex items-center gap-2">Backup Size</div>
 
             <p className="text-2xl font-bold">
@@ -92,7 +87,7 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
             </p>
           </div>
 
-          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border w-full">
+          <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
             <div className="flex items-center gap-2">Timestamp</div>
 
             <p className="text-2xl font-bold">
@@ -107,7 +102,7 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
         </div>
 
         {/* Download Full backup */}
-        <div className="flex flex-col gap-5 p-6 rounded-lg border w-full">
+        <div className="flex flex-col gap-5 p-6 rounded-lg border border-[#87D2ED] w-full">
           <p>Backup File Information</p>
 
           <div className="flex items-center gap-4">
@@ -133,8 +128,9 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
         </div>
 
         {!isFullBackup && selectedDevices.length > 0 && (
-          <div className="flex flex-col gap-3 p-5 w-full rounded-lg border overflow-hidden">
+          <div className="flex flex-col gap-3 p-5 w-full rounded-lg border border-[#87D2ED] overflow-hidden">
             <p>Backed Up Devices</p>
+
             <div className="flex flex-col max-h-64 overflow-y-auto">
               {selectedDevices.map((device: any) => (
                 <div
@@ -170,7 +166,7 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
           </p>
         </AlertCard>
 
-        <CustomButton onClick={onReset}>
+        <CustomButton onClick={onReset} className="w-fit">
           <RefreshCw size={16} />
           Create Another Backup
         </CustomButton>

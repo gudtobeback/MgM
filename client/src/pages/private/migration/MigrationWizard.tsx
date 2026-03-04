@@ -18,36 +18,7 @@ import { DestinationOrganizationStep } from "../../../components/steps/migration
 
 import { getNetworkDevices } from "../../../services/merakiService";
 
-import {
-  MerakiDeviceDetails,
-  MerakiNetwork,
-  MerakiOrganization,
-  BackupFile,
-} from "../../../types/types";
-
-export interface MigrationData {
-  sourceApiKey: string;
-  sourceRegion: string;
-  destinationApiKey: string;
-  destinationRegion: string;
-  sourceOrg: MerakiOrganization | null;
-  sourceNetwork: MerakiNetwork | null;
-  destinationOrg: MerakiOrganization | null;
-  destinationNetwork: MerakiNetwork | null;
-  devicesToMigrate: MerakiDeviceDetails[];
-  reviewConfirmation: string;
-
-  // For backup/restore
-  backupBlob: Blob | null;
-  backupFilename: string;
-  restoreData: BackupFile | null;
-
-  // For results
-  migrationSuccess: MerakiDeviceDetails[];
-  migrationErrors: { device: MerakiDeviceDetails; error: string }[];
-  restoreDeviceSuccessCount: number;
-  restoreNetworkSuccessCount: number;
-}
+import { MigrationData } from "../../../types/types";
 
 const steps = [
   { id: 1, name: "Source", description: "Connect .com dashboard" },
@@ -260,31 +231,35 @@ export function MigrationWizard() {
   const isAutoStep = currentStep >= 6;
 
   return (
-    <div className="w-full">
-      <div className="p-4 font-medium">Full Migration</div>
+    <div className="px-16 py-8">
+      <div className="flex flex-col gap-4">
+        {/* Step indicator */}
+        <StepBar steps={steps} currentStep={currentStep} />
 
-      <StepBar steps={steps} currentStep={currentStep} />
-
-      {/* ── Step content ─────────────────────────────────────────────── */}
-      <div className="px-16 py-8">
-        <div className="rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] overflow-hidden">
+        {/* Step content */}
+        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+          {/* shadow-[0_2px_16px_rgba(0,0,0,0.25)] */}
           {renderStep()}
 
-          {/* ── Navigation ───────────────────────────────────────────────── */}
+          {/* Navigation */}
           {!isAutoStep && (
-            <div className="flex items-center justify-between bg-[#E7E7E7] p-6">
+            <div className="flex items-center justify-between bg-white border-t-2 p-6">
               <CustomButton
                 onClick={handleBack}
                 disabled={currentStep === 1}
                 text_prop="text-black"
                 bg_prop="bg-white"
-                className="border border-gray-300 shadow-[0_0px_2px_rgba(0,0,0,0.25)] enabled:hover:shadow-[0_0px_2px_rgba(0,0,0,0.50)]"
+                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
               >
                 <ArrowLeft size={16} />
                 Back
               </CustomButton>
 
-              <CustomButton onClick={handleNext} disabled={!canProceedToNext()}>
+              <CustomButton
+                onClick={handleNext}
+                disabled={!canProceedToNext()}
+                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+              >
                 Next
                 <ArrowRight size={16} />
               </CustomButton>

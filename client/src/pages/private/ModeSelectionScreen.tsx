@@ -224,27 +224,28 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
   ];
 
   return (
-    <div className="flex flex-col gap-8 p-6 w-full">
-      {/* Welcome Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-2">
-          <p className="font-semibold">Welcome back, {firstName}</p>
-          <p className="text-xs text-black/60">
-            Unified Meraki Management — {connectedOrgs?.length || 0}{" "}
-            organization connected
-          </p>
-        </div>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex flex-col gap-8 p-6 w-full">
+        {/* Welcome Section */}
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2">
+            <p className="font-semibold">Welcome back, {firstName}</p>
+            <p className="text-xs text-black/60">
+              Unified Meraki Management — {connectedOrgs?.length || 0}{" "}
+              organization connected
+            </p>
+          </div>
 
-        {/* <CustomButton
+          {/* <CustomButton
           onClick={() => handleNavigate("organizations")}
           className="px-6 py-3 text-sm"
         >
           <Plus size={20} /> Add Organization
         </CustomButton> */}
-      </div>
+        </div>
 
-      {/* Summay Cards */}
-      {/* <div className="grid grid-cols-4 gap-6">
+        {/* Summay Cards */}
+        {/* <div className="grid grid-cols-4 gap-6">
         {SUMMARY.map((s, i) => (
           <div
             key={s.label}
@@ -266,8 +267,8 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
         ))}
       </div> */}
 
-      {/* Hero Row: Quick Access Tools + Device Distribution */}
-      {/* <div className="grid grid-cols-12 gap-6">
+        {/* Hero Row: Quick Access Tools + Device Distribution */}
+        {/* <div className="grid grid-cols-12 gap-6">
         Quick Access Tools
         <div className="col-span-12 md:col-span-8 flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <div className="text-md font-bold flex items-center gap-2">
@@ -372,37 +373,39 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
         </div>
       </div> */}
 
-      {/* Platform Tools */}
-      <div className="flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
-        <div className="text-[16px] font-bold">Platform Tools</div>
+        {/* Platform Tools */}
+        <div className="flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
+          <div className="text-[16px] font-bold">Platform Tools</div>
 
-        <div className="grid grid-cols-20 gap-5">
-          {TOOLS.map((tool, index) => (
-            <button
-              key={tool.id || index}
-              onClick={() => handleNavigate(tool.id)}
-              className={`col-span-20 sm:col-span-10 lg:col-span-5 flex items-start gap-3 p-4 text-left rounded-lg border border-[#EFEFEF] hover:shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all`}
-            >
-              <div
-                className={`shrink-0 flex items-center justify-center w-9 h-9 ${tool?.icon_bg_color} rounded-xl`}
+          <div className="grid grid-cols-20 gap-5">
+            {TOOLS.map((tool, index) => (
+              <button
+                key={tool.id || index}
+                onClick={() => handleNavigate(tool.id)}
+                className={`col-span-20 sm:col-span-10 lg:col-span-5 flex items-start gap-3 p-4 text-left rounded-lg border border-[#EFEFEF] hover:shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all`}
               >
-                {tool.icon}
-              </div>
+                <div
+                  className={`shrink-0 flex items-center justify-center w-9 h-9 ${tool?.icon_bg_color} rounded-xl`}
+                >
+                  {tool.icon}
+                </div>
 
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-medium text-foreground mb-1 group-hover:text-blue-600 transition-colors">
-                  {tool.label}
-                </h3>
-                <p className="text-xs text-[#ADB8CC] leading-relaxed line-clamp-2">
-                  {tool.description}
-                </p>
-              </div>
-            </button>
-          ))}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-medium text-foreground mb-1 group-hover:text-blue-600 transition-colors">
+                    {tool.label}
+                  </h3>
+                  <p className="text-xs text-[#ADB8CC] leading-relaxed line-clamp-2">
+                    {tool.description}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="p-5 text-xs text-center text-black/60 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
+      {/* Footer */}
+      <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
         © 2026 Meraki Management. All rights reserved.
       </div>
     </div>

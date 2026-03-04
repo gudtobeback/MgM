@@ -27,7 +27,7 @@ export default function AlertCard({
 
     error: "text-red-900 bg-red-100 border border-red-300",
 
-    info: "text-blue-800 bg-blue-50 border border-blue-200",
+    info: "text-[#049FD9] bg-[#F6FDFF] border border-[#87D2ED]",
   };
 
   const icons = {

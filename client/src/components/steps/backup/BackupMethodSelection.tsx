@@ -1,7 +1,16 @@
 import React, { useState } from "react";
+
+import {
+  PlayCircle,
+  Archive,
+  ListChecks,
+  HardDriveDownload,
+} from "lucide-react";
+
+import StepHeadingCard from "../StepHeadingCard";
+
 import { Card } from "../../ui/card";
 import { Button } from "../../ui/button";
-import { PlayCircle, Archive, ListChecks } from "lucide-react";
 
 interface BackupMethodSelectionProps {
   data: any;
@@ -19,21 +28,20 @@ export default function BackupMethodSelection({
   const isDataReady = !!data.apiKey && !!data.organization?.id;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Select Backup Method</p>
-        <p className="text-[12px] text-[#232C32]">
-          Select Backup Selection Method
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Select Backup Method"
+        subHeading="Select Backup Selection Method"
+      />
 
-      <div className="p-6">
+      <div className="step-card-inner-layout">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Selective Backup Card */}
           <Card className="p-6 flex flex-col">
             <div className="flex items-center gap-3">
-              <ListChecks className="w-8 h-8 text-purple-600" />
+              <ListChecks className="w-8 h-8 text-[#049FD9]" />
               <h3 className="text-lg font-semibold">Selective Device Backup</h3>
             </div>
             <p className="text-muted-foreground mt-2 flex-grow">

@@ -12,47 +12,7 @@ import { ReviewStep } from "../../../components/steps/cat9k/ReviewStep";
 import { ResultsStep } from "../../../components/steps/cat9k/ResultsStep";
 import { DestinationStep } from "../../../components/steps/cat9k/DestinationStep";
 
-import { ParsedCat9KConfig } from "../../../services/cat9kParser";
-
-import {
-  MerakiOrganization,
-  MerakiNetwork,
-  MerakiDeviceDetails,
-} from "../../../types/types";
-
-export interface Cat9KResults {
-  portsPushed: number;
-  portsFailed: number;
-  policiesCreated: number;
-  aclRulesPushed: number;
-  log: string[];
-}
-
-export interface Cat9KData {
-  rawConfig: string;
-  parsedConfig: ParsedCat9KConfig | null;
-  destinationApiKey: string;
-  destinationRegion: string;
-  destinationOrg: MerakiOrganization | null;
-  destinationNetwork: MerakiNetwork | null;
-  destinationDevices: MerakiDeviceDetails[];
-  applyPorts: boolean;
-  applyRadius: boolean;
-  applyAcls: boolean;
-  results: Cat9KResults | null;
-  // Claim step
-  claimedDevices: {
-    cloudId: string;
-    serial: string;
-    name: string;
-    model: string;
-  }[];
-  // Apply step checkpoints (stop/resume)
-  appliedPorts: string[];
-  radiusApplied: boolean;
-  aclsApplied: boolean;
-  wasStopped: boolean;
-}
+import { Cat9KData } from "../../../types/types";
 
 interface Cat9KMigrationWizardProps {
   connectedOrgs?: any[];
@@ -196,32 +156,34 @@ export function Cat9KMigrationWizard({
   const isAutoStep = currentStep >= 5;
 
   return (
-    <div className="w-full">
-      <div className="p-4 font-medium">Cat9K → Meraki</div>
+    <div className="px-16 py-8">
+      <div className="flex flex-col gap-4">
+        {/* Step indicator */}
+        <StepBar steps={STEPS} currentStep={currentStep} />
 
-      {/* Step indicator */}
-      <StepBar steps={STEPS} currentStep={currentStep} />
-
-      {/* Step content */}
-      <div className="px-16 py-8">
-        <div className="rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] overflow-hidden">
+        {/* Step content */}
+        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
           {renderStep()}
 
           {/* Navigation */}
           {!isAutoStep && (
-            <div className="flex items-center justify-between bg-[#E7E7E7] p-6">
+            <div className="flex items-center justify-between bg-white border-t-2 p-6">
               <CustomButton
                 onClick={handleBack}
                 disabled={currentStep === 1}
                 text_prop="text-black"
                 bg_prop="bg-white"
-                className="border border-gray-300 shadow-[0_0px_2px_rgba(0,0,0,0.25)] enabled:hover:shadow-[0_0px_2px_rgba(0,0,0,0.50)]"
+                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
               >
                 <ArrowLeft size={16} />
                 Back
               </CustomButton>
 
-              <CustomButton onClick={handleNext} disabled={!canProceedToNext()}>
+              <CustomButton
+                onClick={handleNext}
+                disabled={!canProceedToNext()}
+                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+              >
                 Next
                 <ArrowRight size={16} />
               </CustomButton>

@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <nav className="flex flex-col h-full overflow-y-auto bg-white">
+    <nav className="flex flex-col h-full overflow-y-auto bg-white border-r">
       <header className="shrink-0 flex items-center justify-between h-18 px-3">
         {!collapsed && (
           <div className="ml-2 font-bold text-[20px] text-[#049FD9]">
@@ -172,9 +172,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </header>
 
-      <div
-        className={`flex flex-col justify-between h-full gap-3 pl-0 p-3 border-r`}
-      >
+      <div className={`flex flex-col justify-between h-full gap-3 pl-0 p-3`}>
         <div className="flex-1 flex flex-col gap-1">
           {navItems.map((item) => {
             const groupActive = isGroupActive(item);

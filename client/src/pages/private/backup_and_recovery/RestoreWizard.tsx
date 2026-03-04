@@ -10,13 +10,7 @@ import { ResultsStep } from "../../../components/steps/restore/ResultsStep";
 import { DestinationStep } from "../../../components/steps/restore/DestinationStep";
 import { RestoreExecStep } from "../../../components/steps/restore/RestoreExecStep";
 
-import {
-  BackupFile,
-  MerakiOrganization,
-  MerakiNetwork,
-  MerakiDeviceDetails,
-  RestoreCategories,
-} from "../../../types/types";
+import { RestoreData } from "../../../types/types";
 
 const STEPS = [
   { id: 1, name: "Upload", description: "Upload ZIP or JSON backup" },
@@ -25,26 +19,6 @@ const STEPS = [
   { id: 4, name: "Restore", description: "Apply configuration" },
   { id: 5, name: "Results", description: "View results" },
 ];
-
-export interface RestoreResults {
-  log: string[];
-  restored: number;
-  failed: number;
-}
-
-export interface RestoreData {
-  fileType: "json" | "zip" | null;
-  fileName: string;
-  parsedBackup: BackupFile | null;
-  selectedNetworkId: string;
-  restoreCategories: RestoreCategories;
-  destinationApiKey: string;
-  destinationRegion: string;
-  destinationOrg: MerakiOrganization | null;
-  destinationNetwork: MerakiNetwork | null;
-  destinationDevices: MerakiDeviceDetails[];
-  results: RestoreResults | null;
-}
 
 const DEFAULT_DATA: RestoreData = {
   fileType: null,
@@ -212,32 +186,34 @@ export function RestoreWizard() {
   };
 
   return (
-    <div className="w-full">
-      <div className="p-4 font-medium">Restore Backup</div>
+    <div className="px-16 py-8">
+      <div className="flex flex-col gap-4">
+        {/* Step indicator */}
+        <StepBar steps={STEPS} currentStep={currentStep} />
 
-      {/* Step indicator */}
-      <StepBar steps={STEPS} currentStep={currentStep} />
-
-      <div className="px-16 py-8">
         {/* Step content */}
-        <div className="rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] overflow-hidden">
+        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
           {renderStep()}
 
           {/* Navigation */}
           {!isAutoStep && (
-            <div className="flex items-center justify-between bg-[#E7E7E7] p-6">
+            <div className="flex items-center justify-between bg-white border-t-2 p-6">
               <CustomButton
                 onClick={handleBack}
                 text_prop="text-black"
                 bg_prop="bg-white"
-                className="border border-gray-300 shadow-[0_0px_2px_rgba(0,0,0,0.25)] enabled:hover:shadow-[0_0px_2px_rgba(0,0,0,0.50)]"
+                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
                 disabled={currentStep === 1}
               >
                 <ArrowLeft size={16} />
                 Back
               </CustomButton>
 
-              <CustomButton onClick={handleNext} disabled={!canProceedToNext()}>
+              <CustomButton
+                onClick={handleNext}
+                disabled={!canProceedToNext()}
+                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+              >
                 Next
                 <ArrowRight size={16} />
               </CustomButton>

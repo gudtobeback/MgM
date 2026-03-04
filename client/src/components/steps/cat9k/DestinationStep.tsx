@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Input, Select } from "antd";
 
+import StepHeadingCard from "../StepHeadingCard";
+
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 import CustomButton from "../../ui/CustomButton";
@@ -13,9 +15,14 @@ import {
   getOrgNetworks,
   getNetworkDevices,
 } from "../../../services/merakiService";
+
 import { apiClient } from "../../../services/apiClient";
-import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
-import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
+
+import {
+  MerakiOrganization,
+  MerakiNetwork,
+  Cat9KData,
+} from "../../../types/types";
 
 interface DestinationStepProps {
   data: Cat9KData;
@@ -25,35 +32,6 @@ interface DestinationStepProps {
 }
 
 type FetchState = "idle" | "loading" | "success" | "error";
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  fontSize: "12px",
-  fontWeight: 600,
-  color: "var(--color-text-secondary)",
-  marginBottom: "6px",
-  letterSpacing: "0.04em",
-  textTransform: "uppercase",
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "9px 12px",
-  border: "1px solid var(--color-border-primary)",
-  borderRadius: "5px",
-  fontSize: "13px",
-  color: "var(--color-text-primary)",
-  backgroundColor: "var(--color-bg-primary)",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  appearance: "none" as const,
-  backgroundImage: "none",
-  cursor: "pointer",
-};
 
 export function DestinationStep({
   data,
@@ -240,20 +218,14 @@ export function DestinationStep({
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">
-          Select Destination Meraki Network
-        </p>
-        <p className="text-[12px] text-[#232C32]">
-          Choose the Meraki network where the translated configuration will be
-          pushed. The target network should contain Catalyst 9K devices under
-          Meraki cloud management.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Select Destination Meraki Network"
+        subHeading="Choose the Meraki network where the translated configuration will be pushed. The target network should contain Catalyst 9K devices under Meraki cloud management."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Mode toggle — only show if there are connected orgs */}
         {connectedOrgs.length > 0 && (
           <div className="flex items-center gap-2">

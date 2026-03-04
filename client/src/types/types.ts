@@ -9,8 +9,137 @@ export interface Organization {
   created_at: string;
 }
 
-// --- Core Application Types ---
+// Full Migration
+export interface MigrationData {
+  sourceApiKey: string;
+  sourceRegion: string;
+  destinationApiKey: string;
+  destinationRegion: string;
+  sourceOrg: MerakiOrganization | null;
+  sourceNetwork: MerakiNetwork | null;
+  destinationOrg: MerakiOrganization | null;
+  destinationNetwork: MerakiNetwork | null;
+  devicesToMigrate: MerakiDeviceDetails[];
+  reviewConfirmation: string;
 
+  // For backup/restore
+  backupBlob: Blob | null;
+  backupFilename: string;
+  restoreData: BackupFile | null;
+
+  // For results
+  migrationSuccess: MerakiDeviceDetails[];
+  migrationErrors: { device: MerakiDeviceDetails; error: string }[];
+  restoreDeviceSuccessCount: number;
+  restoreNetworkSuccessCount: number;
+}
+
+// Cat9k Migration
+export interface ParsedVlan {
+  id: number;
+  name: string;
+}
+
+export interface ParsedInterface {
+  name: string;
+  shortName: string;
+  description: string;
+  mode: "access" | "trunk" | "unknown";
+  accessVlan: number | null;
+  trunkAllowedVlans: string | null;
+  nativeVlan: number | null;
+  portFast: boolean;
+  dot1x: boolean;
+}
+
+export interface ParsedAclRule {
+  comment: string;
+  action: "permit" | "deny";
+  protocol: string;
+  srcCidr: string;
+  srcPort: string | null;
+  dstCidr: string;
+  dstPort: string | null;
+}
+
+export interface ParsedAcl {
+  name: string;
+  rules: ParsedAclRule[];
+}
+
+export interface ParsedRadiusServer {
+  name: string;
+  ip: string;
+  authPort: number;
+  acctPort: number;
+  key: string;
+}
+
+export interface ParsedCat9KConfig {
+  hostname: string;
+  vlans: ParsedVlan[];
+  interfaces: ParsedInterface[];
+  radiusServers: ParsedRadiusServer[];
+  dot1xEnabled: boolean;
+  acls: ParsedAcl[];
+}
+
+export interface Cat9KResults {
+  portsPushed: number;
+  portsFailed: number;
+  policiesCreated: number;
+  aclRulesPushed: number;
+  log: string[];
+}
+
+export interface Cat9KData {
+  rawConfig: string;
+  parsedConfig: ParsedCat9KConfig | null;
+  destinationApiKey: string;
+  destinationRegion: string;
+  destinationOrg: MerakiOrganization | null;
+  destinationNetwork: MerakiNetwork | null;
+  destinationDevices: MerakiDeviceDetails[];
+  applyPorts: boolean;
+  applyRadius: boolean;
+  applyAcls: boolean;
+  results: Cat9KResults | null;
+  // Claim step
+  claimedDevices: {
+    cloudId: string;
+    serial: string;
+    name: string;
+    model: string;
+  }[];
+  // Apply step checkpoints (stop/resume)
+  appliedPorts: string[];
+  radiusApplied: boolean;
+  aclsApplied: boolean;
+  wasStopped: boolean;
+}
+
+// Restore
+export interface RestoreResults {
+  log: string[];
+  restored: number;
+  failed: number;
+}
+
+export interface RestoreData {
+  fileType: "json" | "zip" | null;
+  fileName: string;
+  parsedBackup: BackupFile | null;
+  selectedNetworkId: string;
+  restoreCategories: RestoreCategories;
+  destinationApiKey: string;
+  destinationRegion: string;
+  destinationOrg: MerakiOrganization | null;
+  destinationNetwork: MerakiNetwork | null;
+  destinationDevices: MerakiDeviceDetails[];
+  results: RestoreResults | null;
+}
+
+// --- Core Application Types ---
 export interface User {
   id: number;
   username: string;

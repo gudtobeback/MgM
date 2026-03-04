@@ -1,10 +1,13 @@
 import { Input, Select } from "antd";
+import { HardDriveDownload } from "lucide-react";
 
 import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 
 import { MERAKI_REGIONS } from "@/src/constants";
+
 import DomainCard from "../DomainCard";
+import StepHeadingCard from "../StepHeadingCard";
 
 interface BackupConnectionStepProps {
   data: any;
@@ -31,16 +34,15 @@ export function BackupConnectionStep({
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Connect to Source Dashboard</p>
-        <p className="text-[12px] text-[#232C32]">
-          Enter your API key to connect to the dashboard you want to backup
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Connect to Source Dashboard"
+        subHeading="Enter your API key to connect to the dashboard you want to backup."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Title */}
         <DomainCard
           title="Source Dashboard"

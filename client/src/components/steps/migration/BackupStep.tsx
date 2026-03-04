@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 
+import LogsCard from "../LogsCard";
+import StepHeadingCard from "../StepHeadingCard";
+
 import {
   createExhaustiveBackup,
   createSelectiveBackup,
@@ -104,36 +107,31 @@ export function BackupStep({ data, onComplete, onUpdate }: BackupStepProps) {
   }, []); // Run only once on mount
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <div className="flex items-center gap-2">
-          <p className="font-semibold text-[16px]">
-            {isComplete
+      <StepHeadingCard
+        icon={
+          isBackingUp ? (
+            <Loader2 size={30} className="animate-spin text-[#049FD9]" />
+          ) : isComplete ? (
+            <CheckCircle2 size={30} className="text-green-500" />
+          ) : (
+            error && <XCircle size={30} className="text-red-500" />
+          )
+        }
+        heading={
+          isBackingUp
+            ? "Creating Pre-Migration Backup"
+            : isComplete
               ? "Backup Phase Complete"
-              : "Creating Pre-Migration Backup"}
-          </p>
-          {isComplete && !error && (
-            <CheckCircle2 size={24} className="text-green-500" />
-          )}
-          {isComplete && error && (
-            <XCircle size={24} className="text-red-500" />
-          )}
-          {isBackingUp && (
-            <Loader2 size={24} className="animate-spin text-[#2563eb]" />
-          )}
-        </div>
-        <p className="text-[12px] text-[#232C32]">
-          Performing a full, exhaustive backup of the source organization. This
-          is a critical safety step.
-        </p>
-      </div>
+              : "Pre-Migration Backup"
+        }
+        subHeading="Performing a full, exhaustive backup of the source organization. This is a critical safety step."
+      />
 
-      {/* Logs */}
-      <div className="flex flex-col gap-3 p-6">
-        <p className="text-sm text-[#333232]">Live Backup Log</p>
-
-        <div className="h-80 p-4 font-mono text-sm text-[#D5D5D5] bg-black border border-[#B3B3B3] rounded-md overflow-y-auto">
+      <div className="step-card-inner-layout">
+        {/* Logs */}
+        <LogsCard logName="Live Backup Log">
           {logs.map((log, index) => (
             <div key={index} className="whitespace-pre-wrap leading-relaxed">
               {log}
@@ -142,7 +140,7 @@ export function BackupStep({ data, onComplete, onUpdate }: BackupStepProps) {
           {error && (
             <div className="text-red-600 mt-2 font-semibold">{error}</div>
           )}
-        </div>
+        </LogsCard>
       </div>
     </div>
   );

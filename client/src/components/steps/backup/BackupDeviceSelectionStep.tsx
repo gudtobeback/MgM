@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
-import { Checkbox } from "../../ui/checkbox";
+
+import { Input } from "antd";
+import { Wifi, Camera, Router, Loader2, HardDriveDownload } from "lucide-react";
+
+import StepHeadingCard from "../StepHeadingCard";
 
 import { Badge } from "../../ui/badge";
+import { Checkbox } from "../../ui/checkbox";
 import {
   Table,
   TableBody,
@@ -10,11 +15,9 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/table";
-import { Wifi, Camera, Router, Loader2 } from "lucide-react";
-// FIX: Use correct relative path for merakiService import.
-import { getOrgDevices, getOrgNetworks } from "../../../services/merakiService";
 import AlertCard from "../../ui/AlertCard";
-import { Input } from "antd";
+
+import { getOrgDevices, getOrgNetworks } from "../../../services/merakiService";
 
 const { Search } = Input;
 
@@ -177,26 +180,24 @@ export function BackupDeviceSelectionStep({
       : false;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Select Devices to Backup</p>
-        <p className="text-[12px] text-[#232C32]">
-          Choose which devices you want to backup from{" "}
-          {data.organization?.name || "the organization"}
-        </p>
-      </div>
+      <StepHeadingCard
+        icon={<HardDriveDownload size={30} color="#049FD9" />}
+        heading="Select Devices to Backup"
+        subHeading={`Choose which devices you want to backup from ${data.organization?.name || "the organization"}`}
+      />
 
-      <div className="p-6">
+      <div className="step-card-inner-layout">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-[#049FD9]" />
             <p className="mt-4 text-muted-foreground">Loading devices...</p>
           </div>
         ) : error ? (
           <AlertCard variant="error">{error}</AlertCard>
         ) : (
-          <div className="flex flex-col gap-6">
+          <>
             <div className="flex items-center justify-between gap-4">
               <Search
                 className="w-[400px]"
@@ -250,7 +251,7 @@ export function BackupDeviceSelectionStep({
                             />
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
                               <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
                                 <Icon className="w-4 h-4 text-muted-foreground" />
                               </div>
@@ -286,7 +287,7 @@ export function BackupDeviceSelectionStep({
                 </TableBody>
               </Table>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

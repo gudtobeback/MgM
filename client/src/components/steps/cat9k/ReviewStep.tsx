@@ -1,6 +1,9 @@
 import React from "react";
-import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
+
 import { Checkbox } from "antd";
+
+import { Cat9KData } from "../../../types/types";
+import StepHeadingCard from "../StepHeadingCard";
 
 interface ReviewStepProps {
   data: Cat9KData;
@@ -79,17 +82,14 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
   const hasAcls = parsed.acls.length > 0;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <p className="font-semibold text-[16px]">Review Parsed Configuration</p>
-        <p className="text-[12px] text-[#232C32]">
-          Review the items extracted from the running-config and select which
-          categories to apply to the destination Meraki network.
-        </p>
-      </div>
+      <StepHeadingCard
+        heading="Review Parsed Configuration"
+        subHeading="Review the items extracted from the running-config and select which categories to apply to the destination Meraki network."
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Apply toggles */}
         <div className="flex items-center gap-6 p-5 border rounded-md">
           <Toggle

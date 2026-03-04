@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+
+import LogsCard from "../LogsCard";
+import StepHeadingCard from "../StepHeadingCard";
+
 import {
   restoreDeviceConfiguration,
   restoreNetworkConfiguration,
 } from "../../../services/merakiService";
-import { MigrationData } from "../../../pages/private/migration/MigrationWizard";
-import { NetworkConfigBackup, RestoreCategories } from "../../../types/types";
+
+import {
+  NetworkConfigBackup,
+  RestoreCategories,
+  MigrationData,
+} from "../../../types/types";
 
 // Default categories: restore everything in migration flow
 const ALL_CATEGORIES: RestoreCategories = {
@@ -222,36 +230,27 @@ export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
   }, []);
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <div className="flex items-center gap-2">
-          <p className="font-semibold text-[16px]">
-            {isComplete ? "Restore Phase Complete" : "Restoring Configurations"}
-          </p>
+      <StepHeadingCard
+        icon={
+          isRestoring ? (
+            <Loader2 size={30} className="animate-spin text-[#049FD9]" />
+          ) : isComplete ? (
+            <CheckCircle2 size={30} className="text-green-500" />
+          ) : (
+            error && <XCircle size={30} className="text-red-500" />
+          )
+        }
+        heading={
+          isComplete ? "Restore Phase Complete" : "Restoring Configurations"
+        }
+        subHeading="Automatically applying backed-up settings to your newly migrated devices."
+      />
 
-          {isComplete && !error && (
-            <CheckCircle2 size={24} className="text-green-500" />
-          )}
-          {isComplete && error && (
-            <XCircle size={24} className="text-red-500" />
-          )}
-          {isRestoring && (
-            <Loader2 size={24} className="animate-spin text-[#2563eb]" />
-          )}
-        </div>
-
-        <p className="text-[12px] text-[#232C32]">
-          Automatically applying backed-up settings to your newly migrated
-          devices.
-        </p>
-      </div>
-
-      {/* Logs */}
-      <div className="flex flex-col gap-3 p-6">
-        <p className="text-sm text-[#333232]">Live Restore Log</p>
-
-        <div className="h-80 p-4 font-mono text-sm text-[#D5D5D5] bg-black border border-[#B3B3B3] rounded-md overflow-y-auto">
+      <div className="step-card-inner-layout">
+        {/* Logs */}
+        <LogsCard logName="Live Restore Log">
           {logs.map((log, index) => (
             <div key={index} className="whitespace-pre-wrap leading-relaxed">
               {log}
@@ -260,7 +259,7 @@ export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
           {error && (
             <div className="text-red-600 mt-2 font-semibold">{error}</div>
           )}
-        </div>
+        </LogsCard>
       </div>
     </div>
   );

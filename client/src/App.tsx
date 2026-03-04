@@ -126,7 +126,16 @@ function App() {
       {/* Public routes */}
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/auth" element={<AuthScreen />} />
+      <Route
+        path="/auth"
+        element={
+          user ? (
+            <Navigate to={TOOL_MODE_ROUTES.selection} replace />
+          ) : (
+            <AuthScreen />
+          )
+        }
+      />
 
       {/* Authenticated routes */}
       {user && (

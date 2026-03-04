@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Loader2, PauseCircle, CheckCircle2 } from "lucide-react";
 
+import LogsCard from "../LogsCard";
+import StepHeadingCard from "../StepHeadingCard";
+
 import {
   getSwitchPorts,
   updateSwitchPort,
@@ -8,7 +11,8 @@ import {
   updateNetworkSwitchAccessControlLists,
 } from "../../../services/merakiService";
 import { extractPortNumber } from "../../../services/cat9kParser";
-import { Cat9KData } from "../../../pages/private/migration/Cat9KMigrationWizard";
+
+import { Cat9KData } from "../../../types/types";
 
 interface ApplyStepProps {
   data: Cat9KData;
@@ -351,65 +355,56 @@ export function ApplyStep({
   const isDone = !running && !data.wasStopped;
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="step-card-layout">
       {/* Heading */}
-      <div className="flex flex-col gap-1 p-6 border-b-2">
-        <div className="flex items-center gap-2">
-          <p className="text-[16px] font-semibold">
-            {running
-              ? "Applying Configuration"
-              : isPaused
-                ? "Migration Paused"
-                : "Configuration Applied"}
-          </p>
-
-          {running ? (
-            <Loader2
-              size={24}
-              className="text-blue-600 animate-spin shrink-0"
-            />
+      <StepHeadingCard
+        icon={
+          running ? (
+            <Loader2 size={30} className="text-[#049FD9] animate-spin" />
           ) : isPaused ? (
-            <PauseCircle size={24} className="text-amber-500 shrink-0" />
+            <PauseCircle size={30} className="text-amber-500" />
           ) : (
-            <CheckCircle2 size={24} className="text-green-600 shrink-0" />
-          )}
-        </div>
-
-        <p className="text-[12px] text-[#232C32]">
-          {running
+            <CheckCircle2 size={30} className="text-green-600" />
+          )
+        }
+        heading={
+          running
+            ? "Applying Configuration"
+            : isPaused
+              ? "Migration Paused"
+              : "Configuration Applied"
+        }
+        subHeading={
+          running
             ? "Pushing switch port configurations, RADIUS policies, and ACL rules…"
             : isPaused
               ? "The migration was paused. Resume to continue from the last checkpoint."
-              : "All configuration has been pushed to the claimed Catalyst 9K device(s)."}
-        </p>
-      </div>
+              : "All configuration has been pushed to the claimed Catalyst 9K device(s)."
+        }
+      />
 
-      <div className="flex flex-col gap-6 p-6">
+      <div className="step-card-inner-layout">
         {/* Logs */}
-        <div className="flex flex-col gap-3">
-          <p className="text-sm text-[#333232]">Live Log</p>
-
-          <div className="h-80 p-4 font-mono text-sm text-[#D5D5D5] bg-black border border-[#B3B3B3] rounded-md overflow-y-auto">
-            {log.map((line, i) => (
-              <div
-                key={i}
-                className={
-                  line.startsWith("✅")
-                    ? "text-green-400"
-                    : line.startsWith("⚠️") || line.startsWith("🛑")
-                      ? "text-yellow-400"
-                      : line.startsWith("──")
-                        ? "text-slate-400"
-                        : line.startsWith("  ↩")
-                          ? "text-slate-500"
-                          : "text-slate-200"
-                }
-              >
-                {line || <br />}
-              </div>
-            ))}
-          </div>
-        </div>
+        <LogsCard logName="Live Log">
+          {log.map((line, i) => (
+            <div
+              key={i}
+              className={
+                line.startsWith("✅")
+                  ? "text-green-400"
+                  : line.startsWith("⚠️") || line.startsWith("🛑")
+                    ? "text-yellow-400"
+                    : line.startsWith("──")
+                      ? "text-slate-400"
+                      : line.startsWith("  ↩")
+                        ? "text-slate-500"
+                        : "text-slate-200"
+              }
+            >
+              {line || <br />}
+            </div>
+          ))}
+        </LogsCard>
 
         {/* Action buttons */}
         <div className="mt-4 flex flex-wrap gap-2.5">
