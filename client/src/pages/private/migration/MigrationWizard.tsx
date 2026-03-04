@@ -56,6 +56,9 @@ export function MigrationWizard() {
     restoreNetworkSuccessCount: 0,
   });
 
+  const [startLogTimer, setStartLogTimer] = useState(null);
+  const [logTimer, setLogTimer] = useState<number | null>(null);
+
   // Fetch devices from the selected source network when entering the Review step
   useEffect(() => {
     if (
@@ -172,6 +175,7 @@ export function MigrationWizard() {
             data={migrationData}
             onUpdate={updateMigrationData}
             onComplete={handleNext}
+            setStartLogTimer={setStartLogTimer}
           />
         );
       case 7:

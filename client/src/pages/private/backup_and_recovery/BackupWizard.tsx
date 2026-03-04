@@ -49,7 +49,7 @@ export function BackupWizard() {
     null,
   );
 
-  const [logTimer, setLogTimer] = useState(0);
+  const [logTimer, setLogTimer] = useState<number | null>(null);
 
   const handleNext = () => {
     if (currentStep < STEPS.length) setCurrentStep((s) => s + 1);
@@ -134,7 +134,13 @@ export function BackupWizard() {
           />
         );
       case 6:
-        return <BackupResultsStep data={backupData} onReset={handleReset} />;
+        return (
+          <BackupResultsStep
+            data={backupData}
+            onReset={handleReset}
+            logTimer={logTimer}
+          />
+        );
       default:
         return null;
     }

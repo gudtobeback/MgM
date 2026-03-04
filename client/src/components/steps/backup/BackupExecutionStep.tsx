@@ -23,11 +23,19 @@ export function BackupExecutionStep({
   onComplete,
   onUpdate,
   backupType,
+  setLogTimer,
 }: BackupExecutionStepProps) {
   const [logs, setLogs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+
+  const logCallback = (msg: string) => {
+    setLogs((prevLogs) => [
+      ...prevLogs,
+      `[${new Date().toLocaleTimeString()}] ${msg}`,
+    ]);
+  };
 
   const startBackup = async (type: "selective" | "full") => {
     setIsBackingUp(true);
@@ -35,12 +43,7 @@ export function BackupExecutionStep({
     setError(null);
     setLogs([]);
 
-    const logCallback = (msg: string) => {
-      setLogs((prevLogs) => [
-        ...prevLogs,
-        `[${new Date().toLocaleTimeString()}] ${msg}`,
-      ]);
-    };
+    const startTime = Date.now(); // ⬅️ START TIMER
 
     try {
       let blob: Blob;
@@ -53,6 +56,7 @@ export function BackupExecutionStep({
         logCallback(
           `Starting SELECTIVE backup for ${data.selectedDevices.length} devices...`,
         );
+
         blob = await createSelectiveBackup(
           data.apiKey,
           data.region || "com",
@@ -60,25 +64,44 @@ export function BackupExecutionStep({
           data.selectedDevices,
           logCallback,
         );
+
         filename = `meraki-selective-backup-${safeOrgName}-${Date.now()}.json`;
       } else {
-        // full backup
         logCallback(
           `Starting FULL backup for organization "${data.organization.name}"...`,
         );
+
         blob = await createExhaustiveBackup(
           data.apiKey,
           data.region || "com",
           data.organization.id,
           logCallback,
         );
-        // FIX: Corrected filename to use .zip for exhaustive backups, which create a ZIP archive.
+
         filename = `meraki-full-backup-${safeOrgName}-${Date.now()}.zip`;
       }
 
+      const endTime = Date.now(); // ⬅️ END TIMER
+      const durationMs = endTime - startTime;
+
+      // Calculated Backup Time
+      const totalSeconds = Math.floor(durationMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      const formattedDuration =
+        minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
+      // 🔥 send to parent
+      setLogTimer(durationMs);
+
+      logCallback(`--- ⏱ Backup completed in ${formattedDuration} ---`);
+
       onUpdate({ backupBlob: blob, backupFilename: filename });
+
       setIsComplete(true);
       logCallback("--- ✅ Backup completed successfully! ---");
+
       setTimeout(() => onComplete(), 1500);
     } catch (err: any) {
       const errorMessage = "Backup failed: " + (err.message || "Unknown error");

@@ -14,9 +14,14 @@ import CustomButton from "../../ui/CustomButton";
 interface BackupResultsStepProps {
   data: any;
   onReset: () => void;
+  logTimer: any;
 }
 
-export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
+export function BackupResultsStep({
+  data,
+  onReset,
+  logTimer,
+}: BackupResultsStepProps) {
   const {
     selectedDevices = [],
     organization,
@@ -33,6 +38,14 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
     backupFilename ||
     `meraki-backup-${organization?.name.replace(/\s+/g, "-").toLowerCase()}-${Date.now()}.json`;
 
+  // Calculated Backup Time
+  const totalSeconds = Math.floor(logTimer / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  const formattedDuration =
+    minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
   const handleDownload = () => {
     if (!backupBlob) return;
     const url = URL.createObjectURL(backupBlob);
@@ -47,12 +60,16 @@ export function BackupResultsStep({ data, onReset }: BackupResultsStepProps) {
 
   return (
     <div className="step-card-layout">
-      <div className="text-center py-6">
-        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+      <div className="flex flex-col items-center gap-2 py-6">
+        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-2">
           <CheckCircle2 size={40} className="text-green-600" />
         </div>
+
         <h2 className="text-2xl font-bold">Backup Completed Successfully!</h2>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-green-600">
+          Backup completed in <strong>{formattedDuration}...</strong>
+        </p>
+        <p className="text-muted-foreground">
           All selected device configurations have been backed up from{" "}
           {organization?.name}
         </p>
