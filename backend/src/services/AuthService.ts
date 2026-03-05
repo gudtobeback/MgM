@@ -1,11 +1,13 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { query } from "../config/database";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "default-secret-change-in-production";
-const JWT_EXPIRES_IN = "24h";
-const REFRESH_TOKEN_EXPIRES_IN = "7d";
+const JWT_TOKEN_SECRET_KEY: jwt.Secret =
+  process.env.JWT_TOKEN_SECRET_KEY || "default-secret-change-in-production";
+const ACCESS_TOKEN_EXPIRY =
+  (process.env.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"]) || "24h";
+const REFRESH_TOKEN_EXPIRY =
+  (process.env.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"]) || "7d";
 
 export interface UserPayload {
   id: string;
@@ -116,11 +118,11 @@ export class AuthService {
    * Generate JWT tokens
    */
   static generateTokens(payload: UserPayload): AuthTokens {
-    const accessToken = jwt.sign(payload, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
+    const accessToken = jwt.sign(payload, JWT_TOKEN_SECRET_KEY, {
+      expiresIn: ACCESS_TOKEN_EXPIRY,
     });
-    const refreshToken = jwt.sign(payload, JWT_SECRET, {
-      expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+    const refreshToken = jwt.sign(payload, JWT_TOKEN_SECRET_KEY, {
+      expiresIn: REFRESH_TOKEN_EXPIRY,
     });
 
     return {
@@ -135,7 +137,7 @@ export class AuthService {
    */
   static verifyToken(token: string): UserPayload & Record<string, any> {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as UserPayload &
+      const decoded = jwt.verify(token, JWT_TOKEN_SECRET_KEY) as UserPayload &
         Record<string, any>;
       return decoded;
     } catch (error) {
