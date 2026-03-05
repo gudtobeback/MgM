@@ -58,7 +58,7 @@ export default function ChallengesSection() {
   ];
 
   return (
-    <div className="home-section border-b border-gray-200">
+    <div className="home-section bg-[#fafafa] border-b border-gray-200">
       <div className="flex flex-col items-center gap-8">
         {/* Section Heading */}
         <SectionHeading text="The Challenge's" variant="red" />

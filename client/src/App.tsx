@@ -48,6 +48,7 @@ import Header from "./components/home/Header";
 import PrivacyPolicy from "./pages/public/PrivacyPolicy";
 import TermsAndConditions from "./pages/public/TermsAndConditions";
 import Footer from "./components/home/Footer";
+import SubscriptionPage from "./pages/private/SubscriptionPage";
 
 /**
  * Protected Route Wrapper Component
@@ -88,7 +89,7 @@ function PublicLayout() {
       <Header />
 
       {/* Body */}
-      <div className="flex flex-col bg-[#fafafa]">
+      <div className="flex flex-col bg-white">
         {/* Hero body */}
         <Outlet />
       </div>
@@ -212,6 +213,7 @@ function App() {
             }
           />
           <Route path={TOOL_MODE_ROUTES.profile} element={<ProfilePage />} />
+          <Route path={TOOL_MODE_ROUTES.subscription} element={<SubscriptionPage />} />
           <Route
             path={TOOL_MODE_ROUTES.team}
             element={<TeamManagementPage />}

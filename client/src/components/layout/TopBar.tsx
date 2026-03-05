@@ -188,6 +188,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         <div className="w-px h-5 bg-gray-200 hidden md:block" />
 
         <span
+          onClick={() => navigate(TOOL_MODE_ROUTES.subscription)}
           className="hidden md:inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold text-white tracking-wider shadow-sm"
           style={{
             background: `linear-gradient(135deg, ${tierStyle.from}, ${tierStyle.to})`,

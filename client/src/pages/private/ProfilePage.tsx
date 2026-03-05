@@ -100,12 +100,6 @@ const TIERS = [
   },
 ];
 
-// Shared input style
-const INPUT =
-  "w-full px-3 py-2.5 rounded-lg text-sm bg-white/50 border border-white/40 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all backdrop-blur-sm";
-const INPUT_DISABLED =
-  "w-full px-3 py-2.5 rounded-lg text-sm bg-white/20 border border-white/30 text-muted-foreground opacity-70 cursor-not-allowed";
-
 export const ProfilePage = () => {
   const { user, setUser } = useAuth();
 

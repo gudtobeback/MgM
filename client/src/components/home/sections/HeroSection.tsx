@@ -39,7 +39,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="home-section">
+    <div className="home-section border-b border-gray-200">
       <div className="flex flex-col md:flex-row items-start justify-between gap-16">
         {/* Left */}
         <div className="flex flex-col gap-6">
@@ -142,7 +142,8 @@ export default function HeroSection() {
                   <h3 className="text-[14px] font-semibold text-gray-900 mb-1">
                     {capability.title}
                   </h3>
-                  <p className="text-[12px] text-gray-600 leading-relaxed">
+
+                  <p className="text-[14px] text-gray-600 leading-relaxed">
                     {capability.description}
                   </p>
                 </div>

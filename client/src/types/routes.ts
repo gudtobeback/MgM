@@ -20,6 +20,7 @@ export type ToolMode =
   | "scheduler"
   | "cross-region"
   | "profile"
+  | "subscription"
   | "cat9k"
   | "team";
 
@@ -40,6 +41,7 @@ export const TOOL_MODE_ROUTES: Record<ToolMode, string> = {
   scheduler: "/scheduler",
   "cross-region": "/cross-region",
   profile: "/profile",
+  subscription: "/subscription",
   cat9k: "/cat9k",
   team: "/team",
 };
