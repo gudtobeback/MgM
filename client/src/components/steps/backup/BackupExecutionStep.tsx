@@ -9,13 +9,14 @@ import {
   createSelectiveBackup,
   createExhaustiveBackup,
 } from "../../../services/merakiService";
+import { formatLogDuration } from "@/src/utilities/formatLogDuration";
 
 interface BackupExecutionStepProps {
   data: any;
   onComplete: () => void;
   onUpdate: (data: any) => void;
   backupType: any;
-  setLogTimer: any;
+  setLogDuration: any;
 }
 
 export function BackupExecutionStep({
@@ -23,7 +24,7 @@ export function BackupExecutionStep({
   onComplete,
   onUpdate,
   backupType,
-  setLogTimer,
+  setLogDuration,
 }: BackupExecutionStepProps) {
   const [logs, setLogs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -84,16 +85,10 @@ export function BackupExecutionStep({
       const endTime = Date.now(); // ⬅️ END TIMER
       const durationMs = endTime - startTime;
 
-      // Calculated Backup Time
-      const totalSeconds = Math.floor(durationMs / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-
-      const formattedDuration =
-        minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+      const formattedDuration = formatLogDuration(durationMs);
 
       // 🔥 send to parent
-      setLogTimer(durationMs);
+      setLogDuration(durationMs);
 
       logCallback(`--- ⏱ Backup completed in ${formattedDuration} ---`);
 

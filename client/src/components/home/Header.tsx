@@ -8,7 +8,12 @@ export default function Header() {
 
   return (
     <nav className="relative lg:px-20 md:px-16 px-6 h-16 flex items-center justify-between bg-white text-black w-full shadow-md">
-      <div className="text-[18px] font-semibold">Miraki Management</div>
+      <div
+        onClick={() => navigate("/home")}
+        className="text-[18px] font-semibold cursor-pointer"
+      >
+        Miraki Management
+      </div>
 
       <div className="hidden md:flex items-center gap-8">
         <a
@@ -39,7 +44,9 @@ export default function Header() {
           Sign in
         </button>
 
-        <CustomButton onClick={() => navigate("/auth")}>Get Started</CustomButton>
+        <CustomButton onClick={() => navigate("/auth")}>
+          Get Started
+        </CustomButton>
       </div>
     </nav>
   );

@@ -56,8 +56,8 @@ export function MigrationWizard() {
     restoreNetworkSuccessCount: 0,
   });
 
-  const [startLogTimer, setStartLogTimer] = useState(null);
-  const [logTimer, setLogTimer] = useState<number | null>(null);
+  const [logStartTime, setLogStartTime] = useState(null);
+  const [logDuration, setLogDuration] = useState<number | null>(null);
 
   // Fetch devices from the selected source network when entering the Review step
   useEffect(() => {
@@ -175,7 +175,7 @@ export function MigrationWizard() {
             data={migrationData}
             onUpdate={updateMigrationData}
             onComplete={handleNext}
-            setStartLogTimer={setStartLogTimer}
+            setLogStartTime={setLogStartTime}
           />
         );
       case 7:
@@ -200,10 +200,18 @@ export function MigrationWizard() {
             data={migrationData}
             onUpdate={updateMigrationData}
             onComplete={handleNext}
+            logStartTime={logStartTime}
+            setLogDuration={setLogDuration}
           />
         );
       case 10:
-        return <ResultsStep data={migrationData} onReset={handleReset} />;
+        return (
+          <ResultsStep
+            data={migrationData}
+            onReset={handleReset}
+            logDuration={logDuration}
+          />
+        );
       default:
         return null;
     }

@@ -10,17 +10,18 @@ import {
 
 import AlertCard from "../../ui/AlertCard";
 import CustomButton from "../../ui/CustomButton";
+import { formatLogDuration } from "@/src/utilities/formatLogDuration";
 
 interface BackupResultsStepProps {
   data: any;
   onReset: () => void;
-  logTimer: any;
+  logDuration: any;
 }
 
 export function BackupResultsStep({
   data,
   onReset,
-  logTimer,
+  logDuration,
 }: BackupResultsStepProps) {
   const {
     selectedDevices = [],
@@ -39,12 +40,7 @@ export function BackupResultsStep({
     `meraki-backup-${organization?.name.replace(/\s+/g, "-").toLowerCase()}-${Date.now()}.json`;
 
   // Calculated Backup Time
-  const totalSeconds = Math.floor(logTimer / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-
-  const formattedDuration =
-    minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+  const formattedDuration = formatLogDuration(logDuration);
 
   const handleDownload = () => {
     if (!backupBlob) return;
@@ -65,7 +61,7 @@ export function BackupResultsStep({
           <CheckCircle2 size={40} className="text-green-600" />
         </div>
 
-        <h2 className="text-2xl font-bold">Backup Completed Successfully!</h2>
+        <p className="text-2xl font-bold">Backup Completed Successfully!</p>
         <p className="text-green-600">
           Backup completed in <strong>{formattedDuration}...</strong>
         </p>

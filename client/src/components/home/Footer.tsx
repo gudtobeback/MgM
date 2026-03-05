@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 export default function Footer() {
   const products = [
@@ -27,23 +28,23 @@ export default function Footer() {
   const companys = [
     {
       name: "About Us",
-      hash: "#",
+      to: "#",
     },
     {
       name: "Contact",
-      hash: "#",
+      to: "#",
     },
     {
       name: "Support",
-      hash: "#",
+      to: "#",
     },
     {
       name: "Privacy Policy",
-      hash: "#",
+      to: "/privacy-policy",
     },
     {
       name: "Terms Of Service",
-      hash: "#",
+      to: "/terms",
     },
   ];
 
@@ -76,13 +77,13 @@ export default function Footer() {
           <div className="flex flex-col gap-1">
             <div className="font-bold mb-1">Comapny</div>
             {companys?.map((company, idx) => (
-              <a
+              <NavLink
                 key={idx}
-                href={company?.hash}
+                to={company?.to}
                 className="text-[12px] hover:text-blue-500"
               >
                 {company?.name}
-              </a>
+              </NavLink>
             ))}
           </div>
         </div>

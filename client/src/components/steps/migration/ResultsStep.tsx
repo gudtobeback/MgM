@@ -15,13 +15,15 @@ import AlertCard from "../../ui/AlertCard";
 import CustomButton from "../../ui/CustomButton";
 
 import { MigrationData } from "../../../types/types";
+import { formatLogDuration } from "@/src/utilities/formatLogDuration";
 
 interface ResultsStepProps {
   data: MigrationData;
   onReset: () => void;
+  logDuration: any;
 }
 
-export function ResultsStep({ data, onReset }: ResultsStepProps) {
+export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
   const {
     sourceOrg,
     destinationOrg,
@@ -54,19 +56,25 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
 
   const hasMigrationErrors = migrationErrors.length > 0;
 
+  // Calculated Backup Time
+  const formattedDuration = formatLogDuration(logDuration);
+
   return (
     <div className="step-card-layout">
-      <div className="text-center py-6">
+      <div className="flex flex-col items-center gap-2 py-6">
         <div
-          className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${hasMigrationErrors ? "bg-orange-100" : "bg-green-100"}`}
+          className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-2 ${hasMigrationErrors ? "bg-orange-100" : "bg-green-100"}`}
         >
           <CheckCircle2
             size={40}
             className={`${hasMigrationErrors ? "text-orange-600" : "text-green-600"}`}
           />
         </div>
-        <h2 className="text-2xl font-bold">Migration Process Complete</h2>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-2xl font-bold">Migration Process Complete</p>
+        <p className="text-green-600">
+          Migration completed in <strong>{formattedDuration}...</strong>
+        </p>
+        <p className="text-muted-foreground">
           {hasMigrationErrors
             ? "Migration completed with some errors."
             : `Successfully migrated devices from ${sourceOrg?.name} to ${destinationOrg?.name}.`}

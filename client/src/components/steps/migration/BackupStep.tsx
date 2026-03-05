@@ -14,14 +14,14 @@ interface BackupStepProps {
   data: any;
   onComplete: () => void;
   onUpdate: (data: any) => void;
-  setStartLogTimer: any;
+  setLogStartTime: any;
 }
 
 export function BackupStep({
   data,
   onComplete,
   onUpdate,
-  setStartLogTimer,
+  setLogStartTime,
 }: BackupStepProps) {
   const [logs, setLogs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +50,7 @@ export function BackupStep({
 
     setIsBackingUp(true);
 
-    setStartLogTimer(Date.now()); // ⬅️ START TIMER
+    setLogStartTime(Date.now()); // ⬅️ START TIMER
 
     try {
       const safeOrgName = data.sourceOrg.name

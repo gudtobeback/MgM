@@ -14,6 +14,7 @@ import {
   RestoreCategories,
   MigrationData,
 } from "../../../types/types";
+import { formatLogDuration } from "@/src/utilities/formatLogDuration";
 
 // Default categories: restore everything in migration flow
 const ALL_CATEGORIES: RestoreCategories = {
@@ -102,9 +103,17 @@ interface RestoreStepProps {
   data: MigrationData;
   onUpdate: (data: Partial<MigrationData>) => void;
   onComplete: () => void;
+  logStartTime: any;
+  setLogDuration: any;
 }
 
-export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
+export function RestoreStep({
+  data,
+  onComplete,
+  onUpdate,
+  logStartTime,
+  setLogDuration,
+}: RestoreStepProps) {
   const [logs, setLogs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -207,6 +216,16 @@ export function RestoreStep({ data, onComplete, onUpdate }: RestoreStepProps) {
       }
 
       setIsComplete(true);
+
+      const endTime = Date.now(); // ⬅️ END TIMER
+      const durationMs = endTime - logStartTime;
+
+      const formattedDuration = formatLogDuration(durationMs);
+
+      setLogDuration(durationMs);
+
+      log(`--- ⏱ Backup completed in ${formattedDuration} ---`);
+
       log("\n--- ✅ Restore phase complete! ---");
       onUpdate({
         restoreDeviceSuccessCount: deviceSuccessCount,

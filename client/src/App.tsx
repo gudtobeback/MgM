@@ -43,6 +43,11 @@ import Home from "./pages/public/Home";
 import { useAuth } from "./context/AuthContext";
 
 import { useOrganization } from "./context/OrganizationContext";
+import Header from "./components/home/Header";
+
+import PrivacyPolicy from "./pages/public/PrivacyPolicy";
+import TermsAndConditions from "./pages/public/TermsAndConditions";
+import Footer from "./components/home/Footer";
 
 /**
  * Protected Route Wrapper Component
@@ -75,6 +80,22 @@ function ProtectedRouteWrapper() {
   }
 
   return <Outlet />;
+}
+
+function PublicLayout() {
+  return (
+    <div className="text-black/80">
+      <Header />
+
+      {/* Body */}
+      <div className="flex flex-col bg-[#fafafa]">
+        {/* Hero body */}
+        <Outlet />
+      </div>
+
+      <Footer />
+    </div>
+  );
 }
 
 /**
@@ -124,8 +145,13 @@ function App() {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<Home />} />
-      <Route path="/home" element={<Home />} />
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+      </Route>
+
       <Route
         path="/auth"
         element={
