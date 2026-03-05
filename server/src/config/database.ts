@@ -1,5 +1,5 @@
-import { Pool, PoolClient } from 'pg';
-import dotenv from 'dotenv';
+import { Pool, PoolClient } from "pg";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -8,15 +8,19 @@ const pool = new Pool({
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 // Test connection on startup
-pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
+pool.on("connect", () => {
+  console.log("✅ Connected to PostgreSQL database");
 });
 
-pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle database client', err);
+pool.on("error", (err) => {
+  console.error("❌ Unexpected error on idle database client", err);
   process.exit(-1);
 });
 
@@ -25,10 +29,10 @@ export const query = async (text: string, params?: any[]) => {
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: res.rowCount });
+    console.log("Executed query", { text, duration, rows: res.rowCount });
     return res;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error("Database query error:", error);
     throw error;
   }
 };
