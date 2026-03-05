@@ -89,7 +89,7 @@ export default function ChallengesSection() {
 
                 <div className="flex flex-col gap-2">
                   <p className="text-[16px] font-bold">{problem?.title}</p>
-                  <p className="text-[12px]">{problem?.description}</p>
+                  <p className="text-[13px]">{problem?.description}</p>
                 </div>
               </div>
 

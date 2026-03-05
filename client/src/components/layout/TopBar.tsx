@@ -124,14 +124,26 @@ const PAGE_CONTEXT: Record<
   },
 };
 
-const TIER_STYLES: Record<string, { label: string; from: string; to: string }> =
-  {
-    free: { label: "Free", from: "#9ca3af", to: "#6b7280" },
-    essentials: { label: "Essentials", from: "#38bdf8", to: "#0ea5e9" },
-    professional: { label: "Pro", from: "#a78bfa", to: "#7c3aed" },
-    enterprise: { label: "Enterprise", from: "#fbbf24", to: "#f59e0b" },
-    msp: { label: "MSP", from: "#3b82f6", to: "#4f46e5" },
-  };
+const TIER_STYLES: Record<
+  string,
+  { label: string; from: string; to: string; devices: any }
+> = {
+  free: { label: "Free", from: "#9ca3af", to: "#6b7280", devices: 10 },
+  essentials: {
+    label: "Essentials",
+    from: "#38bdf8",
+    to: "#0ea5e9",
+    devices: 20,
+  },
+  professional: { label: "Pro", from: "#a78bfa", to: "#7c3aed", devices: 30 },
+  enterprise: {
+    label: "Enterprise",
+    from: "#fbbf24",
+    to: "#f59e0b",
+    devices: 40,
+  },
+  msp: { label: "MSP", from: "#3b82f6", to: "#4f46e5", devices: 50 },
+};
 
 export const TopBar: React.FC<TopBarProps> = ({
   user,
@@ -194,7 +206,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             background: `linear-gradient(135deg, ${tierStyle.from}, ${tierStyle.to})`,
           }}
         >
-          {tierStyle.label}
+          {tierStyle.devices} Devices
         </span>
 
         <div className="w-px h-5 bg-gray-200 hidden md:block" />

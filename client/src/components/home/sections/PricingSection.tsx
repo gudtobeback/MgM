@@ -188,13 +188,19 @@ export default function PricingSection() {
               <tr key={index} className="text-[13px] border-b border-gray-200">
                 <td className="font-medium">{row.feature}</td>
                 <td className="text-center font-bold place-items-center">
-                  {row.basic}
+                  <div className="flex items-center justify-center">
+                    {row.basic}
+                  </div>
                 </td>
                 <td className="text-center font-bold place-items-center bg-[#181F2C08]">
-                  {row.pro}
+                  <div className="flex items-center justify-center">
+                    {row.pro}
+                  </div>
                 </td>
                 <td className="text-center font-bold place-items-center">
-                  {row.enterprise}
+                  <div className="flex items-center justify-center">
+                    {row.enterprise}
+                  </div>
                 </td>
               </tr>
             ))}
