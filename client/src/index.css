@@ -4,6 +4,10 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Home Section */
 .home-section {
   padding-top: 3rem;
