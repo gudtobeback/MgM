@@ -6,8 +6,11 @@ import CustomButton from "../../ui/CustomButton";
 
 import SectionHeading from "../SectionHeading";
 import SectionDescription from "../SectionDescription";
+import { useNavigate } from "react-router-dom";
 
 export default function GetStartedSection() {
+  const navigate = useNavigate();
+
   return (
     <div className="home-section border-b border-gray-200">
       <div className="flex flex-col items-center gap-8">
@@ -20,11 +23,12 @@ export default function GetStartedSection() {
         />
 
         <div className="flex items-center gap-4 mt-2">
-          <CustomButton>
+          <CustomButton onClick={() => navigate("/auth")}>
             Start migration <ArrowRight size={18} />
           </CustomButton>
 
           <CustomButton
+            onClick={() => navigate("/auth")}
             text_prop="text-black"
             bg_prop="bg-white"
             className="border border-gray-300 shadow-[0_0px_2px_rgba(0,0,0,0.25)] hover:shadow-[0_0px_2px_rgba(0,0,0,0.50)]"

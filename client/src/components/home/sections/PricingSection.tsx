@@ -6,8 +6,11 @@ import CustomButton from "../../ui/CustomButton";
 
 import SectionHeading from "../SectionHeading";
 import SectionDescription from "../SectionDescription";
+import { useNavigate } from "react-router-dom";
 
 export default function PricingSection() {
+  const navigate = useNavigate();
+  
   const iconSize = 18;
 
   const tableBody = [
@@ -156,6 +159,7 @@ export default function PricingSection() {
                       </div>
 
                       <CustomButton
+                        onClick={() => navigate("/auth")}
                         className="text-center text-[12px] w-full"
                         text_prop={
                           plan.highlighted ? "text-black/80" : "text-white"

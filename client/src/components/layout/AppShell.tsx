@@ -4,6 +4,7 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { ToolMode, ROUTE_TO_TOOL_MODE } from "../../types/routes";
 import { Toaster } from "../ui/sonner";
+import { useAuth } from "@/src/context/AuthContext";
 
 interface AppShellProps {
   user: any;
