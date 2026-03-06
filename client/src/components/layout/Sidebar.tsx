@@ -160,7 +160,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <header className="shrink-0 flex items-center justify-between h-18 px-3">
         {!collapsed && (
           <div className="ml-2 font-bold text-[20px] text-[#049FD9]">
-            AgiesOne
+            AegisOne
           </div>
         )}
 

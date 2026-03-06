@@ -164,11 +164,11 @@ export const TopBar: React.FC<TopBarProps> = ({
     <header className="relative flex items-center justify-between px-4 h-18 z-50 bg-white">
       {/* LEFT */}
       <div className="hidden sm:flex items-center gap-3">
-        <Layers  className="text-[#049FD9]"/>
+        <Layers className="text-[#049FD9]" />
 
         <div className="flex flex-col">
           <p className="font-bold text-[20px] text-gray-800">
-            AgiesOne Management Platform
+            AegisOne Management Platform
           </p>
 
           {/* <p className="text-[10px]">via Cisco Integration</p> */}
