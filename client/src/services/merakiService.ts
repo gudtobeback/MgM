@@ -62,8 +62,9 @@ import {
 } from "../types/types";
 
 // The proxy endpoint is now explicitly set for local development.
-const LOCAL_PROXY_URL = "https://meraki-server.onrender.com/api/proxy";
-// const LOCAL_PROXY_URL = "http://127.0.0.1:8787/api/proxy";
+const BACKEND_URL = import.meta.env.VITE_BASE_URL;
+const PROXY_URL = `${BACKEND_URL}/proxy`;
+// const PROXY_URL = "http://127.0.0.1:8787/api/proxy";
 
 // --- Proactive Rate Limiter & Request Queue ---
 const MAX_CONCURRENT_REQUESTS = 9; // Meraki allows 10/sec. We'll use 9 to be safe.
@@ -117,7 +118,7 @@ const _fetchWithMerakiApi = async (
         throw new Error("Operation aborted");
       }
 
-      const response = await fetch(LOCAL_PROXY_URL, options);
+      const response = await fetch(PROXY_URL, options);
 
       // --- Success Case ---
       if (response.ok) {
