@@ -188,11 +188,11 @@ export function RestoreWizard() {
   return (
     <div className="px-16 py-8">
       <div className="flex flex-col gap-4">
-        {/* Step indicator */}
-        <StepBar steps={STEPS} currentStep={currentStep} />
-
         {/* Step content */}
         <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+          {/* Step indicator */}
+          <StepBar steps={STEPS} currentStep={currentStep} />
+
           {renderStep()}
 
           {/* Navigation */}

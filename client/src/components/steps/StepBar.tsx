@@ -27,7 +27,7 @@ export default function StepBar({ steps, currentStep }: StepBarProps) {
   return (
     <nav
       aria-label="Migration steps"
-      className="py-6 bg-white border border-[#87D2ED] rounded-lg overflow-hidden"
+      className="py-6 bg-white border-b border-[#87D2ED] overflow-hidden"
     >
       {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
       <div

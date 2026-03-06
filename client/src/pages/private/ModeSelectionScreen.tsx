@@ -231,7 +231,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
           <div className="flex flex-col gap-2">
             <p className="font-semibold">Welcome back, {firstName}</p>
             <p className="text-xs text-black/60">
-              Unified Meraki Management — {connectedOrgs?.length || 0}{" "}
+              Unified AgiesOne Management — {connectedOrgs?.length || 0}{" "}
               organization connected
             </p>
           </div>

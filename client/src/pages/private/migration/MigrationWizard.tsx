@@ -245,11 +245,11 @@ export function MigrationWizard() {
   return (
     <div className="px-16 py-8">
       <div className="flex flex-col gap-4">
-        {/* Step indicator */}
-        <StepBar steps={steps} currentStep={currentStep} />
-
         {/* Step content */}
         <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+          {/* Step indicator */}
+          <StepBar steps={steps} currentStep={currentStep} />
+
           {/* shadow-[0_2px_16px_rgba(0,0,0,0.25)] */}
           {renderStep()}
 
