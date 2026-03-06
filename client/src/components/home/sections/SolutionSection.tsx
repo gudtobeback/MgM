@@ -5,7 +5,11 @@ import { User, Layers, X, Check } from "lucide-react";
 import SectionHeading from "../SectionHeading";
 import SectionDescription from "../SectionDescription";
 
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
+
 export default function SolutionSection() {
+  const fadeRef = useFadeInOnScroll();
+
   const cards = [
     {
       card_bg: "bg-[#FAFAFA]",
@@ -56,7 +60,8 @@ export default function SolutionSection() {
   return (
     <div
       id="features"
-      className="home-section bg-white border-b border-gray-200"
+      ref={fadeRef}
+      className="home-section fade-in-scroll bg-white border-b border-gray-200"
     >
       <div className="flex flex-col items-center gap-8">
         {/* Section Heading */}

@@ -7,7 +7,6 @@ import { Toaster } from "../ui/sonner";
 import { useAuth } from "@/src/context/AuthContext";
 
 interface AppShellProps {
-  user: any;
   selectedOrgId?: string | null;
   selectedOrgName?: string;
 
@@ -15,10 +14,11 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
-  user,
   selectedOrgName,
   userPermissions,
 }) => {
+  const { user } = useAuth();
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 

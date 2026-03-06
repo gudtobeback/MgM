@@ -1,16 +1,20 @@
 import React from "react";
 
+import { useNavigate } from "react-router-dom";
 import { Check, Settings, MoveRight } from "lucide-react";
-
-import CustomButton from "../../ui/CustomButton";
 
 import SectionHeading from "../SectionHeading";
 import SectionDescription from "../SectionDescription";
-import { useNavigate } from "react-router-dom";
+
+import CustomButton from "../../ui/CustomButton";
+
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
 
 export default function PricingSection() {
+  const fadeRef = useFadeInOnScroll();
+
   const navigate = useNavigate();
-  
+
   const iconSize = 18;
 
   const tableBody = [
@@ -107,7 +111,8 @@ export default function PricingSection() {
   return (
     <div
       id="pricing"
-      className="home-section bg-white border-b border-gray-200"
+      ref={fadeRef}
+      className="home-section fade-in-scroll bg-white border-b border-gray-200"
     >
       <div className="flex flex-col items-center gap-8">
         {/* Section Heading */}

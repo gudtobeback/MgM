@@ -3,7 +3,11 @@ import React from "react";
 import SectionHeading from "../SectionHeading";
 import SectionDescription from "../SectionDescription";
 
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
+
 export default function ChallengesSection() {
+  const fadeRef = useFadeInOnScroll();
+
   const problems = [
     {
       num: "01",
@@ -58,7 +62,10 @@ export default function ChallengesSection() {
   ];
 
   return (
-    <div className="home-section bg-[#fafafa] border-b border-gray-200">
+    <div
+      ref={fadeRef}
+      className="home-section fade-in-scroll bg-[#fafafa] border-b border-gray-200"
+    >
       <div className="flex flex-col items-center gap-8">
         {/* Section Heading */}
         <SectionHeading text="The Challenge's" variant="red" />
@@ -83,7 +90,10 @@ export default function ChallengesSection() {
 
         <div className="flex flex-wrap items-center justify-evenly gap-12 mt-8">
           {problems?.map((problem, idx) => (
-            <div className="relative p-5 bg-white border border-gray-100 rounded-lg max-w-[500px] shadow-lg">
+            <div
+              key={idx}
+              className="relative p-5 bg-white border border-gray-100 rounded-lg max-w-[500px] shadow-lg"
+            >
               <div className="flex items-start gap-3">
                 <p className="text-[16px] font-bold">{problem?.num}.</p>
 

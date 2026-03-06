@@ -1,7 +1,12 @@
 import React from "react";
+
 import { NavLink } from "react-router-dom";
 
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
+
 export default function Footer() {
+  const fadeRef = useFadeInOnScroll();
+
   const products = [
     {
       name: "Features",
@@ -49,7 +54,7 @@ export default function Footer() {
   ];
 
   return (
-    <div>
+    <div ref={fadeRef} className="fade-in-scroll">
       <div className="home-section">
         <div className="flex flex-col md:flex-row justify-around gap-6">
           <div className="flex flex-col gap-1">

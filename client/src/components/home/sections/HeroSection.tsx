@@ -1,11 +1,15 @@
 import React from "react";
 
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, Play, Check, Star } from "lucide-react";
 
 import CustomButton from "../../ui/CustomButton";
-import { useNavigate } from "react-router-dom";
+
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
 
 export default function HeroSection() {
+  const fadeRef = useFadeInOnScroll();
+
   const navigate = useNavigate();
 
   const capabilities = [
@@ -39,7 +43,10 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="home-section border-b border-gray-200">
+    <div
+      ref={fadeRef}
+      className="home-section fade-in-scroll border-b border-gray-200"
+    >
       <div className="flex flex-col md:flex-row items-start justify-between gap-16">
         {/* Left */}
         <div className="flex flex-col gap-6">

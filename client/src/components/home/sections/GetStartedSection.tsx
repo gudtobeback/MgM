@@ -1,18 +1,25 @@
 import React from "react";
 
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
-
-import CustomButton from "../../ui/CustomButton";
 
 import SectionHeading from "../SectionHeading";
 import SectionDescription from "../SectionDescription";
-import { useNavigate } from "react-router-dom";
+
+import CustomButton from "../../ui/CustomButton";
+
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
 
 export default function GetStartedSection() {
+  const fadeRef = useFadeInOnScroll();
+
   const navigate = useNavigate();
 
   return (
-    <div className="home-section border-b border-gray-200">
+    <div
+      ref={fadeRef}
+      className="home-section fade-in-scroll bg-[#fafafa] border-b border-gray-200"
+    >
       <div className="flex flex-col items-center gap-8">
         {/* Section Heading */}
         <SectionHeading text="Get Started" variant="blue" />

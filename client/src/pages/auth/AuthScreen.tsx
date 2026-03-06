@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { apiClient } from "../../services/apiClient";
 
-import { Label } from "../../components/ui/label";
-import { Loader2, ArrowRight, Sparkles } from "lucide-react";
-import { Checkbox } from "../../components/ui/checkbox";
-import CustomButton from "../../components/ui/CustomButton";
-import { apiEndpoints } from "@/src/services/api";
-import { useAuth } from "@/src/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { Input } from "antd";
+import { Loader2, ArrowRight } from "lucide-react";
+
 import LabelInput from "@/src/components/ui/LabelInput";
+import CustomButton from "../../components/ui/CustomButton";
+
+import { apiEndpoints } from "@/src/services/api";
+
+import { useAuth } from "@/src/context/AuthContext";
 
 const { Password } = Input;
 
@@ -66,7 +66,10 @@ export const AuthScreen = () => {
     <div className="min-h-screen w-full flex items-center justify-center px-4 bg-gradient-to-b from-slate-50 to-slate-100 font-sans text-slate-800">
       <div className="w-full max-w-[420px] flex flex-col gap-6">
         {/* Brand */}
-        <div className="text-center">
+        <div
+          onClick={() => navigate("/home")}
+          className="text-center cursor-pointer"
+        >
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
             Meraki<span className="text-[#049FD9]">Migrate</span>
           </h1>

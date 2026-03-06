@@ -99,11 +99,27 @@ function PublicLayout() {
   );
 }
 
-/**
- * Main App Component with Routing
- */
+function RequireAuth() {
+  const { authLoading, accessToken } = useAuth();
+  const location = useLocation();
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen font-semibold text-lg">
+        Restoring Session...
+      </div>
+    );
+  }
+
+  if (!accessToken) {
+    return <Navigate to="/auth" replace state={{ from: location }} />;
+  }
+
+  return <Outlet />;
+}
+
 function App() {
-  const { authLoading, user, accessToken } = useAuth();
+  const { user, accessToken } = useAuth();
 
   const {
     orgsLoading,
@@ -130,14 +146,6 @@ function App() {
     setIsInitializing(false);
   }, [accessToken]);
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen w-full font-semibold text-lg">
-        Restoring Session...
-      </div>
-    );
-  }
-
   // Super admins get their own portal
   if (user?.role === "super_admin") {
     return <SuperAdminApp />;
@@ -156,7 +164,7 @@ function App() {
       <Route
         path="/auth"
         element={
-          user ? (
+          accessToken ? (
             <Navigate to={TOOL_MODE_ROUTES.selection} replace />
           ) : (
             <AuthScreen />
@@ -165,11 +173,10 @@ function App() {
       />
 
       {/* Authenticated routes */}
-      {user && (
+      <Route element={<RequireAuth />}>
         <Route
           element={
             <AppShell
-              user={user}
               selectedOrgName={selectedOrgName}
               userPermissions={userPermissions}
             />
@@ -213,7 +220,10 @@ function App() {
             }
           />
           <Route path={TOOL_MODE_ROUTES.profile} element={<ProfilePage />} />
-          <Route path={TOOL_MODE_ROUTES.subscription} element={<SubscriptionPage />} />
+          <Route
+            path={TOOL_MODE_ROUTES.subscription}
+            element={<SubscriptionPage />}
+          />
           <Route
             path={TOOL_MODE_ROUTES.team}
             element={<TeamManagementPage />}
@@ -292,13 +302,13 @@ function App() {
             />
           </Route>
         </Route>
-      )}
+      </Route>
 
       {/* Fallback redirects */}
       <Route
         path="*"
         element={
-          user ? (
+          accessToken ? (
             <Navigate to={TOOL_MODE_ROUTES.selection} />
           ) : (
             <Navigate to="/home" />
