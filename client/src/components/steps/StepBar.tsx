@@ -32,29 +32,8 @@ export default function StepBar({
   return (
     <nav
       aria-label="Migration steps"
-      className={`${className}  pb-4 bg-white border-b border-[#87D2ED] overflow-hidden`}
+      className={`${className} -mt-2 pb-4 bg-white border-b border-[#87D2ED] overflow-hidden`}
     >
-      {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
-      <div
-        style={{
-          paddingLeft: `${halfStep}%`,
-          paddingRight: `${halfStep}%`,
-        }}
-      >
-        <Progress
-          percent={percentage}
-          strokeColor={{
-            "0%": "#059669",
-            "100%": "#049FD9",
-          }}
-          trailColor="#e5e7eb"
-          strokeWidth={8}
-          showInfo={false}
-          style={{ display: "block", margin: 0 }}
-          status="active"
-        />
-      </div>
-
       {/* ── Step names — evenly spaced, same total width as the container ── */}
       <div
         style={{
@@ -97,6 +76,27 @@ export default function StepBar({
             </div>
           );
         })}
+      </div>
+
+      {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
+      <div
+        style={{
+          paddingLeft: `${halfStep}%`,
+          paddingRight: `${halfStep}%`,
+        }}
+      >
+        <Progress
+          percent={percentage}
+          strokeColor={{
+            "0%": "#059669",
+            "100%": "#049FD9",
+          }}
+          trailColor="#e5e7eb"
+          strokeWidth={8}
+          showInfo={false}
+          style={{ display: "block", margin: 0 }}
+          status="active"
+        />
       </div>
     </nav>
   );

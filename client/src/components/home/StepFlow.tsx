@@ -7,7 +7,11 @@ export default function StepFlow() {
     {
       id: 1,
       number: "01",
-      color: "bg-[#19C1E4]",
+      top: "20px",
+      left: "12%",
+      color: "#19C1E4",
+      bg_color: "bg-[#19C1E4]",
+      text_color: "text-[#19C1E4]",
       title: "Connect your source dashboard",
       description:
         "Select a Meraki region and enter your API key for the organization you want to migrate from. Supports Global, India, Canada, China, and custom endpoints.",
@@ -15,7 +19,11 @@ export default function StepFlow() {
     {
       id: 2,
       number: "02",
-      color: "bg-[#3B7FF3]",
+      top: "110px",
+      left: "25%",
+      color: "#3B7FF3",
+      bg_color: "bg-[#3B7FF3]",
+      text_color: "text-[#3B7FF3]",
       title: "Connect your destination dashboard",
       description:
         "Configure the target region and API key. The wizard validates both connections before allowing you to proceed.",
@@ -23,7 +31,11 @@ export default function StepFlow() {
     {
       id: 3,
       number: "03",
-      color: "bg-[#F45C48]",
+      top: "50px",
+      left: "40%",
+      color: "#F45C48",
+      bg_color: "bg-[#F45C48]",
+      text_color: "text-[#F45C48]",
       title: "Select devices and review",
       description:
         "Browse your source organization's inventory. Select the devices to migrate. The review screen shows a full summary before any change is made.",
@@ -31,7 +43,11 @@ export default function StepFlow() {
     {
       id: 4,
       number: "04",
-      color: "bg-[#005857]",
+      top: "130px",
+      left: "55%",
+      color: "#005857",
+      bg_color: "bg-[#005857]",
+      text_color: "text-[#005857]",
       title: "Automatic pre-migration backup",
       description:
         "The platform snapshots your source organization — VLANs, firewall rules, SSIDs, RADIUS, group policies, RF profiles — and saves it as a ZIP file.",
@@ -39,7 +55,11 @@ export default function StepFlow() {
     {
       id: 5,
       number: "05",
-      color: "bg-[#049FD9]",
+      top: "20px",
+      left: "70%",
+      color: "#049FD9",
+      bg_color: "bg-[#049FD9]",
+      text_color: "text-[#049FD9]",
       title: "Devices are migrated",
       description:
         "Devices are removed from the source network, unclaimed, claimed to the destination org, and added to the target network — with timed waits between stages for cloud propagation.",
@@ -47,7 +67,11 @@ export default function StepFlow() {
     {
       id: 6,
       number: "06",
-      color: "bg-[#F45C48]",
+      top: "105px",
+      left: "85%",
+      color: "#F45C48",
+      bg_color: "bg-[#F45C48]",
+      text_color: "text-[#F45C48]",
       title: "Configurations restored automatically",
       description:
         "Device-level and network-level configs from the backup are pushed to the destination. Rollback is available at any stage if something goes wrong.",
@@ -113,106 +137,27 @@ export default function StepFlow() {
           />
         </svg>
 
-        {/* Step 01 */}
-        <button
-          onClick={() => setActiveStep(1)}
-          className={`absolute ${steps[0].color} text-white font-bold text-[30px] rounded-2xl shadow-lg hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
-          style={{
-            top: "20px",
-            left: "12%",
-            width: "90px",
-            height: "90px",
-            zIndex: activeStep === 1 ? 20 : 10,
-            transform: activeStep === 1 ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          {steps[0].number}
-        </button>
-
-        {/* Step 02 */}
-        <button
-          onClick={() => setActiveStep(2)}
-          className={`absolute ${steps[1].color} text-white font-bold text-[30px] rounded-2xl shadow-lg hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
-          style={{
-            top: "110px",
-            left: "25%",
-            width: "90px",
-            height: "90px",
-            zIndex: activeStep === 2 ? 20 : 10,
-            transform: activeStep === 2 ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          {steps[1].number}
-        </button>
-
-        {/* Step 03 */}
-        <button
-          onClick={() => setActiveStep(3)}
-          className={`absolute ${steps[2].color} text-white font-bold text-[30px] rounded-2xl shadow-lg hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
-          style={{
-            top: "50px",
-            left: "40%",
-            width: "90px",
-            height: "90px",
-            zIndex: activeStep === 3 ? 20 : 10,
-            transform: activeStep === 3 ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          {steps[2].number}
-        </button>
-
-        {/* Step 04 */}
-        <button
-          onClick={() => setActiveStep(4)}
-          className={`absolute ${steps[3].color} text-white font-bold text-[30px] rounded-2xl shadow-lg hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
-          style={{
-            top: "130px",
-            left: "55%",
-            width: "90px",
-            height: "90px",
-            zIndex: activeStep === 4 ? 20 : 10,
-            transform: activeStep === 4 ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          {steps[3].number}
-        </button>
-
-        {/* Step 05 */}
-        <button
-          onClick={() => setActiveStep(5)}
-          className={`absolute ${steps[4].color} text-white font-bold text-[30px] rounded-2xl shadow-lg hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
-          style={{
-            top: "20px",
-            left: "70%",
-            width: "90px",
-            height: "90px",
-            zIndex: activeStep === 5 ? 20 : 10,
-            transform: activeStep === 5 ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          {steps[4].number}
-        </button>
-
-        {/* Step 06 */}
-        <button
-          onClick={() => setActiveStep(6)}
-          className={`absolute ${steps[5].color} text-white font-bold text-[30px] rounded-2xl shadow-lg hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
-          style={{
-            top: "105px",
-            left: "85%",
-            width: "90px",
-            height: "90px",
-            zIndex: activeStep === 6 ? 20 : 10,
-            transform: activeStep === 6 ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          {steps[5].number}
-        </button>
+        {steps?.map((step, idx) => (
+          <button
+            onClick={() => setActiveStep(idx + 1)}
+            className={`absolute ${step.bg_color} text-white font-bold text-[30px] rounded-2xl hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
+            style={{
+              top: step.top,
+              left: step.left,
+              width: "90px",
+              height: "90px",
+              zIndex: activeStep === idx + 1 ? 20 : 10,
+              transform: activeStep === idx + 1 ? "scale(1.1)" : "scale(1)",
+            }}
+          >
+            {step.number}
+          </button>
+        ))}
       </div>
 
       {/* Active Step Content Card - Fixed Width */}
       <div
-        className={`${steps[activeStep - 1].color} rounded-lg shadow-xl w-full max-w-[1200px] px-8 py-6 text-white transition-all duration-100`}
+        className={`${steps[activeStep - 1].bg_color} rounded-lg shadow-xl w-full max-w-[1200px] px-8 py-6 text-white transition-all duration-100`}
       >
         <div className="flex items-start gap-4 text-[18px] w-full">
           <div className="font-bold">{steps[activeStep - 1].number}.</div>
