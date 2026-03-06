@@ -62,7 +62,7 @@ import {
 } from "../types/types";
 
 // The proxy endpoint is now explicitly set for local development.
-const LOCAL_PROXY_URL = "http://127.0.0.1:8787/api/proxy";
+const LOCAL_PROXY_URL = "http://agiesone.com/api/proxy";
 
 // --- Proactive Rate Limiter & Request Queue ---
 const MAX_CONCURRENT_REQUESTS = 9; // Meraki allows 10/sec. We'll use 9 to be safe.
