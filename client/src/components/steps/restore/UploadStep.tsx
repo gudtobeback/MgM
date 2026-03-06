@@ -219,141 +219,125 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
     : null;
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        icon={<HardDriveDownload size={30} color="#049FD9" />}
-        heading="Upload Backup File"
-        subHeading={
-          <>
-            Upload a <strong>.zip</strong> (full backup) or{" "}
-            <strong>.json</strong> (selective backup) created by the Backup
-            tool.
-          </>
-        }
-      />
-
-      <div className="step-card-inner-layout">
-        {/* Drop zone */}
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`mb-6 cursor-pointer rounded-[10px] border-2 border-dashed px-8 py-[60px] text-center transition-colors duration-150 ${
-            dragging || data.parsedBackup
-              ? "border-blue-600"
+    <div className="step-card-inner-layout">
+      {/* Drop zone */}
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        onClick={() => fileInputRef.current?.click()}
+        className={`mb-6 cursor-pointer rounded-[10px] border-2 border-dashed px-8 py-[60px] text-center transition-colors duration-150 ${
+          dragging || data.parsedBackup
+            ? "border-blue-600"
+            : "border-border bg-secondary"
+        } ${
+          dragging
+            ? "bg-green-50"
+            : data.parsedBackup
+              ? "bg-emerald-50"
               : "border-border bg-secondary"
-          } ${
-            dragging
-              ? "bg-green-50"
-              : data.parsedBackup
-                ? "bg-emerald-50"
-                : "border-border bg-secondary"
-          }`}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json,.zip"
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-          />
+        }`}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,.zip"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
 
-          {parsing ? (
-            <div className="flex flex-col items-center gap-3">
-              <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-blue-600 border-t-transparent" />
-              <span className="text-sm text-[var(--color-text-secondary)]">
-                Parsing backup file…
-              </span>
-            </div>
-          ) : data.parsedBackup ? (
-            <div className="flex flex-col items-center gap-2">
-              <CheckCircle2 size={36} className="text-blue-600" />
-              <span className="text-sm font-semibold text-green-800">
-                {data.fileName}
-              </span>
-              <span className="text-xs text-[var(--color-text-secondary)]">
-                Click to replace
-              </span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-3">
-              <UploadCloud
-                size={40}
-                className="text-[var(--color-text-tertiary)]"
-              />
-              <div>
-                <div className="mb-1 text-sm font-semibold text-[var(--color-text-primary)]">
-                  Drop your backup file here
-                </div>
-                <div className="text-[13px] text-[var(--color-text-secondary)]">
-                  or click to browse · accepts{" "}
-                  <code className="font-mono text-xs">.json</code> and{" "}
-                  <code className="font-mono text-xs">.zip</code>
-                </div>
+        {parsing ? (
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-blue-600 border-t-transparent" />
+            <span className="text-sm text-[var(--color-text-secondary)]">
+              Parsing backup file…
+            </span>
+          </div>
+        ) : data.parsedBackup ? (
+          <div className="flex flex-col items-center gap-2">
+            <CheckCircle2 size={36} className="text-blue-600" />
+            <span className="text-sm font-semibold text-green-800">
+              {data.fileName}
+            </span>
+            <span className="text-xs text-[var(--color-text-secondary)]">
+              Click to replace
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-3">
+            <UploadCloud
+              size={40}
+              className="text-[var(--color-text-tertiary)]"
+            />
+            <div>
+              <div className="mb-1 text-sm font-semibold text-[var(--color-text-primary)]">
+                Drop your backup file here
+              </div>
+              <div className="text-[13px] text-[var(--color-text-secondary)]">
+                or click to browse · accepts{" "}
+                <code className="font-mono text-xs">.json</code> and{" "}
+                <code className="font-mono text-xs">.zip</code>
               </div>
             </div>
-          )}
-        </div>
-
-        {/* Parse error */}
-        {parseError && <AlertCard variant="error">{parseError}</AlertCard>}
-
-        {/* Backup summary */}
-        {data.parsedBackup && (
-          <div className="overflow-hidden rounded-md border border-[var(--color-border-primary)]">
-            <div className="border-b border-[var(--color-border-primary)] bg-[var(--color-bg-secondary)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.05em] text-[var(--color-text-tertiary)]">
-              Backup Summary
-            </div>
-            <div className="grid grid-cols-4">
-              {[
-                {
-                  label: "File type",
-                  value:
-                    data.fileType === "zip" ? "Full ZIP" : "Selective JSON",
-                  icon:
-                    data.fileType === "zip" ? (
-                      <Archive size={16} />
-                    ) : (
-                      <FileJson size={16} />
-                    ),
-                },
-                {
-                  label: "Organization",
-                  value: data.parsedBackup.sourceOrgName,
-                  icon: null,
-                },
-                { label: "Networks", value: String(networkCount), icon: null },
-                { label: "Devices", value: String(deviceCount), icon: null },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className={`px-5 py-[18px] ${
-                    i < 3 ? "border-r border-[var(--color-border-subtle)]" : ""
-                  }`}
-                >
-                  <div className="mb-1 flex items-center gap-1 text-[11px] text-[var(--color-text-tertiary)]">
-                    {item.icon}
-                    {item.label}
-                  </div>
-                  <div className="text-sm font-bold text-[var(--color-text-primary)]">
-                    {item.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-            {createdAt && (
-              <div className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] px-4 py-2 text-[11px] text-[var(--color-text-tertiary)]">
-                Created: {createdAt}
-              </div>
-            )}
           </div>
         )}
       </div>
+
+      {/* Parse error */}
+      {parseError && <AlertCard variant="error">{parseError}</AlertCard>}
+
+      {/* Backup summary */}
+      {data.parsedBackup && (
+        <div className="overflow-hidden rounded-md border border-[var(--color-border-primary)]">
+          <div className="border-b border-[var(--color-border-primary)] bg-[var(--color-bg-secondary)] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.05em] text-[var(--color-text-tertiary)]">
+            Backup Summary
+          </div>
+          <div className="grid grid-cols-4">
+            {[
+              {
+                label: "File type",
+                value: data.fileType === "zip" ? "Full ZIP" : "Selective JSON",
+                icon:
+                  data.fileType === "zip" ? (
+                    <Archive size={16} />
+                  ) : (
+                    <FileJson size={16} />
+                  ),
+              },
+              {
+                label: "Organization",
+                value: data.parsedBackup.sourceOrgName,
+                icon: null,
+              },
+              { label: "Networks", value: String(networkCount), icon: null },
+              { label: "Devices", value: String(deviceCount), icon: null },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`px-5 py-[18px] ${
+                  i < 3 ? "border-r border-[var(--color-border-subtle)]" : ""
+                }`}
+              >
+                <div className="mb-1 flex items-center gap-1 text-[11px] text-[var(--color-text-tertiary)]">
+                  {item.icon}
+                  {item.label}
+                </div>
+                <div className="text-sm font-bold text-[var(--color-text-primary)]">
+                  {item.value}
+                </div>
+              </div>
+            ))}
+          </div>
+          {createdAt && (
+            <div className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] px-4 py-2 text-[11px] text-[var(--color-text-tertiary)]">
+              Created: {createdAt}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

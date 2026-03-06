@@ -4,9 +4,14 @@ import { Progress } from "antd";
 type StepBarProps = {
   steps?: any;
   currentStep?: any;
+  className?: any;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export default function StepBar({ steps, currentStep }: StepBarProps) {
+export default function StepBar({
+  steps,
+  currentStep,
+  className,
+}: StepBarProps) {
   const ACTIVE_COLOR = "#049FD9";
   const COMPLETED_COLOR = "#059669";
   const INACTIVE_COLOR = "#9FA3AA";
@@ -27,7 +32,7 @@ export default function StepBar({ steps, currentStep }: StepBarProps) {
   return (
     <nav
       aria-label="Migration steps"
-      className="py-6 bg-white border-b border-[#87D2ED] overflow-hidden"
+      className={`${className}  pb-4 bg-white border-b border-[#87D2ED] overflow-hidden`}
     >
       {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
       <div

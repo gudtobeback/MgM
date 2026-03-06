@@ -1,4 +1,4 @@
-import { Input, Select } from "antd";
+import React, { Input, Select } from "antd";
 
 import DomainCard from "../DomainCard";
 import StepHeadingCard from "../StepHeadingCard";
@@ -7,6 +7,7 @@ import AlertCard from "../../ui/AlertCard";
 import LabelInput from "../../ui/LabelInput";
 
 import { MERAKI_REGIONS } from "@/src/constants";
+import { ArrowRightLeft, Loader2, X } from "lucide-react";
 
 interface SourceConnectionStepProps {
   data: any;
@@ -33,114 +34,105 @@ export function SourceConnectionStep({
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        heading="Connect to Source Dashboard"
-        subHeading="Select the Meraki region and enter your API key for the dashboard you want to migrate from."
+    <div className="step-card-inner-layout">
+      {/* Title */}
+      <DomainCard
+        title="Source Dashboard"
+        subTitle={isCustom ? "Custom API endpoint" : selectedRegion.dashboard}
       />
 
-      {/* Form */}
-      <div className="step-card-inner-layout">
-        {/* Title */}
-        <DomainCard
-          title="Source Dashboard"
-          subTitle={isCustom ? "Custom API endpoint" : selectedRegion.dashboard}
+      <LabelInput id="region" label="Region" required>
+        <Select
+          id="region"
+          placeholder="Select Region"
+          options={MERAKI_REGIONS.map((r) => ({
+            value: r.code,
+            label: `${r.name} ${!r.confirmed && r.code !== "custom" ? " ⚠" : ""}`,
+          }))}
+          value={data.sourceRegion || "com"}
+          onChange={handleRegionChange}
         />
 
-        <LabelInput id="region" label="Region" required>
-          <Select
-            id="region"
-            placeholder="Select Region"
-            options={MERAKI_REGIONS.map((r) => ({
-              value: r.code,
-              label: `${r.name} ${!r.confirmed && r.code !== "custom" ? " ⚠" : ""}`,
-            }))}
-            value={data.sourceRegion || "com"}
-            onChange={handleRegionChange}
-          />
-
-          {!isCustom && !selectedRegion.confirmed && (
-            <p className="mt-1 text-xs text-amber-600">
-              ⚠ This region domain is not officially confirmed. Verify{" "}
-              <strong>{selectedRegion.dashboard}</strong> is active before
-              proceeding.
-            </p>
-          )}
-        </LabelInput>
-
-        {isCustom && (
-          <LabelInput
-            id="source-custom-url"
-            label="Custom API Base URL"
-            colSpan="col-span-12"
-            required
-          >
-            <Input
-              id="source-custom-url"
-              placeholder="https://api.meraki.example/api/v1"
-              value={
-                data.sourceRegion === "custom"
-                  ? (data.sourceCustomApiBase ?? "")
-                  : ""
-              }
-              onChange={(e) =>
-                onUpdate({
-                  sourceCustomApiBase: e.target.value,
-                  // sourceRegion: e.target.value || "custom",
-                })
-              }
-            />
-
-            <p className="text-xs">
-              Enter the full API base URL for your Meraki region (e.g.
-              https://api.meraki.cn/api/v1).
-            </p>
-          </LabelInput>
-        )}
-
-        <LabelInput id="source-api-key" label="API Key" required>
-          <Input
-            id="source-api-key"
-            type="password"
-            placeholder="Enter source API key"
-            value={data.sourceApiKey}
-            onChange={(e) => onUpdate({ sourceApiKey: e.target.value })}
-          />
-        </LabelInput>
-
-        {/* Note */}
-        <AlertCard variant="note">
-          <p>
-            <strong>Note:</strong> Your API key is only used for this session
-            and is never stored. Make sure you have administrator access to the
-            source dashboard.
+        {!isCustom && !selectedRegion.confirmed && (
+          <p className="mt-1 text-xs text-amber-600">
+            ⚠ This region domain is not officially confirmed. Verify{" "}
+            <strong>{selectedRegion.dashboard}</strong> is active before
+            proceeding.
           </p>
-        </AlertCard>
+        )}
+      </LabelInput>
 
-        {/* Howto get api key */}
-        <AlertCard>
-          <p className="font-semibold text-sm">How to get your API key</p>
+      {isCustom && (
+        <LabelInput
+          id="source-custom-url"
+          label="Custom API Base URL"
+          colSpan="col-span-12"
+          required
+        >
+          <Input
+            id="source-custom-url"
+            placeholder="https://api.meraki.example/api/v1"
+            value={
+              data.sourceRegion === "custom"
+                ? (data.sourceCustomApiBase ?? "")
+                : ""
+            }
+            onChange={(e) =>
+              onUpdate({
+                sourceCustomApiBase: e.target.value,
+                // sourceRegion: e.target.value || "custom",
+              })
+            }
+          />
 
-          <ol className="list-decimal list-inside space-y-1 text-sm">
-            <li>
-              Log in to{" "}
-              <strong>
-                {isCustom ? "your Meraki dashboard" : selectedRegion.dashboard}
-              </strong>
-            </li>
-            <li>
-              Go to <strong>Organization → Settings</strong>
-            </li>
-            <li>
-              Scroll to <strong>Dashboard API access</strong> and enable it
-            </li>
-            <li>
-              Click <strong>Generate new API key</strong>, then paste it above
-            </li>
-          </ol>
-        </AlertCard>
-      </div>
+          <p className="text-xs">
+            Enter the full API base URL for your Meraki region (e.g.
+            https://api.meraki.cn/api/v1).
+          </p>
+        </LabelInput>
+      )}
+
+      <LabelInput id="source-api-key" label="API Key" required>
+        <Input
+          id="source-api-key"
+          type="password"
+          placeholder="Enter source API key"
+          value={data.sourceApiKey}
+          onChange={(e) => onUpdate({ sourceApiKey: e.target.value })}
+        />
+      </LabelInput>
+
+      {/* Note */}
+      <AlertCard variant="note">
+        <p>
+          <strong>Note:</strong> Your API key is only used for this session and
+          is never stored. Make sure you have administrator access to the source
+          dashboard.
+        </p>
+      </AlertCard>
+
+      {/* Howto get api key */}
+      <AlertCard>
+        <p className="font-semibold text-sm">How to get your API key</p>
+
+        <ol className="list-decimal list-inside space-y-1 text-sm">
+          <li>
+            Log in to{" "}
+            <strong>
+              {isCustom ? "your Meraki dashboard" : selectedRegion.dashboard}
+            </strong>
+          </li>
+          <li>
+            Go to <strong>Organization → Settings</strong>
+          </li>
+          <li>
+            Scroll to <strong>Dashboard API access</strong> and enable it
+          </li>
+          <li>
+            Click <strong>Generate new API key</strong>, then paste it above
+          </li>
+        </ol>
+      </AlertCard>
     </div>
   );
 }

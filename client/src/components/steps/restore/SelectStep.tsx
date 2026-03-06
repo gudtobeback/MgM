@@ -686,123 +686,113 @@ export function SelectStep({ data, onUpdate }: SelectStepProps) {
   const hasAnySelected = Object.values(data.restoreCategories).some((v) => v);
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        icon={<HardDriveDownload size={30} color="#049FD9" />}
-        heading="Select What to Restore"
-        subHeading="Choose the network from the backup and which configuration categories to restore."
-      />
+    <div className="step-card-inner-layout">
+      {networkIds.length > 1 && (
+        <div className="mb-[22px]">
+          <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.05em] text-gray-500">
+            Source Network
+          </label>
 
-      <div className="step-card-inner-layout">
-        {networkIds.length > 1 && (
-          <div className="mb-[22px]">
-            <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.05em] text-gray-500">
-              Source Network
-            </label>
+          <div className="relative max-w-[400px]">
+            <select
+              value={data.selectedNetworkId}
+              onChange={(e) => onUpdate({ selectedNetworkId: e.target.value })}
+              className="w-full appearance-none rounded-[5px] border border-white/40 bg-white/50 px-3 py-[9px] pr-8 text-[13px] text-gray-900 outline-none transition focus:border-blue-500"
+            >
+              {networkIds.map((id) => (
+                <option key={id} value={id}>
+                  Network: {id}
+                </option>
+              ))}
+            </select>
 
-            <div className="relative max-w-[400px]">
-              <select
-                value={data.selectedNetworkId}
-                onChange={(e) =>
-                  onUpdate({ selectedNetworkId: e.target.value })
-                }
-                className="w-full appearance-none rounded-[5px] border border-white/40 bg-white/50 px-3 py-[9px] pr-8 text-[13px] text-gray-900 outline-none transition focus:border-blue-500"
-              >
-                {networkIds.map((id) => (
-                  <option key={id} value={id}>
-                    Network: {id}
-                  </option>
-                ))}
-              </select>
-
-              <ChevronDown
-                size={13}
-                className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
-              />
-            </div>
+            <ChevronDown
+              size={13}
+              className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+            />
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Select / Clear */}
-        <div className="flex gap-3">
-          <button
-            onClick={selectAll}
-            className="p-0 text-[12px] font-semibold text-blue-600 hover:underline"
-          >
-            Select all
-          </button>
+      {/* Select / Clear */}
+      <div className="flex gap-3">
+        <button
+          onClick={selectAll}
+          className="p-0 text-[12px] font-semibold text-blue-600 hover:underline"
+        >
+          Select all
+        </button>
 
-          <span className="text-[12px] text-gray-400">·</span>
+        <span className="text-[12px] text-gray-400">·</span>
 
-          <button
-            onClick={clearAll}
-            disabled={!hasAnySelected}
-            className={`p-0 text-[12px] font-semibold transition
+        <button
+          onClick={clearAll}
+          disabled={!hasAnySelected}
+          className={`p-0 text-[12px] font-semibold transition
             ${
               hasAnySelected
                 ? "cursor-pointer text-gray-600 hover:underline"
                 : "cursor-default text-gray-400"
             }
           `}
-          >
-            Clear all
-          </button>
-        </div>
+        >
+          Clear all
+        </button>
+      </div>
 
-        {/* Category Groups */}
-        <div className="overflow-hidden rounded-md border border-white/40">
-          {CATEGORY_GROUPS.map((group, groupIdx) => {
-            const isExpanded = expandedGroups.has(group.id);
-            const groupCats = group.categories.filter((cat) => {
-              const count = counts[cat.key];
-              return typeof count === "number"
-                ? count > 0
-                : count === "Configured";
-            });
+      {/* Category Groups */}
+      <div className="overflow-hidden rounded-md border border-white/40">
+        {CATEGORY_GROUPS.map((group, groupIdx) => {
+          const isExpanded = expandedGroups.has(group.id);
+          const groupCats = group.categories.filter((cat) => {
+            const count = counts[cat.key];
+            return typeof count === "number"
+              ? count > 0
+              : count === "Configured";
+          });
 
-            const hasData = groupCats.length > 0;
+          const hasData = groupCats.length > 0;
 
-            const allSelected =
-              hasData &&
-              groupCats.every((cat) => data.restoreCategories[cat.key]);
+          const allSelected =
+            hasData &&
+            groupCats.every((cat) => data.restoreCategories[cat.key]);
 
-            const someSelected =
-              hasData &&
-              groupCats.some((cat) => data.restoreCategories[cat.key]) &&
-              !allSelected;
+          const someSelected =
+            hasData &&
+            groupCats.some((cat) => data.restoreCategories[cat.key]) &&
+            !allSelected;
 
-            return (
+          return (
+            <div
+              key={group.id}
+              className={
+                groupIdx < CATEGORY_GROUPS.length - 1
+                  ? "border-b border-white/30"
+                  : ""
+              }
+            >
+              {/* Group Header */}
               <div
-                key={group.id}
-                className={
-                  groupIdx < CATEGORY_GROUPS.length - 1
-                    ? "border-b border-white/30"
-                    : ""
-                }
+                onClick={() => toggleGroup(group.id)}
+                className="flex cursor-pointer select-none items-center gap-3 bg-white/40 px-5 py-3.5"
               >
-                {/* Group Header */}
-                <div
-                  onClick={() => toggleGroup(group.id)}
-                  className="flex cursor-pointer select-none items-center gap-3 bg-white/40 px-5 py-3.5"
-                >
-                  {isExpanded ? (
-                    <ChevronDown size={16} className="text-gray-500" />
-                  ) : (
-                    <ChevronRight size={16} className="text-gray-500" />
-                  )}
+                {isExpanded ? (
+                  <ChevronDown size={16} className="text-gray-500" />
+                ) : (
+                  <ChevronRight size={16} className="text-gray-500" />
+                )}
 
-                  <div className="flex-1 text-sm font-bold text-gray-900">
-                    {group.title}
-                  </div>
+                <div className="flex-1 text-sm font-bold text-gray-900">
+                  {group.title}
+                </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleGroupSelection(group.id, !allSelected);
-                    }}
-                    disabled={!hasData}
-                    className={`rounded px-2.5 py-1 text-[11px] font-semibold transition
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleGroupSelection(group.id, !allSelected);
+                  }}
+                  disabled={!hasData}
+                  className={`rounded px-2.5 py-1 text-[11px] font-semibold transition
                     ${!hasData ? "cursor-not-allowed opacity-40" : ""}
                     ${
                       allSelected
@@ -812,77 +802,76 @@ export function SelectStep({ data, onUpdate }: SelectStepProps) {
                           : "border border-white/50 bg-white/60 text-blue-600"
                     }
                   `}
-                  >
-                    {allSelected ? "Deselect All" : "Select All"}
-                  </button>
-                </div>
+                >
+                  {allSelected ? "Deselect All" : "Select All"}
+                </button>
+              </div>
 
-                {/* Categories */}
-                {isExpanded && (
-                  <div>
-                    {group.categories.map((cat) => {
-                      const count = counts[cat.key];
-                      const hasItemData =
-                        typeof count === "number"
-                          ? count > 0
-                          : count === "Configured";
+              {/* Categories */}
+              {isExpanded && (
+                <div>
+                  {group.categories.map((cat) => {
+                    const count = counts[cat.key];
+                    const hasItemData =
+                      typeof count === "number"
+                        ? count > 0
+                        : count === "Configured";
 
-                      const disabled = !hasItemData;
-                      const checked =
-                        data.restoreCategories[cat.key] && !disabled;
+                    const disabled = !hasItemData;
+                    const checked =
+                      data.restoreCategories[cat.key] && !disabled;
 
-                      return (
-                        <label
-                          key={cat.key}
-                          className={`flex items-center gap-4 border-t border-white/25 bg-white/65 px-5 py-3 pl-12
+                    return (
+                      <label
+                        key={cat.key}
+                        className={`flex items-center gap-4 border-t border-white/25 bg-white/65 px-5 py-3 pl-12
                           ${
                             disabled
                               ? "cursor-not-allowed opacity-50"
                               : "cursor-pointer"
                           }
                         `}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            disabled={disabled}
-                            onChange={(e) =>
-                              setCategory(cat.key, e.target.checked)
-                            }
-                            className="h-[15px] w-[15px] cursor-pointer accent-blue-600 disabled:cursor-not-allowed"
-                          />
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          disabled={disabled}
+                          onChange={(e) =>
+                            setCategory(cat.key, e.target.checked)
+                          }
+                          className="h-[15px] w-[15px] cursor-pointer accent-blue-600 disabled:cursor-not-allowed"
+                        />
 
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-0.5 text-[13px] font-semibold text-gray-900">
-                              {cat.label}
-                            </div>
-                            <div className="text-[12px] text-gray-500">
-                              {cat.description}
-                            </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-0.5 text-[13px] font-semibold text-gray-900">
+                            {cat.label}
                           </div>
+                          <div className="text-[12px] text-gray-500">
+                            {cat.description}
+                          </div>
+                        </div>
 
-                          <div
-                            className={`shrink-0 rounded-full px-2 py-[3px] text-[11px] font-bold
+                        <div
+                          className={`shrink-0 rounded-full px-2 py-[3px] text-[11px] font-bold
                             ${
                               disabled
                                 ? "border border-black/10 bg-black/5 text-gray-400"
                                 : "border border-blue-200 bg-blue-100 text-blue-600"
                             }
                           `}
-                          >
-                            {typeof count === "number"
-                              ? count
-                              : count || "Not found"}
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                        >
+                          {typeof count === "number"
+                            ? count
+                            : count || "Not found"}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import StepHeadingCard from "../StepHeadingCard";
 import CustomButton from "../../ui/CustomButton";
 
 import { RestoreData } from "../../../types/types";
+import ProcedureCard from "../ProcedureCard";
 
 interface ResultsStepProps {
   data: RestoreData;
@@ -40,62 +41,59 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
   ];
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
+    <div className="step-card-inner-layout">
+      <ProcedureCard
         icon={<CheckCircle2 size={30} className="text-green-600" />}
         heading="Restore Complete"
         subHeading={`Configuration has been pushed to ${data.destinationNetwork?.name ?? "the target network"}.`}
       />
 
-      <div className="step-card-inner-layout">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          {stats.map((s) => (
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="rounded-lg border px-5 py-5 text-center"
+          >
             <div
-              key={s.label}
-              className="rounded-lg border px-5 py-5 text-center"
-            >
-              <div
-                className={`mb-1 text-[26px] font-bold leading-[1.2] tracking-[-0.02em] ${
-                  s.warn ? "text-amber-600" : ""
-                }`}
-              >
-                {s.value}
-              </div>
-              <div className="text-[11px] leading-[1.4]">{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Logs */}
-        <LogsCard logName="Operation Log">
-          {results.log.map((line, i) => (
-            <div
-              key={i}
-              className={`${
-                line.startsWith("✅")
-                  ? "text-green-400"
-                  : line.includes("❌")
-                    ? "text-red-400"
-                    : line.startsWith("⚠️") || line.includes("⏩")
-                      ? "text-yellow-400"
-                      : line.startsWith("──")
-                        ? "text-slate-400"
-                        : "text-slate-200"
+              className={`mb-1 text-[26px] font-bold leading-[1.2] tracking-[-0.02em] ${
+                s.warn ? "text-amber-600" : ""
               }`}
             >
-              {line || <br />}
+              {s.value}
             </div>
-          ))}
-        </LogsCard>
-
-        {/* Actions */}
-        <CustomButton onClick={onReset} className="w-fit">
-          <RotateCcw size={14} />
-          Start New Restore
-        </CustomButton>
+            <div className="text-[11px] leading-[1.4]">{s.label}</div>
+          </div>
+        ))}
       </div>
+
+      {/* Logs */}
+      <LogsCard logName="Operation Log">
+        {results.log.map((line, i) => (
+          <div
+            key={i}
+            className={`${
+              line.startsWith("✅")
+                ? "text-green-400"
+                : line.includes("❌")
+                  ? "text-red-400"
+                  : line.startsWith("⚠️") || line.includes("⏩")
+                    ? "text-yellow-400"
+                    : line.startsWith("──")
+                      ? "text-slate-400"
+                      : "text-slate-200"
+            }`}
+          >
+            {line || <br />}
+          </div>
+        ))}
+      </LogsCard>
+
+      {/* Actions */}
+      <CustomButton onClick={onReset} className="w-fit">
+        <RotateCcw size={14} />
+        Start New Restore
+      </CustomButton>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { extractPortNumber } from "../../../services/cat9kParser";
 
 import { Cat9KData } from "../../../types/types";
+import ProcedureCard from "../ProcedureCard";
 
 interface ApplyStepProps {
   data: Cat9KData;
@@ -355,16 +356,15 @@ export function ApplyStep({
   const isDone = !running && !data.wasStopped;
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
+    <div className="step-card-inner-layout">
+      <ProcedureCard
         icon={
           running ? (
             <Loader2 size={30} className="text-[#049FD9] animate-spin" />
           ) : isPaused ? (
             <PauseCircle size={30} className="text-amber-500" />
           ) : (
-            <CheckCircle2 size={30} className="text-green-600" />
+            isDone && <CheckCircle2 size={30} className="text-green-600" />
           )
         }
         heading={
@@ -372,75 +372,74 @@ export function ApplyStep({
             ? "Applying Configuration"
             : isPaused
               ? "Migration Paused"
-              : "Configuration Applied"
+              : isDone && "Configuration Applied"
         }
         subHeading={
           running
             ? "Pushing switch port configurations, RADIUS policies, and ACL rules…"
             : isPaused
               ? "The migration was paused. Resume to continue from the last checkpoint."
-              : "All configuration has been pushed to the claimed Catalyst 9K device(s)."
+              : isDone &&
+                "All configuration has been pushed to the claimed Catalyst 9K device(s)."
         }
       />
 
-      <div className="step-card-inner-layout">
-        {/* Logs */}
-        <LogsCard logName="Live Log">
-          {log.map((line, i) => (
-            <div
-              key={i}
-              className={
-                line.startsWith("✅")
-                  ? "text-green-400"
-                  : line.startsWith("⚠️") || line.startsWith("🛑")
-                    ? "text-yellow-400"
-                    : line.startsWith("──")
-                      ? "text-slate-400"
-                      : line.startsWith("  ↩")
-                        ? "text-slate-500"
-                        : "text-slate-200"
-              }
-            >
-              {line || <br />}
-            </div>
-          ))}
-        </LogsCard>
+      {/* Logs */}
+      <LogsCard logName="Live Log">
+        {log.map((line, i) => (
+          <div
+            key={i}
+            className={
+              line.startsWith("✅")
+                ? "text-green-400"
+                : line.startsWith("⚠️") || line.startsWith("🛑")
+                  ? "text-yellow-400"
+                  : line.startsWith("──")
+                    ? "text-slate-400"
+                    : line.startsWith("  ↩")
+                      ? "text-slate-500"
+                      : "text-slate-200"
+            }
+          >
+            {line || <br />}
+          </div>
+        ))}
+      </LogsCard>
 
-        {/* Action buttons */}
-        <div className="mt-4 flex flex-wrap gap-2.5">
-          {/* Stop button — only while running */}
-          {running && (
+      {/* Action buttons */}
+      <div className="mt-4 flex flex-wrap gap-2.5">
+        {/* Stop button — only while running */}
+        {running && (
+          <button
+            onClick={() => {
+              stopRef.current = true;
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold rounded-md border border-amber-500 bg-amber-50 text-amber-800 hover:bg-amber-100"
+          >
+            <PauseCircle size={14} />
+            Stop After Current
+          </button>
+        )}
+
+        {/* Paused state buttons */}
+        {isPaused && (
+          <>
             <button
-              onClick={() => {
-                stopRef.current = true;
-              }}
-              className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold rounded-md border border-amber-500 bg-amber-50 text-amber-800 hover:bg-amber-100"
+              onClick={onResume}
+              className="flex items-center gap-1.5 px-5 py-2 text-[13px] font-bold rounded-md bg-blue-600 text-white hover:bg-blue-700"
             >
-              <PauseCircle size={14} />
-              Stop After Current
+              <Loader2 size={14} className="animate-spin" />
+              Resume Migration
             </button>
-          )}
 
-          {/* Paused state buttons */}
-          {isPaused && (
-            <>
-              <button
-                onClick={onResume}
-                className="flex items-center gap-1.5 px-5 py-2 text-[13px] font-bold rounded-md bg-blue-600 text-white hover:bg-blue-700"
-              >
-                <Loader2 size={14} className="animate-spin" />
-                Resume Migration
-              </button>
-
-              <button
-                onClick={onComplete}
-                className="px-4 py-2 text-[13px] font-semibold rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                View Results So Far
-              </button>
-            </>
-          )}
-        </div>
+            <button
+              onClick={onComplete}
+              className="px-4 py-2 text-[13px] font-semibold rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              View Results So Far
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

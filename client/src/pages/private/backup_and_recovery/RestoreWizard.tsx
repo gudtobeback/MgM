@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, HardDriveDownload } from "lucide-react";
 
 import CustomButton from "../../../components/ui/CustomButton";
 
@@ -11,13 +11,46 @@ import { DestinationStep } from "../../../components/steps/restore/DestinationSt
 import { RestoreExecStep } from "../../../components/steps/restore/RestoreExecStep";
 
 import { RestoreData } from "../../../types/types";
+import StepHeadingCard from "@/src/components/steps/StepHeadingCard";
 
-const STEPS = [
-  { id: 1, name: "Upload", description: "Upload ZIP or JSON backup" },
-  { id: 2, name: "Select", description: "Choose what to restore" },
-  { id: 3, name: "Destination", description: "Select target network" },
-  { id: 4, name: "Restore", description: "Apply configuration" },
-  { id: 5, name: "Results", description: "View results" },
+const steps = [
+  {
+    id: 1,
+    name: "Upload",
+    heading: "Upload Backup File",
+    description: (
+      <>
+        Upload a <strong>.zip</strong> (full backup) or <strong>.json</strong>{" "}
+        (selective backup) created by the Backup tool.
+      </>
+    ),
+  },
+  {
+    id: 2,
+    name: "Select",
+    heading: "Select What to Restore",
+    description:
+      "Choose the network from the backup and which configuration categories to restore.",
+  },
+  {
+    id: 3,
+    name: "Destination",
+    heading: "Select Destination Meraki Network",
+    description:
+      "Connect to the Meraki dashboard where you want to restore the configuration.",
+  },
+  {
+    id: 4,
+    name: "Restore",
+    heading: "Restore",
+    description: "Push selected categories to the target network.",
+  },
+  {
+    id: 5,
+    name: "Results",
+    heading: "Restore Results",
+    description: "View results",
+  },
 ];
 
 const DEFAULT_DATA: RestoreData = {
@@ -131,7 +164,7 @@ export function RestoreWizard() {
   };
 
   const handleNext = () => {
-    if (currentStep < STEPS.length) setCurrentStep((s) => s + 1);
+    if (currentStep < steps.length) setCurrentStep((s) => s + 1);
   };
 
   const handleBack = () => {
@@ -160,8 +193,6 @@ export function RestoreWizard() {
     }
   }
 
-  const isAutoStep = currentStep >= 4;
-
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -185,19 +216,34 @@ export function RestoreWizard() {
     }
   };
 
+  const isAutoStep = currentStep >= 4;
+
+  const heading = steps?.find((step) => step?.id == currentStep).heading;
+  const description = steps?.find(
+    (step) => step?.id == currentStep,
+  ).description;
+
   return (
     <div className="px-16 py-8">
       <div className="flex flex-col gap-4">
         {/* Step content */}
         <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
-          {/* Step indicator */}
-          <StepBar steps={STEPS} currentStep={currentStep} />
+          <div className="step-card-layout">
+            <StepHeadingCard
+              icon={<HardDriveDownload size={30} color="#049FD9" />}
+              heading={heading}
+              subHeading={description}
+            />
 
-          {renderStep()}
+            {/* Step indicator */}
+            <StepBar steps={steps} currentStep={currentStep} />
+
+            {renderStep()}
+          </div>
 
           {/* Navigation */}
           {!isAutoStep && (
-            <div className="flex items-center justify-between bg-white border-t-2 p-6">
+            <div className="flex items-center justify-between bg-white border-t-2 px-10 py-6">
               <CustomButton
                 onClick={handleBack}
                 text_prop="text-black"

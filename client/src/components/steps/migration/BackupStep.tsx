@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 
 import LogsCard from "../LogsCard";
-import StepHeadingCard from "../StepHeadingCard";
+import ProcedureCard from "../ProcedureCard";
 
 import {
   createExhaustiveBackup,
@@ -115,9 +115,8 @@ export function BackupStep({
   }, []);
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
+    <div className="step-card-inner-layout">
+      <ProcedureCard
         icon={
           isBackingUp ? (
             <Loader2 size={30} className="animate-spin text-[#049FD9]" />
@@ -132,24 +131,21 @@ export function BackupStep({
             ? "Creating Pre-Migration Backup"
             : isComplete
               ? "Backup Phase Complete"
-              : "Pre-Migration Backup"
+              : error && "Pre-Migration Backup Failed"
         }
-        subHeading="Performing a full, exhaustive backup of the source organization. This is a critical safety step."
       />
 
-      <div className="step-card-inner-layout">
-        {/* Logs */}
-        <LogsCard logName="Live Backup Log">
-          {logs.map((log, index) => (
-            <div key={index} className="whitespace-pre-wrap leading-relaxed">
-              {log}
-            </div>
-          ))}
-          {error && (
-            <div className="text-red-600 mt-2 font-semibold">{error}</div>
-          )}
-        </LogsCard>
-      </div>
+      {/* Logs */}
+      <LogsCard logName="Live Backup Log">
+        {logs.map((log, index) => (
+          <div key={index} className="whitespace-pre-wrap leading-relaxed">
+            {log}
+          </div>
+        ))}
+        {error && (
+          <div className="text-red-600 mt-2 font-semibold">{error}</div>
+        )}
+      </LogsCard>
     </div>
   );
 }

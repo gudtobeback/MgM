@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { HardDriveDownload, ArrowLeft, ArrowRight } from "lucide-react";
 
 import CustomButton from "../../../components/ui/CustomButton";
 
@@ -13,14 +13,48 @@ import { BackupDeviceSelectionStep } from "../../../components/steps/backup/Back
 
 import { MerakiDeviceDetails, MerakiOrganization } from "../../../types/types";
 import BackupMethodSelection from "@/src/components/steps/backup/BackupMethodSelection";
+import StepHeadingCard from "@/src/components/steps/StepHeadingCard";
 
-const STEPS = [
-  { id: 1, name: "Connect", description: "Connect to Meraki dashboard" },
-  { id: 2, name: "Organization", description: "Select organization" },
-  { id: 3, name: "Backup Method", description: "Select Backup Method" },
-  { id: 4, name: "Devices", description: "Select devices to backup" },
-  { id: 5, name: "Backup Execution", description: "Execute backup" },
-  { id: 6, name: "Download", description: "Download backup file" },
+const steps = [
+  {
+    id: 1,
+    name: "Connect",
+    heading: "Connect to Source Dashboard",
+    description:
+      "Enter your API key to connect to the dashboard you want to backup.",
+  },
+  {
+    id: 2,
+    name: "Organization",
+    heading: "Select Organization",
+    description: "Choose the organization you want to backup.",
+  },
+  {
+    id: 3,
+    name: "Backup Method",
+    heading: "Select Backup Method",
+    description: "Select Backup Selection Method.",
+  },
+  {
+    id: 4,
+    name: "Devices",
+    heading: "Select Devices to Backup",
+    description:
+      "Choose which devices you want to backup from the organization.",
+  },
+  {
+    id: 5,
+    name: "Backup Execution",
+    heading: "Backup Execution",
+    description:
+      "Choose the type of backup you want to perform for the organization.",
+  },
+  {
+    id: 6,
+    name: "Result",
+    heading: "Backup Results",
+    description: "Download Backup file",
+  },
 ];
 
 interface BackupData {
@@ -52,7 +86,7 @@ export function BackupWizard() {
   const [logDuration, setLogDuration] = useState<number | null>(null);
 
   const handleNext = () => {
-    if (currentStep < STEPS.length) setCurrentStep((s) => s + 1);
+    if (currentStep < steps.length) setCurrentStep((s) => s + 1);
   };
 
   const handleBack = () => {
@@ -90,9 +124,6 @@ export function BackupWizard() {
         return false;
     }
   }
-
-  // Steps 4–5 run automatically (no manual Next button)
-  const isAutoStep = currentStep >= 5;
 
   const renderStep = () => {
     switch (currentStep) {
@@ -146,41 +177,55 @@ export function BackupWizard() {
     }
   };
 
+  // Steps 4–5 run automatically (no manual Next button)
+  const isAutoStep = currentStep >= 5;
+
+  const heading = steps?.find((step) => step?.id == currentStep).heading;
+  const description = steps?.find(
+    (step) => step?.id == currentStep,
+  ).description;
+
   return (
     <div className="px-16 py-8">
-      <div className="flex flex-col gap-4">
-        {/* Step content */}
-        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+      {/* Step content */}
+      <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+        <div className="step-card-layout">
+          <StepHeadingCard
+            icon={<HardDriveDownload size={30} color="#049FD9" />}
+            heading={heading}
+            subHeading={description}
+          />
+
           {/* Step indicator */}
-          <StepBar steps={STEPS} currentStep={currentStep} />
+          <StepBar steps={steps} currentStep={currentStep} />
 
           {renderStep()}
-
-          {/* Navigation */}
-          {!isAutoStep && (
-            <div className="flex items-center justify-between bg-white border-t-2 p-6">
-              <CustomButton
-                onClick={handleBack}
-                text_prop="text-black"
-                bg_prop="bg-white"
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-                disabled={currentStep === 1}
-              >
-                <ArrowLeft size={16} />
-                Back
-              </CustomButton>
-
-              <CustomButton
-                onClick={handleNext}
-                disabled={!canProceedToNext()}
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-              >
-                Next
-                <ArrowRight size={16} />
-              </CustomButton>
-            </div>
-          )}
         </div>
+
+        {/* Navigation */}
+        {!isAutoStep && (
+          <div className="flex items-center justify-between bg-white border-t-2 px-10 py-6">
+            <CustomButton
+              onClick={handleBack}
+              text_prop="text-black"
+              bg_prop="bg-white"
+              className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+              disabled={currentStep === 1}
+            >
+              <ArrowLeft size={16} />
+              Back
+            </CustomButton>
+
+            <CustomButton
+              onClick={handleNext}
+              disabled={!canProceedToNext()}
+              className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+            >
+              Next
+              <ArrowRight size={16} />
+            </CustomButton>
+          </div>
+        )}
       </div>
     </div>
   );

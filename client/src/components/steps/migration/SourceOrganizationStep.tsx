@@ -132,87 +132,79 @@ export function SourceOrganizationStep({
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        heading="Select Source Organization & Network"
-        subHeading="Choose the organization from your source dashboard that you want to migrate."
-      />
-
-      <div className="step-card-inner-layout">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center h-full p-6">
-            <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
-            <p className="mt-4 text-muted-foreground">
-              Fetching source organizations...
-            </p>
-          </div>
-        ) : error ? (
-          <AlertCard variant="error">{error}</AlertCard>
-        ) : (
-          <div className="flex flex-col gap-6">
-            <LabelInput
+    <div className="step-card-inner-layout">
+      {loading ? (
+        <div className="flex flex-col items-center justify-center h-full p-6">
+          <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
+          <p className="mt-4 text-muted-foreground">
+            Fetching source organizations...
+          </p>
+        </div>
+      ) : error ? (
+        <AlertCard variant="error">{error}</AlertCard>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <LabelInput
+            id="source-organization"
+            label="Source Organization (dashboard.meraki.com)"
+            colSpan=""
+            required
+          >
+            <Select
               id="source-organization"
-              label="Source Organization (dashboard.meraki.com)"
+              placeholder="Select source organization"
+              value={data.sourceOrg?.id || null}
+              options={organizations.map((org) => ({
+                value: org?.id,
+                label: org?.name,
+              }))}
+              onChange={handleOrgChange}
+            />
+          </LabelInput>
+
+          {data.sourceOrg && (
+            <LabelInput
+              id="source-network"
+              label="Source Network"
               colSpan=""
               required
             >
               <Select
-                id="source-organization"
-                placeholder="Select source organization"
-                value={data.sourceOrg?.id || null}
-                options={organizations.map((org) => ({
-                  value: org?.id,
-                  label: org?.name,
+                id="source-network"
+                placeholder={
+                  loadingNetworks
+                    ? "Loading networks..."
+                    : "Select source network"
+                }
+                value={data.sourceNetwork?.id || null}
+                options={networks.map((net) => ({
+                  value: net?.id,
+                  label: net?.name,
                 }))}
-                onChange={handleOrgChange}
+                onChange={handleNetworkChange}
+                disabled={loadingNetworks || networks.length === 0}
               />
             </LabelInput>
+          )}
 
-            {data.sourceOrg && (
-              <LabelInput
-                id="source-network"
-                label="Source Network"
-                colSpan=""
-                required
-              >
-                <Select
-                  id="source-network"
-                  placeholder={
-                    loadingNetworks
-                      ? "Loading networks..."
-                      : "Select source network"
-                  }
-                  value={data.sourceNetwork?.id || null}
-                  options={networks.map((net) => ({
-                    value: net?.id,
-                    label: net?.name,
-                  }))}
-                  onChange={handleNetworkChange}
-                  disabled={loadingNetworks || networks.length === 0}
-                />
-              </LabelInput>
-            )}
+          {/* Note */}
+          {(data.sourceOrg || data.sourceNetwork) && (
+            <AlertCard variant="note">
+              {data.sourceOrg && (
+                <p>
+                  <strong>Organization:</strong> {data.sourceOrg.name}
+                </p>
+              )}
 
-            {/* Note */}
-            {(data.sourceOrg || data.sourceNetwork) && (
-              <AlertCard variant="note">
-                {data.sourceOrg && (
-                  <p>
-                    <strong>Organization:</strong> {data.sourceOrg.name}
-                  </p>
-                )}
-
-                {data.sourceNetwork && (
-                  <p>
-                    <strong>Network:</strong> {data.sourceNetwork.name}
-                  </p>
-                )}
-              </AlertCard>
-            )}
-          </div>
-        )}
-      </div>
+              {data.sourceNetwork && (
+                <p>
+                  <strong>Network:</strong> {data.sourceNetwork.name}
+                </p>
+              )}
+            </AlertCard>
+          )}
+        </div>
+      )}
     </div>
   );
 }

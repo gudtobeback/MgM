@@ -115,124 +115,114 @@ export function DestinationStep({ data, onUpdate }: DestinationStepProps) {
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        icon={<HardDriveDownload size={30} color="#049FD9" />}
-        heading="Select Destination Meraki Network"
-        subHeading="Connect to the Meraki dashboard where you want to restore the
-          configuration."
-      />
+    <div className="step-card-inner-layout">
+      {/* Region */}
+      <LabelInput id="region" label="Region" required>
+        <Select
+          id="region"
+          placeholder="Select Region"
+          value={data.destinationRegion || null}
+          options={MERAKI_REGIONS?.map((r) => ({
+            value: r?.code,
+            label: r?.name,
+          }))}
+          onChange={(value) => handleRegionChange(value)}
+        />
 
-      <div className="step-card-inner-layout">
-        {/* Region */}
-        <LabelInput id="region" label="Region" required>
+        {selectedRegion.code !== "custom" && (
+          <div className="mt-1 text-xs">{selectedRegion.dashboard}</div>
+        )}
+      </LabelInput>
+
+      {/* API Key */}
+      <LabelInput id="api-key" label="API Key" required>
+        <Input
+          id="api-key"
+          type="password"
+          placeholder="Enter Meraki API key"
+          value={data.destinationApiKey}
+          onChange={(e) => {
+            onUpdate({
+              destinationApiKey: e.target.value,
+              destinationOrg: null,
+              destinationNetwork: null,
+              destinationDevices: [],
+            });
+            setOrgs([]);
+            setNetworks([]);
+            setOrgState("idle");
+            setNetworkState("idle");
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleFetchOrgs();
+          }}
+        />
+      </LabelInput>
+
+      <CustomButton
+        onClick={handleFetchOrgs}
+        disabled={!data.destinationApiKey.trim() || orgState === "loading"}
+        className="w-fit"
+      >
+        {orgState === "loading"
+          ? "Connecting..."
+          : orgState === "success"
+            ? "Connected"
+            : "Connect"}
+      </CustomButton>
+
+      {/* Error */}
+      {error && <AlertCard variant="error">{error}</AlertCard>}
+
+      {/* Organization */}
+      {orgs.length > 0 && (
+        <LabelInput id="organization" label="Organization" required>
           <Select
-            id="region"
-            placeholder="Select Region"
-            value={data.destinationRegion || null}
-            options={MERAKI_REGIONS?.map((r) => ({
-              value: r?.code,
-              label: r?.name,
+            id="organization"
+            placeholder="Select Organization"
+            value={data.destinationOrg?.id ?? null}
+            options={orgs?.map((o) => ({ value: o?.id, label: o?.name }))}
+            onChange={(value) => handleSelectOrg(value)}
+          />
+        </LabelInput>
+      )}
+
+      {/* Network */}
+      {(networks.length > 0 || networkState === "loading") && (
+        <LabelInput id="network" label="Network" required>
+          <Select
+            id="network"
+            value={data.destinationNetwork?.id || null}
+            options={networks?.map((n) => ({
+              value: n?.id,
+              label: n?.name,
             }))}
-            onChange={(value) => handleRegionChange(value)}
-          />
-
-          {selectedRegion.code !== "custom" && (
-            <div className="mt-1 text-xs">{selectedRegion.dashboard}</div>
-          )}
-        </LabelInput>
-
-        {/* API Key */}
-        <LabelInput id="api-key" label="API Key" required>
-          <Input
-            id="api-key"
-            type="password"
-            placeholder="Enter Meraki API key"
-            value={data.destinationApiKey}
-            onChange={(e) => {
-              onUpdate({
-                destinationApiKey: e.target.value,
-                destinationOrg: null,
-                destinationNetwork: null,
-                destinationDevices: [],
-              });
-              setOrgs([]);
-              setNetworks([]);
-              setOrgState("idle");
-              setNetworkState("idle");
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleFetchOrgs();
-            }}
+            onChange={(value) => handleSelectNetwork(value)}
+            loading={networkState === "loading"}
+            disabled={networkState === "loading"}
           />
         </LabelInput>
+      )}
 
-        <CustomButton
-          onClick={handleFetchOrgs}
-          disabled={!data.destinationApiKey.trim() || orgState === "loading"}
-          className="w-fit"
-        >
-          {orgState === "loading"
-            ? "Connecting..."
-            : orgState === "success"
-              ? "Connected"
-              : "Connect"}
-        </CustomButton>
-
-        {/* Error */}
-        {error && <AlertCard variant="error">{error}</AlertCard>}
-
-        {/* Organization */}
-        {orgs.length > 0 && (
-          <LabelInput id="organization" label="Organization" required>
-            <Select
-              id="organization"
-              placeholder="Select Organization"
-              value={data.destinationOrg?.id ?? null}
-              options={orgs?.map((o) => ({ value: o?.id, label: o?.name }))}
-              onChange={(value) => handleSelectOrg(value)}
-            />
-          </LabelInput>
-        )}
-
-        {/* Network */}
-        {(networks.length > 0 || networkState === "loading") && (
-          <LabelInput id="network" label="Network" required>
-            <Select
-              id="network"
-              value={data.destinationNetwork?.id || null}
-              options={networks?.map((n) => ({
-                value: n?.id,
-                label: n?.name,
-              }))}
-              onChange={(value) => handleSelectNetwork(value)}
-              loading={networkState === "loading"}
-              disabled={networkState === "loading"}
-            />
-          </LabelInput>
-        )}
-
-        {/* Selected summary */}
-        {data.destinationNetwork && (
-          <AlertCard variant="note">
-            <p>
-              <strong>Organization - </strong>
-              {data.destinationNetwork.name}
-            </p>
-            <p>
-              <strong>Network - </strong>
-              {data.destinationOrg?.name}
-              {data.destinationDevices.length > 0 && (
-                <span>
-                  {" "}
-                  &middot; {data.destinationDevices.length} device(s) found
-                </span>
-              )}
-            </p>
-          </AlertCard>
-        )}
-      </div>
+      {/* Selected summary */}
+      {data.destinationNetwork && (
+        <AlertCard variant="note">
+          <p>
+            <strong>Organization - </strong>
+            {data.destinationNetwork.name}
+          </p>
+          <p>
+            <strong>Network - </strong>
+            {data.destinationOrg?.name}
+            {data.destinationDevices.length > 0 && (
+              <span>
+                {" "}
+                &middot; {data.destinationDevices.length} device(s) found
+              </span>
+            )}
+          </p>
+        </AlertCard>
+      )}
     </div>
   );
 }

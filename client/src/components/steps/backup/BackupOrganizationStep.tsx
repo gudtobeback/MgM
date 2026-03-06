@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { Select } from "antd";
-import {
-  Building2,
-  CheckCircle2,
-  HardDriveDownload,
-  Loader2,
-} from "lucide-react";
+import { HardDriveDownload, Loader2 } from "lucide-react";
 
 import StepHeadingCard from "../StepHeadingCard";
 
@@ -86,50 +81,41 @@ export function BackupOrganizationStep({
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        icon={<HardDriveDownload size={30} color="#049FD9" />}
-        heading="Select Organization"
-        subHeading="Choose the organization you want to backup"
-      />
+    <div className="step-card-inner-layout">
+      {loading ? (
+        <div className="flex flex-col items-center justify-center h-full">
+          <Loader2 className="w-8 h-8 animate-spin text-[#049FD9]" />
+          <p className="mt-4 text-muted-foreground">
+            Fetching organizations...
+          </p>
+        </div>
+      ) : error ? (
+        <AlertCard variant="error">{error}</AlertCard>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <LabelInput id="organization" label="Organization" required>
+            <Select
+              id="organization"
+              placeholder="Select organization to backup"
+              value={selectedOrgId || null}
+              options={organizations.map((org) => ({
+                value: org?.id,
+                label: org?.name,
+              }))}
+              onChange={handleOrgChange}
+            />
+          </LabelInput>
 
-      <div className="step-card-inner-layout">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <Loader2 className="w-8 h-8 animate-spin text-[#049FD9]" />
-            <p className="mt-4 text-muted-foreground">
-              Fetching organizations...
-            </p>
-          </div>
-        ) : error ? (
-          <AlertCard variant="error">{error}</AlertCard>
-        ) : (
-          <div className="flex flex-col gap-6">
-            <LabelInput id="organization" label="Organization" required>
-              <Select
-                id="organization"
-                placeholder="Select organization to backup"
-                value={selectedOrgId || null}
-                options={organizations.map((org) => ({
-                  value: org?.id,
-                  label: org?.name,
-                }))}
-                onChange={handleOrgChange}
-              />
-            </LabelInput>
-
-            {selectedOrgId && data.organization && (
-              <AlertCard variant="note">
-                <p>
-                  <strong>Selected: </strong>
-                  {data.organization.name}
-                </p>
-              </AlertCard>
-            )}
-          </div>
-        )}
-      </div>
+          {selectedOrgId && data.organization && (
+            <AlertCard variant="note">
+              <p>
+                <strong>Selected: </strong>
+                {data.organization.name}
+              </p>
+            </AlertCard>
+          )}
+        </div>
+      )}
     </div>
   );
 }

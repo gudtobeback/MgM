@@ -25,6 +25,7 @@ import {
 } from "../../../services/merakiService";
 
 import { MerakiDeviceDetails, MigrationData } from "../../../types/types";
+import ProcedureCard from "../ProcedureCard";
 
 // Tracks how far migration progressed — used to skip completed stages on retry
 // and to know how far to unwind on rollback.
@@ -425,9 +426,8 @@ export function MigrationStep({
     stageReached.current < 4 ? stageLabel[stageReached.current + 1] : "";
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
+    <div className="step-card-inner-layout">
+      <ProcedureCard
         icon={
           isMigrating || isRollingBack ? (
             <Loader2 size={30} className="animate-spin text-[#049FD9]" />
@@ -450,7 +450,7 @@ export function MigrationStep({
         }
         subHeading={
           isMigrating
-            ? "Moving devices from source to destination dashboard. Do not close this window."
+            ? "Do not close this window."
             : isRollingBack
               ? "Reversing completed stages. This may take up to 40 seconds."
               : rollbackDone
@@ -459,83 +459,81 @@ export function MigrationStep({
         }
       />
 
-      <div className="step-card-inner-layout">
-        {/* Logs */}
-        <LogsCard logName="Live Migration Log">
-          {logs.map((entry, index) => (
-            <div key={index} className="whitespace-pre-wrap leading-relaxed">
-              {entry}
-            </div>
-          ))}
-        </LogsCard>
+      {/* Logs */}
+      <LogsCard logName="Live Migration Log">
+        {logs.map((entry, index) => (
+          <div key={index} className="whitespace-pre-wrap leading-relaxed">
+            {entry}
+          </div>
+        ))}
+      </LogsCard>
 
-        {showRetry && (
-          <>
-            <AlertCard variant="error">
-              <p>
-                <strong>Failed at: </strong> <br />
-                {failedStageText} <br />
-                {error}
-              </p>
-            </AlertCard>
-
-            <div className="grid grid-cols-3 gap-3">
-              <div className="col-span-1 flex flex-col items-center gap-3">
-                <CustomButton
-                  onClick={handleRetry}
-                  bg_prop="bg-green-600 enabled:hover:bg-green-700"
-                  className="w-full"
-                >
-                  <RefreshCw size={16} />
-                  Retry from Stage {stageReached.current + 1}
-                </CustomButton>
-
-                <p className="text-xs text-center">
-                  Resumes from Stage {stageReached.current + 1} — skips
-                  already-completed stages.
-                </p>
-              </div>
-
-              <div className="col-span-1 flex flex-col items-center gap-3">
-                <CustomButton
-                  onClick={handleRollback}
-                  bg_prop="bg-red-600 enabled:hover:bg-red-700"
-                  className="w-full"
-                >
-                  <Undo2 size={16} />
-                  Roll Back
-                </CustomButton>
-
-                <p className="text-xs text-center">
-                  Undoes all completed stages and returns devices to the source
-                  dashboard.
-                </p>
-              </div>
-
-              <div className="col-span-1 flex flex-col items-center gap-3">
-                <CustomButton onClick={handleSkip} className="w-full">
-                  Skip to Restore
-                  <ArrowRight size={16} />
-                </CustomButton>
-
-                <p className="text-xs text-center">
-                  Use if you fixed the issue manually in the Meraki dashboard.
-                </p>
-              </div>
-            </div>
-          </>
-        )}
-
-        {rollbackDone && (
-          <AlertCard variant="warning">
+      {showRetry && (
+        <>
+          <AlertCard variant="error">
             <p>
-              <strong>Rollback complete. </strong>Please verify device status in
-              both dashboards before retrying. Restart the wizard when you are
-              ready to attempt migration again.
+              <strong>Failed at: </strong> <br />
+              {failedStageText} <br />
+              {error}
             </p>
           </AlertCard>
-        )}
-      </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="col-span-1 flex flex-col items-center gap-3">
+              <CustomButton
+                onClick={handleRetry}
+                bg_prop="bg-green-600 enabled:hover:bg-green-700"
+                className="w-full"
+              >
+                <RefreshCw size={16} />
+                Retry from Stage {stageReached.current + 1}
+              </CustomButton>
+
+              <p className="text-xs text-center">
+                Resumes from Stage {stageReached.current + 1} — skips
+                already-completed stages.
+              </p>
+            </div>
+
+            <div className="col-span-1 flex flex-col items-center gap-3">
+              <CustomButton
+                onClick={handleRollback}
+                bg_prop="bg-red-600 enabled:hover:bg-red-700"
+                className="w-full"
+              >
+                <Undo2 size={16} />
+                Roll Back
+              </CustomButton>
+
+              <p className="text-xs text-center">
+                Undoes all completed stages and returns devices to the source
+                dashboard.
+              </p>
+            </div>
+
+            <div className="col-span-1 flex flex-col items-center gap-3">
+              <CustomButton onClick={handleSkip} className="w-full">
+                Skip to Restore
+                <ArrowRight size={16} />
+              </CustomButton>
+
+              <p className="text-xs text-center">
+                Use if you fixed the issue manually in the Meraki dashboard.
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
+      {rollbackDone && (
+        <AlertCard variant="warning">
+          <p>
+            <strong>Rollback complete. </strong>Please verify device status in
+            both dashboards before retrying. Restart the wizard when you are
+            ready to attempt migration again.
+          </p>
+        </AlertCard>
+      )}
     </div>
   );
 }

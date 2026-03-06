@@ -12,6 +12,7 @@ import {
   restoreNetworkConfiguration,
   restoreDeviceConfiguration,
 } from "../../../services/merakiService";
+import ProcedureCard from "../ProcedureCard";
 
 interface RestoreExecStepProps {
   data: RestoreData;
@@ -136,40 +137,37 @@ export function RestoreExecStep({
   const log = data.results?.log ?? [];
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
+    <div className="step-card-inner-layout">
+      <ProcedureCard
         icon={<Loader2 size={30} className="animate-spin text-[#049FD9]" />}
         heading="Restoring Configuration"
         subHeading={`Pushing selected categories to ${data.destinationNetwork?.name ?? "the target network"}…`}
       />
 
-      <div className="step-card-inner-layout">
-        {/* Logs */}
-        <LogsCard logName="Live Restore Log">
-          {log.map((line, i) => (
-            <div
-              key={i}
-              className={`${
-                line.startsWith("✅")
-                  ? "text-green-400"
-                  : line.includes("❌")
-                    ? "text-red-400"
-                    : line.startsWith("⚠️") || line.includes("⏩")
-                      ? "text-yellow-400"
-                      : line.startsWith("──")
-                        ? "text-slate-400"
-                        : "text-slate-200"
-              }`}
-            >
-              {line || <br />}
-            </div>
-          ))}
-          {log.length === 0 && (
-            <div className="text-[#64748b]">Initializing…</div>
-          )}
-        </LogsCard>
-      </div>
+      {/* Logs */}
+      <LogsCard logName="Live Restore Log">
+        {log.map((line, i) => (
+          <div
+            key={i}
+            className={`${
+              line.startsWith("✅")
+                ? "text-green-400"
+                : line.includes("❌")
+                  ? "text-red-400"
+                  : line.startsWith("⚠️") || line.includes("⏩")
+                    ? "text-yellow-400"
+                    : line.startsWith("──")
+                      ? "text-slate-400"
+                      : "text-slate-200"
+            }`}
+          >
+            {line || <br />}
+          </div>
+        ))}
+        {log.length === 0 && (
+          <div className="text-[#64748b]">Initializing…</div>
+        )}
+      </LogsCard>
     </div>
   );
 }

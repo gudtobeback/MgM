@@ -15,6 +15,7 @@ import {
   MigrationData,
 } from "../../../types/types";
 import { formatLogDuration } from "@/src/utilities/formatLogDuration";
+import ProcedureCard from "../ProcedureCard";
 
 // Default categories: restore everything in migration flow
 const ALL_CATEGORIES: RestoreCategories = {
@@ -249,9 +250,8 @@ export function RestoreStep({
   }, []);
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
+    <div className="step-card-inner-layout">
+      <ProcedureCard
         icon={
           isRestoring ? (
             <Loader2 size={30} className="animate-spin text-[#049FD9]" />
@@ -262,24 +262,25 @@ export function RestoreStep({
           )
         }
         heading={
-          isComplete ? "Restore Phase Complete" : "Restoring Configurations"
+          isRestoring
+            ? "Restoring Configurations"
+            : isComplete
+              ? "Restore Phase Complete"
+              : error && "Restoration Failed"
         }
-        subHeading="Automatically applying backed-up settings to your newly migrated devices."
       />
 
-      <div className="step-card-inner-layout">
-        {/* Logs */}
-        <LogsCard logName="Live Restore Log">
-          {logs.map((log, index) => (
-            <div key={index} className="whitespace-pre-wrap leading-relaxed">
-              {log}
-            </div>
-          ))}
-          {error && (
-            <div className="text-red-600 mt-2 font-semibold">{error}</div>
-          )}
-        </LogsCard>
-      </div>
+      {/* Logs */}
+      <LogsCard logName="Live Restore Log">
+        {logs.map((log, index) => (
+          <div key={index} className="whitespace-pre-wrap leading-relaxed">
+            {log}
+          </div>
+        ))}
+        {error && (
+          <div className="text-red-600 mt-2 font-semibold">{error}</div>
+        )}
+      </LogsCard>
     </div>
   );
 }

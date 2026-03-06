@@ -218,200 +218,184 @@ export function DestinationStep({
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        heading="Select Destination Meraki Network"
-        subHeading="Choose the Meraki network where the translated configuration will be pushed. The target network should contain Catalyst 9K devices under Meraki cloud management."
-      />
-
-      <div className="step-card-inner-layout">
-        {/* Mode toggle — only show if there are connected orgs */}
-        {connectedOrgs.length > 0 && (
-          <div className="flex items-center gap-2">
-            {(["connected", "manual"] as const).map((m) => (
-              <CustomButton
-                key={m}
-                onClick={() => switchMode(m)}
-                bg_prop={mode === m ? `bg-[#049FD9]` : `bg-white`}
-                text_prop={mode === m ? "text-white" : "text-black"}
-              >
-                {m === "connected" ? "Use Connected Org" : "Different API Key"}
-              </CustomButton>
-            ))}
-          </div>
-        )}
-
-        {/* ── Connected-org flow ── */}
-        {mode === "connected" && (
-          <>
-            {/* Connected org picker */}
-            <LabelInput
-              id="organization"
-              label="Connected Organization"
-              required
+    <div className="step-card-inner-layout">
+      {/* Mode toggle — only show if there are connected orgs */}
+      {connectedOrgs.length > 0 && (
+        <div className="flex items-center gap-2">
+          {(["connected", "manual"] as const).map((m) => (
+            <CustomButton
+              key={m}
+              onClick={() => switchMode(m)}
+              bg_prop={mode === m ? `bg-[#049FD9]` : `bg-white`}
+              text_prop={mode === m ? "text-white" : "text-black"}
             >
+              {m === "connected" ? "Use Connected Org" : "Different API Key"}
+            </CustomButton>
+          ))}
+        </div>
+      )}
+
+      {/* ── Connected-org flow ── */}
+      {mode === "connected" && (
+        <>
+          {/* Connected org picker */}
+          <LabelInput id="organization" label="Connected Organization" required>
+            <Select
+              placeholder="Select Oragnization"
+              value={connectedOrgId}
+              options={connectedOrgs?.map((o) => ({
+                value: o?.id,
+                label: `${o?.meraki_org_name} ${o.meraki_region === "in" ? " (India)" : " (Global)"}`,
+              }))}
+              onChange={(value) => setConnectedOrgId(value)}
+            />
+          </LabelInput>
+
+          {/* Network error */}
+          {networkError && (
+            <AlertCard variant="error">{networkError}</AlertCard>
+          )}
+
+          {/* Network picker */}
+          {(connectedNetworks.length > 0 || networkLoadState === "loading") && (
+            <LabelInput id="network" label="Network" required>
               <Select
-                placeholder="Select Oragnization"
-                value={connectedOrgId}
-                options={connectedOrgs?.map((o) => ({
-                  value: o?.id,
-                  label: `${o?.meraki_org_name} ${o.meraki_region === "in" ? " (India)" : " (Global)"}`,
+                id="network"
+                placeholder="Select Network"
+                value={data.destinationNetwork?.id ?? null}
+                options={connectedNetworks?.map((n) => ({
+                  value: n?.id,
+                  label: n?.name,
                 }))}
-                onChange={(value) => setConnectedOrgId(value)}
+                onChange={(value) => handleConnectedNetworkSelect(value)}
+                loading={networkLoadState === "loading"}
+                disabled={networkLoadState === "loading"}
               />
             </LabelInput>
+          )}
+        </>
+      )}
 
-            {/* Network error */}
-            {networkError && (
-              <AlertCard variant="error">{networkError}</AlertCard>
+      {/* ── Manual / different API key flow ── */}
+      {mode === "manual" && (
+        <>
+          {/* Region */}
+          <LabelInput id="region" label="Region" required>
+            <Select
+              id="region"
+              placeholder="Select Region"
+              value={data.destinationRegion}
+              options={MERAKI_REGIONS.map((r) => ({
+                value: r.code,
+                label: r.name,
+              }))}
+              onChange={(value) => handleRegionChange(value)}
+              className="w-full"
+            />
+
+            {selectedRegion.code !== "custom" && (
+              <div className="text-xs text-muted-foreground mt-1">
+                {selectedRegion.dashboard}
+              </div>
             )}
+          </LabelInput>
 
-            {/* Network picker */}
-            {(connectedNetworks.length > 0 ||
-              networkLoadState === "loading") && (
-              <LabelInput id="network" label="Network" required>
-                <Select
-                  id="network"
-                  placeholder="Select Network"
-                  value={data.destinationNetwork?.id ?? null}
-                  options={connectedNetworks?.map((n) => ({
-                    value: n?.id,
-                    label: n?.name,
-                  }))}
-                  onChange={(value) => handleConnectedNetworkSelect(value)}
-                  loading={networkLoadState === "loading"}
-                  disabled={networkLoadState === "loading"}
-                />
-              </LabelInput>
-            )}
-          </>
-        )}
+          {/* API Key */}
+          <LabelInput id="api-key" label="API Key" required>
+            <Input
+              id="api-key"
+              type="password"
+              value={data.destinationApiKey}
+              placeholder="Enter Meraki API key"
+              onChange={(e) => {
+                onUpdate({
+                  destinationApiKey: e.target.value,
+                  destinationOrg: null,
+                  destinationNetwork: null,
+                  destinationDevices: [],
+                });
+                setOrgs([]);
+                setNetworks([]);
+                setOrgState("idle");
+                setNetworkState("idle");
+              }}
+              onPressEnter={handleFetchOrgs}
+            />
+          </LabelInput>
 
-        {/* ── Manual / different API key flow ── */}
-        {mode === "manual" && (
-          <>
-            {/* Region */}
-            <LabelInput id="region" label="Region" required>
+          <CustomButton
+            onClick={handleFetchOrgs}
+            disabled={!data.destinationApiKey.trim() || orgState === "loading"}
+            className="w-fit"
+          >
+            {orgState === "loading"
+              ? "Connecting..."
+              : orgState === "success"
+                ? "Connected"
+                : "Connect"}
+          </CustomButton>
+
+          {/* Error */}
+          {error && <AlertCard variant="error">{error}</AlertCard>}
+
+          {/* Organization */}
+          {orgs.length > 0 && (
+            <LabelInput id="organization" label="Organization" required>
               <Select
-                id="region"
-                placeholder="Select Region"
-                value={data.destinationRegion}
-                options={MERAKI_REGIONS.map((r) => ({
-                  value: r.code,
-                  label: r.name,
+                placeholder="Select organization…"
+                value={data.destinationOrg?.id ?? undefined}
+                options={orgs.map((o) => ({
+                  value: o.id,
+                  label: o.name,
                 }))}
-                onChange={(value) => handleRegionChange(value)}
+                onChange={(value) => handleSelectOrg(value)}
                 className="w-full"
               />
-
-              {selectedRegion.code !== "custom" && (
-                <div className="text-xs text-muted-foreground mt-1">
-                  {selectedRegion.dashboard}
-                </div>
-              )}
             </LabelInput>
+          )}
 
-            {/* API Key */}
-            <LabelInput id="api-key" label="API Key" required>
-              <Input
-                id="api-key"
-                type="password"
-                value={data.destinationApiKey}
-                placeholder="Enter Meraki API key"
-                onChange={(e) => {
-                  onUpdate({
-                    destinationApiKey: e.target.value,
-                    destinationOrg: null,
-                    destinationNetwork: null,
-                    destinationDevices: [],
-                  });
-                  setOrgs([]);
-                  setNetworks([]);
-                  setOrgState("idle");
-                  setNetworkState("idle");
-                }}
-                onPressEnter={handleFetchOrgs}
+          {/* Network */}
+          {(networks.length > 0 || networkState === "loading") && (
+            <LabelInput id="network" label="Network" required>
+              <Select
+                placeholder="Select network…"
+                value={data.destinationNetwork?.id ?? undefined}
+                options={networks.map((n) => ({
+                  value: n.id,
+                  label: n.name,
+                }))}
+                onChange={(value) => handleSelectNetwork(value)}
+                loading={networkState === "loading"}
+                disabled={networkState === "loading"}
+                className="w-full"
               />
             </LabelInput>
+          )}
+        </>
+      )}
 
-            <CustomButton
-              onClick={handleFetchOrgs}
-              disabled={
-                !data.destinationApiKey.trim() || orgState === "loading"
-              }
-              className="w-fit"
-            >
-              {orgState === "loading"
-                ? "Connecting..."
-                : orgState === "success"
-                  ? "Connected"
-                  : "Connect"}
-            </CustomButton>
-
-            {/* Error */}
-            {error && <AlertCard variant="error">{error}</AlertCard>}
-
-            {/* Organization */}
-            {orgs.length > 0 && (
-              <LabelInput id="organization" label="Organization" required>
-                <Select
-                  placeholder="Select organization…"
-                  value={data.destinationOrg?.id ?? undefined}
-                  options={orgs.map((o) => ({
-                    value: o.id,
-                    label: o.name,
-                  }))}
-                  onChange={(value) => handleSelectOrg(value)}
-                  className="w-full"
-                />
-              </LabelInput>
+      {/* Selected summary */}
+      {data.destinationNetwork && (
+        <AlertCard variant="success">
+          <div className="font-semibold">{data.destinationNetwork.name}</div>
+          <div>
+            {data.destinationOrg?.name}
+            {data.destinationDevices.length > 0 && (
+              <span>
+                {" "}
+                &middot;{" "}
+                {
+                  data.destinationDevices.filter(
+                    (d) =>
+                      d.model?.startsWith("C93") || d.model?.startsWith("C9K"),
+                  ).length
+                }{" "}
+                Cat9K device(s) found
+              </span>
             )}
-
-            {/* Network */}
-            {(networks.length > 0 || networkState === "loading") && (
-              <LabelInput id="network" label="Network" required>
-                <Select
-                  placeholder="Select network…"
-                  value={data.destinationNetwork?.id ?? undefined}
-                  options={networks.map((n) => ({
-                    value: n.id,
-                    label: n.name,
-                  }))}
-                  onChange={(value) => handleSelectNetwork(value)}
-                  loading={networkState === "loading"}
-                  disabled={networkState === "loading"}
-                  className="w-full"
-                />
-              </LabelInput>
-            )}
-          </>
-        )}
-
-        {/* Selected summary */}
-        {data.destinationNetwork && (
-          <AlertCard variant="success">
-            <div className="font-semibold">{data.destinationNetwork.name}</div>
-            <div>
-              {data.destinationOrg?.name}
-              {data.destinationDevices.length > 0 && (
-                <span>
-                  {" "}
-                  &middot;{" "}
-                  {
-                    data.destinationDevices.filter(
-                      (d) =>
-                        d.model?.startsWith("C93") ||
-                        d.model?.startsWith("C9K"),
-                    ).length
-                  }{" "}
-                  Cat9K device(s) found
-                </span>
-              )}
-            </div>
-          </AlertCard>
-        )}
-      </div>
+          </div>
+        </AlertCard>
+      )}
     </div>
   );
 }

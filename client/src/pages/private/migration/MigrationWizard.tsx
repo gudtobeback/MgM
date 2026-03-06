@@ -19,18 +19,76 @@ import { DestinationOrganizationStep } from "../../../components/steps/migration
 import { getNetworkDevices } from "../../../services/merakiService";
 
 import { MigrationData } from "../../../types/types";
+import StepHeadingCard from "@/src/components/steps/StepHeadingCard";
 
 const steps = [
-  { id: 1, name: "Source", description: "Connect .com dashboard" },
-  { id: 2, name: "Source Org", description: "Select source org & network" },
-  { id: 3, name: "Destination", description: "Connect .in dashboard" },
-  { id: 4, name: "Dest Org", description: "Select destination" },
-  { id: 5, name: "Review", description: "Review migration plan" },
-  { id: 6, name: "Backup", description: "Automatic backup" },
-  { id: 7, name: "Pre-Config", description: "Transfer foundational configs" },
-  { id: 8, name: "Migrate", description: "Execute migration" },
-  { id: 9, name: "Restore", description: "Restore configurations" },
-  { id: 10, name: "Results", description: "View results" },
+  {
+    id: 1,
+    name: "Source",
+    heading: "Connect to Source Dashboard",
+    description:
+      "Select the Meraki region and enter your API key for the dashboard you want to migrate from.",
+  },
+  {
+    id: 2,
+    name: "Source Org",
+    heading: "Select Source Organization & Network",
+    description:
+      "Choose the organization from your source dashboard that you want to migrate.",
+  },
+  {
+    id: 3,
+    name: "Destination",
+    heading: "Connect to Destination Dashboard",
+    description:
+      "Select the Meraki region and enter your API key for the dashboard you want to migrate to.",
+  },
+  {
+    id: 4,
+    name: "Dest Org",
+    heading: "Select Destination Organization & Network",
+    description:
+      "Choose the organization from your source dashboard that you want to migrate.",
+  },
+  {
+    id: 5,
+    name: "Review",
+    heading: "Review Migration Plan",
+    description: "Review all settings before we begin the migration process.",
+  },
+  {
+    id: 6,
+    name: "Backup",
+    heading: "Pre-Migration Backup",
+    description:
+      "Performing a full, exhaustive backup of the source organization. This is a critical safety step.",
+  },
+  {
+    id: 7,
+    name: "Pre-Config",
+    heading: "Pre-Config Transfer",
+    description:
+      "Copying group policies, RF profiles, RADIUS access policies, and VPN configuration to the destination before migrating devices.",
+  },
+  {
+    id: 8,
+    name: "Migrate",
+    heading: "Migration",
+    description: "Moving devices from source to destination dashboard.",
+  },
+  {
+    id: 9,
+    name: "Restore",
+    heading: "Restore",
+    description:
+      "Automatically applying backed-up settings to your newly migrated devices.",
+  },
+  {
+    id: 10,
+    name: "Results",
+    heading: "Migration Results",
+    description: "Download Migration file",
+  },
 ];
 
 export function MigrationWizard() {
@@ -242,42 +300,50 @@ export function MigrationWizard() {
   // Steps 6–10 run automatically (no manual Next button)
   const isAutoStep = currentStep >= 6;
 
+  const heading = steps?.find((step) => step?.id == currentStep).heading;
+  const description = steps?.find(
+    (step) => step?.id == currentStep,
+  ).description;
+
   return (
     <div className="px-16 py-8">
-      <div className="flex flex-col gap-4">
-        {/* Step content */}
-        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+      {/* Step content */}
+      <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
+        <div className="step-card-layout">
+          {/* Heading */}
+          <StepHeadingCard heading={heading} subHeading={description} />
+
           {/* Step indicator */}
           <StepBar steps={steps} currentStep={currentStep} />
 
           {/* shadow-[0_2px_16px_rgba(0,0,0,0.25)] */}
           {renderStep()}
-
-          {/* Navigation */}
-          {!isAutoStep && (
-            <div className="flex items-center justify-between bg-white border-t-2 p-6">
-              <CustomButton
-                onClick={handleBack}
-                disabled={currentStep === 1}
-                text_prop="text-black"
-                bg_prop="bg-white"
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-              >
-                <ArrowLeft size={16} />
-                Back
-              </CustomButton>
-
-              <CustomButton
-                onClick={handleNext}
-                disabled={!canProceedToNext()}
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-              >
-                Next
-                <ArrowRight size={16} />
-              </CustomButton>
-            </div>
-          )}
         </div>
+
+        {/* Navigation */}
+        {!isAutoStep && (
+          <div className="flex items-center justify-between bg-white border-t-2 px-10 py-6">
+            <CustomButton
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              text_prop="text-black"
+              bg_prop="bg-white"
+              className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+            >
+              <ArrowLeft size={16} />
+              Back
+            </CustomButton>
+
+            <CustomButton
+              onClick={handleNext}
+              disabled={!canProceedToNext()}
+              className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+            >
+              Next
+              <ArrowRight size={16} />
+            </CustomButton>
+          </div>
+        )}
       </div>
     </div>
   );

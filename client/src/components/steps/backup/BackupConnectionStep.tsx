@@ -34,91 +34,82 @@ export function BackupConnectionStep({
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        icon={<HardDriveDownload size={30} color="#049FD9" />}
-        heading="Connect to Source Dashboard"
-        subHeading="Enter your API key to connect to the dashboard you want to backup."
+    <div className="step-card-inner-layout">
+      {/* Title */}
+      <DomainCard
+        title="Source Dashboard"
+        subTitle={isCustom ? "Custom API endpoint" : selectedRegion.dashboard}
       />
 
-      <div className="step-card-inner-layout">
-        {/* Title */}
-        <DomainCard
-          title="Source Dashboard"
-          subTitle={isCustom ? "Custom API endpoint" : selectedRegion.dashboard}
+      <LabelInput id="region" label="Region" required>
+        <Select
+          id="region"
+          placeholder="Select Region"
+          options={MERAKI_REGIONS.map((r) => ({
+            value: r.code,
+            label: `${r.name} ${!r.confirmed && r.code !== "custom" ? " ⚠" : ""}`,
+          }))}
+          value={data.sourceRegion || "com"}
+          onChange={handleRegionChange}
         />
 
-        <LabelInput id="region" label="Region" required>
-          <Select
-            id="region"
-            placeholder="Select Region"
-            options={MERAKI_REGIONS.map((r) => ({
-              value: r.code,
-              label: `${r.name} ${!r.confirmed && r.code !== "custom" ? " ⚠" : ""}`,
-            }))}
-            value={data.sourceRegion || "com"}
-            onChange={handleRegionChange}
-          />
-
-          {!isCustom && !selectedRegion.confirmed && (
-            <p className="mt-1 text-xs text-amber-600">
-              ⚠ This region domain is not officially confirmed. Verify{" "}
-              <strong>{selectedRegion.dashboard}</strong> is active before
-              proceeding.
-            </p>
-          )}
-        </LabelInput>
-
-        {isCustom && (
-          <LabelInput
-            id="source-custom-url"
-            label="Custom API Base URL"
-            colSpan="col-span-12"
-            required
-          >
-            <Input
-              id="source-custom-url"
-              placeholder="https://api.meraki.example/api/v1"
-              value={
-                data.sourceRegion === "custom"
-                  ? (data.sourceCustomApiBase ?? "")
-                  : ""
-              }
-              onChange={(e) =>
-                onUpdate({
-                  sourceCustomApiBase: e.target.value,
-                  // sourceRegion: e.target.value || "custom",
-                })
-              }
-            />
-
-            <p className="text-xs">
-              Enter the full API base URL for your Meraki region (e.g.
-              https://api.meraki.cn/api/v1).
-            </p>
-          </LabelInput>
-        )}
-
-        <LabelInput id="api-key" label="API Key" colSpan="col-span-12" required>
-          <Input
-            id="api-key"
-            type="password"
-            placeholder="Enter your API key"
-            value={data.apiKey}
-            onChange={(e) => onUpdate({ apiKey: e.target.value })}
-            autoComplete="new-password"
-          />
-        </LabelInput>
-
-        <AlertCard variant="note">
-          <p>
-            <strong>Note:</strong> Your API key is only used for this session
-            and is never stored. Make sure you have read access to the
-            organization you want to backup.
+        {!isCustom && !selectedRegion.confirmed && (
+          <p className="mt-1 text-xs text-amber-600">
+            ⚠ This region domain is not officially confirmed. Verify{" "}
+            <strong>{selectedRegion.dashboard}</strong> is active before
+            proceeding.
           </p>
-        </AlertCard>
-      </div>
+        )}
+      </LabelInput>
+
+      {isCustom && (
+        <LabelInput
+          id="source-custom-url"
+          label="Custom API Base URL"
+          colSpan="col-span-12"
+          required
+        >
+          <Input
+            id="source-custom-url"
+            placeholder="https://api.meraki.example/api/v1"
+            value={
+              data.sourceRegion === "custom"
+                ? (data.sourceCustomApiBase ?? "")
+                : ""
+            }
+            onChange={(e) =>
+              onUpdate({
+                sourceCustomApiBase: e.target.value,
+                // sourceRegion: e.target.value || "custom",
+              })
+            }
+          />
+
+          <p className="text-xs">
+            Enter the full API base URL for your Meraki region (e.g.
+            https://api.meraki.cn/api/v1).
+          </p>
+        </LabelInput>
+      )}
+
+      <LabelInput id="api-key" label="API Key" colSpan="col-span-12" required>
+        <Input
+          id="api-key"
+          type="password"
+          placeholder="Enter your API key"
+          value={data.apiKey}
+          onChange={(e) => onUpdate({ apiKey: e.target.value })}
+          autoComplete="new-password"
+        />
+      </LabelInput>
+
+      <AlertCard variant="note">
+        <p>
+          <strong>Note:</strong> Your API key is only used for this session and
+          is never stored. Make sure you have read access to the organization
+          you want to backup.
+        </p>
+      </AlertCard>
     </div>
   );
 }

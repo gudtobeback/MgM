@@ -132,87 +132,79 @@ export function DestinationOrganizationStep({
   };
 
   return (
-    <div className="step-card-layout">
-      {/* Heading */}
-      <StepHeadingCard
-        heading="Select Destination Organization & Network"
-        subHeading="Choose the organization from your source dashboard that you want to migrate."
-      />
-
-      <div className="step-card-inner-layout">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-            <p className="mt-4 text-muted-foreground">
-              Fetching destination organizations...
-            </p>
-          </div>
-        ) : error ? (
-          <AlertCard variant="error">{error}</AlertCard>
-        ) : (
-          <div className="flex flex-col gap-6">
-            <LabelInput
+    <div className="step-card-inner-layout">
+      {loading ? (
+        <div className="flex flex-col items-center justify-center h-full">
+          <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+          <p className="mt-4 text-muted-foreground">
+            Fetching destination organizations...
+          </p>
+        </div>
+      ) : error ? (
+        <AlertCard variant="error">{error}</AlertCard>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <LabelInput
+            id="destination-organization"
+            label="Destination Organization (dashboard.meraki.in)"
+            colSpan=""
+            required
+          >
+            <Select
               id="destination-organization"
-              label="Destination Organization (dashboard.meraki.in)"
+              placeholder="Select source organization"
+              value={data.destinationOrg?.id || null}
+              options={organizations.map((org) => ({
+                value: org?.id,
+                label: org?.name,
+              }))}
+              onChange={handleOrgChange}
+            />
+          </LabelInput>
+
+          {data.destinationOrg && (
+            <LabelInput
+              id="destination-network"
+              label="Destination Network"
               colSpan=""
               required
             >
               <Select
-                id="destination-organization"
-                placeholder="Select source organization"
-                value={data.destinationOrg?.id || null}
-                options={organizations.map((org) => ({
-                  value: org?.id,
-                  label: org?.name,
+                id="destination-network"
+                placeholder={
+                  loadingNetworks
+                    ? "Loading networks..."
+                    : "Select destination network"
+                }
+                value={data.destinationNetwork?.id || null}
+                options={networks.map((net) => ({
+                  value: net?.id,
+                  label: net?.name,
                 }))}
-                onChange={handleOrgChange}
+                onChange={handleNetworkChange}
+                disabled={loadingNetworks || networks.length === 0}
               />
             </LabelInput>
+          )}
 
-            {data.destinationOrg && (
-              <LabelInput
-                id="destination-network"
-                label="Destination Network"
-                colSpan=""
-                required
-              >
-                <Select
-                  id="destination-network"
-                  placeholder={
-                    loadingNetworks
-                      ? "Loading networks..."
-                      : "Select destination network"
-                  }
-                  value={data.destinationNetwork?.id || null}
-                  options={networks.map((net) => ({
-                    value: net?.id,
-                    label: net?.name,
-                  }))}
-                  onChange={handleNetworkChange}
-                  disabled={loadingNetworks || networks.length === 0}
-                />
-              </LabelInput>
-            )}
+          {/* Note */}
+          {(data.destinationOrg || data.destinationNetwork) && (
+            <AlertCard variant="note">
+              {data.destinationOrg && (
+                <p>
+                  <strong>Organization:</strong> {data.destinationOrg.name}
+                </p>
+              )}
 
-            {/* Note */}
-            {(data.destinationOrg || data.destinationNetwork) && (
-              <AlertCard variant="note">
-                {data.destinationOrg && (
-                  <p>
-                    <strong>Organization:</strong> {data.destinationOrg.name}
-                  </p>
-                )}
-
-                {data.destinationNetwork && (
-                  <p>
-                    <strong>Network:</strong> {data.destinationNetwork.name}
-                  </p>
-                )}
-              </AlertCard>
-            )}
-          </div>
-        )}
-      </div>
+              {data.destinationNetwork && (
+                <p>
+                  <strong>Network:</strong> {data.destinationNetwork.name}
+                </p>
+              )}
+            </AlertCard>
+          )}
+        </div>
+      )}
     </div>
   );
 }
