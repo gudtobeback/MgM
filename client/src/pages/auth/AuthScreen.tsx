@@ -71,7 +71,7 @@ export const AuthScreen = () => {
           className="text-center cursor-pointer"
         >
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-            Meraki<span className="text-[#049FD9]">Migrate</span>
+            AgiesOne<span className="text-[#049FD9]">Migrate</span>
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             Enterprise-grade network migration

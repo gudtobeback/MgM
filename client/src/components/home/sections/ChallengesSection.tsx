@@ -66,6 +66,7 @@ export default function ChallengesSection() {
       ref={fadeRef}
       className="home-section fade-in-scroll bg-[#fafafa] border-b border-gray-200"
     >
+      {/* bg-[url('/images/1.webp')] bg-no-repeat bg-cover */}
       <div className="flex flex-col items-center gap-8">
         {/* Section Heading */}
         <SectionHeading text="The Challenge's" variant="red" />

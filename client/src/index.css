@@ -19,7 +19,6 @@ html {
     transform: translateY(0);
   }
 }
-
 /* Base hidden state */
 .fade-in-scroll {
   opacity: 0;
@@ -28,10 +27,20 @@ html {
     opacity 0.4s ease,
     transform 0.4s ease;
 }
-
 /* When visible */
 .fade-in-scroll.show {
-  animation: fadeInUp 0.5s ease forwards;
+  animation: fadeInUp 0.7s ease forwards;
+}
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 /* Home Section */
@@ -41,7 +50,6 @@ html {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
-
 /* md breakpoint (768px and up) */
 @media (min-width: 768px) {
   .home-section {
@@ -49,7 +57,6 @@ html {
     padding-right: 4rem;
   }
 }
-
 /* lg breakpoint (1024px and up) */
 @media (min-width: 1024px) {
   .home-section {
