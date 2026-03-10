@@ -86,11 +86,11 @@ export function BackupWizard() {
   const [logDuration, setLogDuration] = useState<number | null>(null);
 
   const handleNext = () => {
-    if (currentStep < steps.length) setCurrentStep((s) => s + 1);
+    if (currentStep < steps.length) setCurrentStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    if (currentStep > 1) setCurrentStep((s) => s - 1);
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
   const handleReset = () => {
@@ -191,7 +191,7 @@ export function BackupWizard() {
       <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
         <div className="step-card-layout">
           <StepHeadingCard
-            icon={<HardDriveDownload size={30} color="#049FD9" />}
+            icon={HardDriveDownload}
             heading={heading}
             subHeading={description}
           />

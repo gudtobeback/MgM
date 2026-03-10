@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { ArrowLeft, ArrowRight, ArrowRightLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import CustomButton from "../../../components/ui/CustomButton";
 
@@ -99,11 +99,11 @@ export function Cat9KMigrationWizard({
   };
 
   const handleNext = () => {
-    if (currentStep < steps.length) setCurrentStep((s) => s + 1);
+    if (currentStep < steps.length) setCurrentStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    if (currentStep > 1) setCurrentStep((s) => s - 1);
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
   const handleResume = () => {

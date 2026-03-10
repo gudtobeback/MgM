@@ -122,10 +122,7 @@ export function RestoreStep({
   const hasRun = useRef(false);
 
   const log = (msg: string) => {
-    setLogs((prevLogs) => [
-      ...prevLogs,
-      `[${new Date().toLocaleTimeString()}] ${msg}`,
-    ]);
+    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
   };
 
   const startRestore = async () => {

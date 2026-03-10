@@ -8,6 +8,42 @@ html {
   scroll-behavior: smooth;
 }
 
+/* .after {
+  position: absolute;
+  width: 98%;
+  height: 98%;
+  z-index: -1;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  box-shadow: inset 1px 1px 10px white;
+  background: linear-gradient(left bottom, #2b2d2e, #19c1e4);
+} */
+/* Glass Effect */
+/* .glass-effect {
+  box-shadow: inset 0px 0px 7px 11px #ffffff27;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} */
+
+.after {
+  position: absolute;
+  width: 98%;
+  height: 98%;
+  z-index: -1;
+  /* backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px); */
+  box-shadow: inset 1px 1px 6px white;
+  background: linear-gradient(left bottom, transparent, #19c1e4);
+}
+/* Glass Effect */
+.glass-effect {
+  box-shadow: inset 0px 0px 7px 6px #ffffff27;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .step-button {
   background: linear-gradient(
     to left bottom,
@@ -53,17 +89,6 @@ html {
 /* When visible */
 .fade-in-scroll-card.show {
   animation: fadeInUp 1s ease forwards;
-}
-
-/* Glass Effect */
-.glass-effect {
-  background: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 /* Home Section */

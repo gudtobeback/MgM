@@ -6,6 +6,7 @@ import "./index.css";
 import App from "./App";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { OrganizationProvider } from "./context/OrganizationContext";
+import { PermissionsProvider } from "./context/PermissionContext";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -17,9 +18,11 @@ function Provider() {
 
   // Refresh the API provider to reset all the states
   return (
-    <OrganizationProvider key={user?.id || user?.email || "anon"}>
-      <App />
-    </OrganizationProvider>
+    <PermissionsProvider key={user?.id || user?.email || "anon"}>
+      <OrganizationProvider>
+        <App />
+      </OrganizationProvider>
+    </PermissionsProvider>
   );
 }
 

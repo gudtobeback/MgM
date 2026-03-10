@@ -11,6 +11,7 @@ export default function StepFlow() {
       left: "12%",
       color: "#19C1E4",
       bg_color: "bg-[#19C1E4]",
+      bg_after: "bg-[#19C1E4]",
       text_color: "text-[#19C1E4]",
       title: "Connect your source dashboard",
       description:
@@ -140,7 +141,7 @@ export default function StepFlow() {
         {steps?.map((step, idx) => (
           <button
             onClick={() => setActiveStep(idx + 1)}
-            className={`absolute ${step.bg_color} text-white font-bold text-[30px] rounded-2xl hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
+            className={`glass-effect absolute ${step.bg_color} text-white font-bold text-[30px] rounded-2xl hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center`}
             style={{
               top: step.top,
               left: step.left,
@@ -151,6 +152,7 @@ export default function StepFlow() {
             }}
           >
             {step.number}
+            <div className="after rounded-2xl hover:scale-102 transition-all duration-200 cursor-pointer flex items-center justify-center"></div>
           </button>
         ))}
       </div>

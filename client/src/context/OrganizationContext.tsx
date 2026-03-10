@@ -19,15 +19,11 @@ type OrganizationContextType = {
   selectedOrgId: string | null;
   selectedOrgName: string;
 
-  effectiveOrgId: string;
-  effectiveOrgName: string;
-
   handleSelectOrg: (orgId: string, orgName: string) => void;
   fetchOrganizations: () => void;
 };
 
 type OrganizationProviderProps = {
-  key: any;
   children: React.ReactNode;
 };
 
@@ -57,11 +53,6 @@ export const OrganizationProvider = ({
 
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
   const [selectedOrgName, setSelectedOrgName] = useState<string>("");
-
-  // Memoize effective org values
-  const effectiveOrgId = selectedOrgId ?? String(organizations[0]?.id ?? "");
-  const effectiveOrgName =
-    selectedOrgName || organizations[0]?.meraki_org_name || "";
 
   const fetchOrganizations = async () => {
     setLoading(true);
@@ -107,9 +98,6 @@ export const OrganizationProvider = ({
 
         selectedOrgId,
         selectedOrgName,
-
-        effectiveOrgId,
-        effectiveOrgName,
 
         handleSelectOrg,
         fetchOrganizations,

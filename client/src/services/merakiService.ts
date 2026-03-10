@@ -2302,6 +2302,7 @@ export const createExhaustiveBackup = async (
       name: "devices_statuses",
     },
   ];
+  
   await Promise.all(
     orgEndpoints.map((endpoint) =>
       getAndZip(`organization/${endpoint.name}.json`, () =>

@@ -128,13 +128,21 @@ router.delete("/companies/:id", async (req: Request, res: Response) => {
  */
 router.get("/users", async (req: Request, res: Response) => {
   try {
+    // Updated by Aryan 10-03-2026
     const result = await query(
-      `SELECT u.id, u.email, u.full_name, u.role, u.subscription_tier,
-              u.company_id, c.name AS company_name, u.created_at
-       FROM users u
-       LEFT JOIN companies c ON c.id = u.company_id
-       ORDER BY u.created_at DESC`,
+      `SELECT id, email, full_name, role, subscription_tier, company_id, created_at
+       FROM users
+
+       ORDER BY created_at DESC`,
     );
+
+    // With Companies
+    //  `SELECT u.id, u.email, u.full_name, u.role, u.subscription_tier,
+    //  u.company_id, c.name AS company_name, u.created_at
+    //  FROM users u
+    //  LEFT JOIN companies c ON c.id = u.company_id
+    //  ORDER BY u.created_at DESC`,
+
     res.json(result.rows);
   } catch (err) {
     console.error("List all users error:", err);

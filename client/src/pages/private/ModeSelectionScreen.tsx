@@ -17,11 +17,10 @@ import {
 import CustomButton from "../../components/ui/CustomButton";
 
 import { ToolMode, TOOL_MODE_ROUTES } from "../../types/routes";
-
-interface ModeSelectionScreenProps {
-  userEmail?: string;
-  connectedOrgs?: any[];
-}
+import { useAuth } from "@/src/context/AuthContext";
+import { useOrganization } from "@/src/context/OrganizationContext";
+import SummaryCard from "@/src/components/ui/SummaryCard";
+import PageHeader from "@/src/components/ui/PageHeader";
 
 // ── Tool cards ────────────────────────────────────────────────────────────────
 const TOOLS: {
@@ -136,11 +135,13 @@ function formatDate(): string {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
-  userEmail,
-  connectedOrgs = [],
-}) => {
+export const ModeSelectionScreen = () => {
+  const { user } = useAuth();
+  const { organizations } = useOrganization();
+
   const navigate = useNavigate();
+
+  const userEmail = user?.email;
 
   const firstName = userEmail
     ? userEmail.split("@")[0].replace(/[._]/g, " ")
@@ -151,16 +152,16 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
   };
 
   // ── Derived summary from real orgs ──────────────────────────────────────────
-  const totalDevices = connectedOrgs.reduce(
+  const totalDevices = organizations.reduce(
     (s, o) => s + (o.device_count ?? 0),
     0,
   );
 
-  const uniqueRegions = new Set(connectedOrgs.map((o) => o.meraki_region)).size;
+  const uniqueRegions = new Set(organizations.map((o) => o.meraki_region)).size;
 
   const SUMMARY = [
     {
-      value: String(connectedOrgs?.length),
+      value: String(organizations?.length),
       label: "Connected Orgs",
       icon: <Building2 size={20} />,
       icon_bg_color: "bg-[#D398E7]",
@@ -178,7 +179,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
       icon_bg_color: "bg-[#70A1E5]",
     },
     {
-      value: connectedOrgs.length === 0 ? "—" : "Active",
+      value: organizations.length === 0 ? "—" : "Active",
       label: "Platform Status",
       icon: <Activity size={20} />,
       icon_bg_color: "bg-[#F0C274]",
@@ -227,45 +228,34 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 flex flex-col gap-8 p-6 w-full">
         {/* Welcome Section */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-2">
-            <p className="font-semibold">Welcome back, {firstName}</p>
-            <p className="text-xs text-black/60">
-              Unified AegisOne Management — {connectedOrgs?.length || 0}{" "}
-              organization connected
-            </p>
-          </div>
-
+        <PageHeader
+          heading={`Welcome back, ${firstName}`}
+          subHeading={`Unified AegisOne Management — ${organizations?.length || 0} organization connected.`}
+        >
           {/* <CustomButton
           onClick={() => handleNavigate("organizations")}
           className="px-6 py-3 text-sm"
         >
           <Plus size={20} /> Add Organization
         </CustomButton> */}
-        </div>
+        </PageHeader>
 
         {/* Summay Cards */}
         {/* <div className="grid grid-cols-4 gap-6">
-        {SUMMARY.map((s, i) => (
-          <div
-            key={s.label}
-            className="col-span-4 md:col-span-2 lg:col-span-1 flex items-start gap-5 p-5 bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all"
-          >
+          {SUMMARY.map((card, idx) => (
             <div
-              className={`mt-2 p-2.5 text-white ${s?.icon_bg_color} rounded-full`}
+              key={card?.label || idx}
+              className="col-span-4 md:col-span-2 lg:col-span-1"
             >
-              {s.icon}
+              <SummaryCard
+                icon={card?.icon}
+                icon_bg_color={card?.icon_bg_color}
+                value={card?.value}
+                label={card?.label}
+              />
             </div>
-
-            <div className="flex flex-col gap-1">
-              <div className="text-[28px] font-semibold">{s.value}</div>
-              <div className="text-xs font-medium text-[#797979] tracking-wider">
-                {s.label}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div> */}
+          ))}
+        </div> */}
 
         {/* Hero Row: Quick Access Tools + Device Distribution */}
         {/* <div className="grid grid-cols-12 gap-6">
@@ -304,9 +294,9 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
           </div>
 
           <div className="space-y-4">
-            {connectedOrgs.slice(0, 5).map((org, i) => {
+            {organizations.slice(0, 5).map((org, i) => {
               const max = Math.max(
-                ...connectedOrgs.map((o: any) => o.device_count ?? 0),
+                ...organizations.map((o: any) => o.device_count ?? 0),
                 1,
               );
 
@@ -349,10 +339,10 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
               );
             })}
 
-            {connectedOrgs.length > 5 && (
+            {organizations.length > 5 && (
               <p className="text-xs text-muted-foreground text-center pt-1">
-                +{connectedOrgs.length - 5} more organization
-                {connectedOrgs.length - 5 !== 1 ? "s" : ""}
+                +{organizations.length - 5} more organization
+                {organizations.length - 5 !== 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -374,7 +364,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
       </div> */}
 
         {/* Platform Tools */}
-        <div className="flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
+        <div className="flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0px_0px_8px_rgba(0,0,0,0.10)]">
           <div className="text-[16px] font-bold">Platform Tools</div>
 
           <div className="grid grid-cols-20 gap-5">
@@ -405,7 +395,7 @@ export const ModeSelectionScreen: React.FC<ModeSelectionScreenProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
+      <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-lg shadow-[0_0px_8px_rgba(0,0,0,0.10)]">
         © 2026 Meraki Management. All rights reserved.
       </div>
     </div>

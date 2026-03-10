@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+
 import { Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
-import { apiClient } from "./services/apiClient";
 import {
   ToolMode,
   TOOL_MODE_ROUTES,
@@ -25,6 +25,8 @@ import { Cat9KMigrationWizard } from "./pages/private/migration/Cat9KMigrationWi
 import { BackupWizard } from "./pages/private/backup_and_recovery/BackupWizard";
 import { RestoreWizard } from "./pages/private/backup_and_recovery/RestoreWizard";
 
+import { ProfilePage } from "./pages/private/ProfilePage";
+
 import { VersionControlPage } from "./components/version-control/VersionControlPage";
 import { DriftDetectionPage } from "./components/drift/DriftDetectionPage";
 import { CompliancePage } from "./components/compliance/CompliancePage";
@@ -35,8 +37,12 @@ import { ChangeManagementPage } from "./components/change-management/ChangeManag
 import { DocumentationPage } from "./components/docs/DocumentationPage";
 import { SchedulerPage } from "./components/scheduler/SchedulerPage";
 import { CrossRegionPage } from "./components/cross-region/CrossRegionPage";
-import { ProfilePage } from "./pages/private/ProfilePage";
-import { SuperAdminApp } from "./components/super-admin/SuperAdminApp";
+import { SuperAdminLayout } from "./components/layout/SuperAdminLayout";
+import { OverviewPage } from "./components/super-admin/pages/OverviewPage";
+import { CompaniesPage } from "./components/super-admin/pages/CompaniesPage";
+import { CompanyDetailPage } from "./components/super-admin/pages/CompanyDetailPage";
+import { AllUsersPage } from "./components/super-admin/pages/AllUsersPage";
+import { AuditLogPage } from "./components/super-admin/pages/AuditLogPage";
 import { TeamManagementPage } from "./components/team/TeamManagementPage";
 
 import Home from "./pages/public/Home";
@@ -50,11 +56,6 @@ import TermsAndConditions from "./pages/public/TermsAndConditions";
 import Footer from "./components/home/Footer";
 import SubscriptionPage from "./pages/private/SubscriptionPage";
 
-/**
- * Protected Route Wrapper Component
- * Checks if user has required organization for org-dependent routes
- * Derives toolMode from URL location to avoid prop drilling
- */
 function ProtectedRouteWrapper() {
   const { orgsLoading, organizations } = useOrganization();
 
@@ -83,6 +84,27 @@ function ProtectedRouteWrapper() {
   return <Outlet />;
 }
 
+// Super Admin Protected Route
+function SuperAdminProtectedRoute() {
+  const { user } = useAuth();
+
+  if (user?.role !== "super_admin") {
+    return <Navigate to={TOOL_MODE_ROUTES.selection} replace />;
+  }
+
+  return <Outlet />;
+}
+
+function UserProtectedRoute() {
+  const { user } = useAuth();
+
+  if (user?.role === "super_admin") {
+    return <Navigate to={TOOL_MODE_ROUTES["admin-overview"]} replace />;
+  }
+
+  return <Outlet />;
+}
+
 function PublicLayout() {
   return (
     <div className="text-black/80">
@@ -99,68 +121,14 @@ function PublicLayout() {
   );
 }
 
-function RequireAuth() {
-  const { authLoading, accessToken } = useAuth();
-  const location = useLocation();
-
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen font-semibold text-lg">
-        Restoring Session...
-      </div>
-    );
-  }
-
-  if (!accessToken) {
-    return <Navigate to="/auth" replace state={{ from: location }} />;
-  }
-
-  return <Outlet />;
-}
-
 function App() {
   const { user, accessToken } = useAuth();
 
-  const {
-    orgsLoading,
-    organizations,
-    selectedOrgId,
-    selectedOrgName,
-
-    effectiveOrgId,
-    effectiveOrgName,
-  } = useOrganization();
-
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [userPermissions, setUserPermissions] = useState<
-    Record<string, boolean>
-  >(() => apiClient.getUserPermissions());
-
-  useEffect(() => {
-    setUserPermissions(apiClient.getUserPermissions());
-    apiClient
-      .fetchAndCachePermissions()
-      .then((perms) => setUserPermissions(perms))
-      .catch(() => {});
-
-    setIsInitializing(false);
-  }, [accessToken]);
-
-  // Super admins get their own portal
-  if (user?.role === "super_admin") {
-    return <SuperAdminApp />;
-  }
+  const { orgsLoading, organizations, selectedOrgId, selectedOrgName } =
+    useOrganization();
 
   return (
     <Routes>
-      {/* Public routes */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsAndConditions />} />
-      </Route>
-
       <Route
         path="/auth"
         element={
@@ -172,25 +140,21 @@ function App() {
         }
       />
 
-      {/* Authenticated routes */}
-      <Route element={<RequireAuth />}>
-        <Route
-          element={
-            <AppShell
-              selectedOrgName={selectedOrgName}
-              userPermissions={userPermissions}
-            />
-          }
-        >
+      {/* Public routes */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+      </Route>
+
+      {/* Private routes */}
+      <Route element={<AppShell />}>
+        <Route element={<UserProtectedRoute />}>
           {/* Non-protected routes */}
           <Route
             path={TOOL_MODE_ROUTES.selection}
-            element={
-              <ModeSelectionScreen
-                userEmail={user?.email}
-                connectedOrgs={organizations}
-              />
-            }
+            element={<ModeSelectionScreen />}
           />
           <Route
             path={TOOL_MODE_ROUTES.migration}
@@ -215,7 +179,7 @@ function App() {
             element={
               <Cat9KMigrationWizard
                 connectedOrgs={organizations}
-                selectedOrgId={effectiveOrgId}
+                selectedOrgId={selectedOrgId}
               />
             }
           />
@@ -230,19 +194,17 @@ function App() {
           />
 
           {/* Protected routes requiring organization */}
-          <Route
-            element={<ProtectedRouteWrapper connectedOrgs={organizations} />}
-          >
+          <Route element={<ProtectedRouteWrapper />}>
             <Route
               path={TOOL_MODE_ROUTES["version-control"]}
-              element={<VersionControlPage organizationId={effectiveOrgId} />}
+              element={<VersionControlPage organizationId={selectedOrgId} />}
             />
             <Route
               path={TOOL_MODE_ROUTES.drift}
               element={
                 <DriftDetectionPage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
             />
@@ -250,8 +212,8 @@ function App() {
               path={TOOL_MODE_ROUTES.compliance}
               element={
                 <CompliancePage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
             />
@@ -259,8 +221,8 @@ function App() {
               path={TOOL_MODE_ROUTES["bulk-ops"]}
               element={
                 <BulkOperationsPage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
             />
@@ -268,8 +230,8 @@ function App() {
               path={TOOL_MODE_ROUTES.security}
               element={
                 <SecurityPage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
             />
@@ -277,8 +239,8 @@ function App() {
               path={TOOL_MODE_ROUTES["change-management"]}
               element={
                 <ChangeManagementPage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
             />
@@ -286,8 +248,8 @@ function App() {
               path={TOOL_MODE_ROUTES.documentation}
               element={
                 <DocumentationPage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
             />
@@ -295,10 +257,42 @@ function App() {
               path={TOOL_MODE_ROUTES.scheduler}
               element={
                 <SchedulerPage
-                  organizationId={effectiveOrgId}
-                  organizationName={effectiveOrgName}
+                  organizationId={selectedOrgId}
+                  organizationName={selectedOrgName}
                 />
               }
+            />
+          </Route>
+        </Route>
+
+        {/* Super Admin Protected Routes */}
+        <Route element={<SuperAdminProtectedRoute />}>
+          <Route
+            element={
+              <SuperAdminLayout>
+                <Outlet />
+              </SuperAdminLayout>
+            }
+          >
+            <Route
+              path={TOOL_MODE_ROUTES["admin-overview"]}
+              element={<OverviewPage />}
+            />
+            <Route
+              path={TOOL_MODE_ROUTES["admin-companies"]}
+              element={<CompaniesPage />}
+            />
+            <Route
+              path="/admin/companies/:companyId"
+              element={<CompanyDetailPage />}
+            />
+            <Route
+              path={TOOL_MODE_ROUTES["admin-users"]}
+              element={<AllUsersPage />}
+            />
+            <Route
+              path={TOOL_MODE_ROUTES["admin-audit"]}
+              element={<AuditLogPage />}
             />
           </Route>
         </Route>

@@ -29,10 +29,7 @@ export function BackupStep({
   const [isComplete, setIsComplete] = useState(false);
 
   const log = (msg: string) => {
-    setLogs((prevLogs) => [
-      ...prevLogs,
-      `[${new Date().toLocaleTimeString()}] ${msg}`,
-    ]);
+    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
   };
 
   const startBackup = async () => {

@@ -3,7 +3,7 @@ import React from "react";
 import { ArrowRightLeft } from "lucide-react";
 
 type StepHeadingCardProps = {
-  icon?: React.ReactNode;
+  icon?: React.ElementType;
   heading?: string;
   subHeading?: string;
   variant?: string;
@@ -11,7 +11,7 @@ type StepHeadingCardProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function StepHeadingCard({
-  icon,
+  icon: Icon = ArrowRightLeft,
   heading,
   subHeading,
 }: StepHeadingCardProps) {
@@ -19,7 +19,7 @@ export default function StepHeadingCard({
 
   return (
     <div className="flex items-center gap-3 p-4 border-b border-[#87D2ED]">
-      {icon || <ArrowRightLeft size={30} color="#049FD9" />}
+      <Icon size={30} color="#049FD9" className="shrink-0" />
 
       <div className="flex flex-col gap-1">
         <p className="font-semibold text-[16px]">{heading}</p>

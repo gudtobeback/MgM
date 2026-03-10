@@ -178,6 +178,8 @@ export class AuthService {
 
     const user = result.rows[0];
 
+    console.log("User: ", user);
+
     return {
       id: user.id,
       email: user.email,

@@ -52,6 +52,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
     const user = await AuthService.getUserById(tokens?.user?.id);
 
+
     res.json({
       accessToken: tokens?.accessToken,
       refreshToken: tokens?.refreshToken,

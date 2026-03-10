@@ -29,7 +29,15 @@ export const apiEndpoints = {
 
   getCurrentUser: () => api.get(`/auth/me`),
 
+  getUserPermissions: () => api.get(`/auth/permissions`),
+
   listOrganizations: () => api.get(`/organizations`),
 
   updateSubscription: (body) => api.patch(`/auth/subscription`, body),
+
+  // Super Admin Endpoints
+  listUsers: () => api.get(`/admin/users`),
+
+  listAuditLogs: (limit = 100, offset = 0) =>
+    api.get(`/admin/audit?limit=${limit}&offset=${offset}`),
 };

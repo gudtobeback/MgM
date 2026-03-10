@@ -1,170 +1,152 @@
-import React, { useEffect, useState } from 'react';
-import { Search, Trash2 } from 'lucide-react';
-import { apiClient } from '../../../services/apiClient';
+import React, { useEffect, useState } from "react";
 
-interface UserRow {
-  id: number;
-  email: string;
-  full_name: string | null;
-  role: string;
-  subscription_tier: string;
-  company_id: number | null;
-  company_name: string | null;
-  created_at: string;
-}
+import { Input, Select } from "antd";
+import { Trash2 } from "lucide-react";
+
+import PageHeader from "../../ui/PageHeader";
+
+import { apiClient } from "../../../services/apiClient";
+import { useListAllUses } from "@/src/hooks/useListAllUses";
+
+const { Search } = Input;
 
 export function AllUsersPage() {
-  const [users, setUsers] = useState<UserRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
-  const load = async () => {
-    try {
-      const data = await apiClient.listAdminUsers();
-      setUsers(data);
-    } catch (err) {
-      console.error('Load users error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { load(); }, []);
+  const { users, usersLoading, fetchAllUsers } = useListAllUses();
 
   const handleUpdateRole = async (userId: number, role: string) => {
     try {
       await apiClient.updateAdminUser(userId, { role });
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
+
+      fetchAllUsers();
     } catch (err: any) {
-      alert(err.message || 'Failed to update role');
+      alert(err.message || "Failed to update role");
     }
   };
 
   const handleDelete = async (userId: number) => {
-    if (!confirm('Delete this user? This cannot be undone.')) return;
+    if (!confirm("Delete this user? This cannot be undone.")) return;
     try {
       await apiClient.deleteAdminUser(userId);
-      await load();
+
+      fetchAllUsers();
     } catch (err: any) {
-      alert(err.message || 'Failed to delete user');
+      alert(err.message || "Failed to delete user");
     }
   };
 
-  const filtered = users.filter(u =>
-    !search || u.email.toLowerCase().includes(search.toLowerCase()) ||
-    (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
-    (u.company_name || '').toLowerCase().includes(search.toLowerCase())
+  const filtered = users.filter(
+    (u) =>
+      !search ||
+      u.email.toLowerCase().includes(search.toLowerCase()) ||
+      (u.full_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (u.company_name || "").toLowerCase().includes(search.toLowerCase()),
   );
 
-  const ROLE_BADGE: Record<string, React.CSSProperties> = {
-    super_admin: { backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' },
-    company_admin: { backgroundColor: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' },
-    user: { backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-tertiary)', border: '1px solid var(--color-border-subtle)' },
-  };
-
-  const TH: React.CSSProperties = {
-    padding: '10px 16px', fontSize: '11px', fontWeight: 600,
-    color: 'var(--color-text-tertiary)', textAlign: 'left',
-    backgroundColor: 'var(--color-bg-secondary)',
-    borderBottom: '1px solid var(--color-border-subtle)',
-  };
-  const TD: React.CSSProperties = {
-    padding: '11px 16px', fontSize: '13px', color: 'var(--color-text-primary)',
-    borderBottom: '1px solid var(--color-border-subtle)',
-  };
-
   return (
-    <div>
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>All Users</h1>
-        <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
-          View and manage all users across all companies.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8 p-6">
+      <PageHeader
+        heading="All Users"
+        subHeading="View and manage all users across all companies."
+      />
 
-      {/* Search */}
-      <div style={{ position: 'relative', marginBottom: '16px', maxWidth: '360px' }}>
-        <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-tertiary)' }} />
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search by email, name, or company…"
-          style={{
-            width: '100%', padding: '8px 12px 8px 34px', fontSize: '13px',
-            border: '1px solid var(--color-border-primary)', borderRadius: '6px',
-            backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)',
-            outline: 'none', boxSizing: 'border-box',
-          }}
-        />
-      </div>
+      <div className="flex flex-col gap-5">
+        {/* Search */}
+        <div className="max-w-[360px]">
+          <Search
+            placeholder="Search by email, name, or company…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
 
-      <div style={{ border: '1px solid var(--color-border-primary)', borderRadius: '8px', overflow: 'hidden' }}>
-        {loading ? (
-          <div style={{ padding: '32px', textAlign: 'center', fontSize: '14px', color: 'var(--color-text-tertiary)' }}>
-            Loading users…
-          </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  <th style={TH}>Email</th>
-                  <th style={TH}>Name</th>
-                  <th style={{ ...TH, width: '140px' }}>Role</th>
-                  <th style={{ ...TH, width: '160px' }}>Company</th>
-                  <th style={{ ...TH, width: '100px' }}>Tier</th>
-                  <th style={{ ...TH, width: '60px' }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 ? (
+        <div className="p-5 bg-white rounded-xl shadow-[0_0px_8px_rgba(0,0,0,0.10)]">
+          {usersLoading ? (
+            <div className="p-8 text-center text-[14px] text-[var(--color-text-tertiary)]">
+              Loading users…
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table
+                className="w-full border-collapse
+                [&_td]:px-2 [&_td]:py-2 [&_td]:text-[14px] [&_td]:text-center
+                [&_th]:px-2 [&_th]:py-2 [&_th]:text-[14px]"
+              >
+                <thead>
                   <tr>
-                    <td colSpan={6} style={{ ...TD, textAlign: 'center', color: 'var(--color-text-tertiary)' }}>
-                      {search ? 'No users match your search' : 'No users found'}
-                    </td>
-                  </tr>
-                ) : filtered.map(u => (
-                  <tr key={u.id}>
-                    <td style={TD}>{u.email}</td>
-                    <td style={{ ...TD, color: 'var(--color-text-secondary)' }}>{u.full_name || '—'}</td>
-                    <td style={TD}>
-                      <select
-                        value={u.role}
-                        onChange={e => handleUpdateRole(u.id, e.target.value)}
-                        style={{
-                          padding: '4px 8px', fontSize: '12px',
-                          border: '1px solid var(--color-border-primary)', borderRadius: '4px',
-                          backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)',
-                        }}
-                      >
-                        <option value="user">User</option>
-                        <option value="company_admin">Company Admin</option>
-                        <option value="super_admin">Super Admin</option>
-                      </select>
-                    </td>
-                    <td style={{ ...TD, fontSize: '12px', color: 'var(--color-text-secondary)' }}>
-                      {u.company_name || '—'}
-                    </td>
-                    <td style={{ ...TD, fontSize: '12px' }}>{u.subscription_tier}</td>
-                    <td style={TD}>
-                      <button
-                        onClick={() => handleDelete(u.id)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', display: 'flex', alignItems: 'center' }}
-                        title="Delete user"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                    <th>Email</th>
 
-      <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--color-text-tertiary)' }}>
-        {filtered.length} of {users.length} users
+                    <th>Name</th>
+
+                    <th>Role</th>
+
+                    <th>Company</th>
+
+                    <th>Tier</th>
+
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="text-center">
+                        {search
+                          ? "No users match your search"
+                          : "No users found"}
+                      </td>
+                    </tr>
+                  ) : (
+                    filtered.map((u, idx) => (
+                      <tr key={u.id} className={idx % 2 !== 0 && "bg-gray-100"}>
+                        <td>{u.email}</td>
+
+                        <td>{u.full_name || "—"}</td>
+
+                        <td>
+                          <Select
+                            className="w-full text-start"
+                            placeholder="Select User Role"
+                            value={u.role}
+                            options={[
+                              { value: "user", label: "User" },
+                              {
+                                value: "company_admin",
+                                label: "Company Admin",
+                              },
+                              { value: "super_admin", label: "Super Admin" },
+                            ]}
+                            onChange={(value) => handleUpdateRole(u.id, value)}
+                          />
+                        </td>
+
+                        <td>{u.company_name || "—"}</td>
+
+                        <td>{u.subscription_tier}</td>
+
+                        <td>
+                          <button
+                            onClick={() => handleDelete(u.id)}
+                            className="bg-none border-none cursor-pointer text-[#dc2626] flex items-center"
+                            title="Delete user"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="text-[12px]">
+          {filtered.length} of {users.length} users
+        </div>
       </div>
     </div>
   );

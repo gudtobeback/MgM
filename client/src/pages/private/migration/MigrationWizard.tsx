@@ -151,15 +151,11 @@ export function MigrationWizard() {
   };
 
   const handleNext = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
-    }
+    if (currentStep < steps.length) setCurrentStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
   const handleReset = () => {
@@ -275,7 +271,7 @@ export function MigrationWizard() {
     }
   };
 
-  function canProceedToNext() {
+  function canProceedToNext(): boolean {
     switch (currentStep) {
       case 1:
         return !!migrationData.sourceApiKey;

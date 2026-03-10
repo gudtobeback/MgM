@@ -22,7 +22,11 @@ export type ToolMode =
   | "profile"
   | "subscription"
   | "cat9k"
-  | "team";
+  | "team"
+  | "admin-overview"
+  | "admin-companies"
+  | "admin-users"
+  | "admin-audit";
 
 export const TOOL_MODE_ROUTES: Record<ToolMode, string> = {
   selection: "/selection",
@@ -44,6 +48,10 @@ export const TOOL_MODE_ROUTES: Record<ToolMode, string> = {
   subscription: "/subscription",
   cat9k: "/cat9k",
   team: "/team",
+  "admin-overview": "/admin/overview",
+  "admin-companies": "/admin/companies",
+  "admin-users": "/admin/users",
+  "admin-audit": "/admin/audit",
 };
 
 export const ROUTE_TO_TOOL_MODE: Record<string, ToolMode> = Object.entries(

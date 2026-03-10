@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
   Building2,
   ArrowRightLeft,
   HardDriveDownload,
+  LayoutDashboard,
   HardDriveUpload,
   GitBranch,
   Activity,
@@ -26,8 +27,13 @@ import {
   LayoutGrid,
   ArrowRight,
 } from "lucide-react";
-import { ToolMode, TOOL_MODE_ROUTES } from "../../types/routes";
+import {
+  ToolMode,
+  TOOL_MODE_ROUTES,
+  ROUTE_TO_TOOL_MODE,
+} from "../../types/routes";
 import { useAuth } from "@/src/context/AuthContext";
+import { usePermissions } from "@/src/context/PermissionContext";
 
 interface NavItem {
   id: ToolMode;
@@ -36,7 +42,6 @@ interface NavItem {
   children?: { id: ToolMode; label: string }[];
 }
 
-/* ---- NAV ITEMS (unchanged) ---- */
 const NAV_ITEMS: NavItem[] = [
   { id: "selection", label: "Dashboard", icon: <LayoutGrid size={18} /> },
   // {
@@ -95,6 +100,17 @@ const NAV_ITEMS: NavItem[] = [
   // },
 ];
 
+const SUPER_ADMIN_NAV_ITEMS: NavItem[] = [
+  {
+    id: "admin-overview",
+    label: "Overview",
+    icon: <LayoutDashboard size={16} />,
+  },
+  { id: "admin-companies", label: "Companies", icon: <Building2 size={16} /> },
+  { id: "admin-users", label: "All Users", icon: <Users size={16} /> },
+  { id: "admin-audit", label: "Audit Log", icon: <FileText size={16} /> },
+];
+
 const PERMISSION_GATE: Record<string, ToolMode[]> = {
   backup: ["backup"],
   restore: ["restore"],
@@ -109,42 +125,32 @@ const PERMISSION_GATE: Record<string, ToolMode[]> = {
 };
 
 interface SidebarProps {
-  activeMode: ToolMode;
-  selectedOrgName?: string;
   collapsed: boolean;
   onToggleCollapse: () => void;
-  userRole?: string;
-  userPermissions?: Record<string, boolean>;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  activeMode,
-  selectedOrgName,
   collapsed,
   onToggleCollapse,
-  userRole,
-  userPermissions = {},
 }) => {
+  const { user } = useAuth();
+
+  const { userPermissions } = usePermissions();
+
   const navigate = useNavigate();
-  const isCompanyAdmin = userRole === "company_admin";
-  const isSuperAdmin = userRole === "super_admin";
+  const location = useLocation();
+
+  // Determine current tool mode from route
+  const activeMode: ToolMode =
+    ROUTE_TO_TOOL_MODE[location.pathname] || "selection";
 
   const { logout } = useAuth();
 
-  const isModeAllowed = (mode: ToolMode): boolean => {
-    if (isSuperAdmin) return true;
-    for (const [feature, modes] of Object.entries(PERMISSION_GATE)) {
-      if (modes.includes(mode)) {
-        if (feature in userPermissions && userPermissions[feature] === false)
-          return false;
-      }
-    }
-    return true;
-  };
-
-  const navItems: NavItem[] = NAV_ITEMS;
-
   const [expandedGroup, setExpandedGroup] = useState<ToolMode | null>(null);
+
+  // Use different nav items based on user role
+  const isSuperAdmin = user?.role === "super_admin";
+  const navItems = isSuperAdmin ? SUPER_ADMIN_NAV_ITEMS : NAV_ITEMS;
 
   const isGroupActive = (item: NavItem): boolean => {
     if (item.id === activeMode) return true;
@@ -156,7 +162,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <nav className="flex flex-col h-full overflow-y-auto bg-white border-r">
+    <nav
+      className={`flex flex-col h-full overflow-y-auto bg-white border-r ${!collapsed && "min-w-[200px]"}`}
+    >
       <header className="shrink-0 flex items-center justify-between h-18 px-3">
         {!collapsed && (
           <div className="ml-2 font-bold text-[20px] text-[#049FD9]">

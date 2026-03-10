@@ -1,100 +1,23 @@
 import React, { useState } from "react";
 
 import { message } from "antd";
+import { CheckCircle2 } from "lucide-react";
+
+import { TIERS } from "@/src/constants";
 
 import { cn } from "../../lib/utils";
 
-import { useAuth } from "@/src/context/AuthContext";
 import { apiEndpoints } from "@/src/services/api";
-import { CheckCircle2 } from "lucide-react";
 
-const TIERS = [
-  {
-    id: "free",
-    label: "Free",
-    from: "#9ca3af",
-    to: "#6b7280",
-    ring: "ring-gray-300",
-    features: [
-      "Migration wizard",
-      "Manual backups",
-      "1 organization",
-      "5 snapshots",
-    ],
-    devices: 10,
-  },
-  {
-    id: "essentials",
-    label: "Essentials",
-    from: "#38bdf8",
-    to: "#0ea5e9",
-    ring: "ring-cyan-400",
-    features: [
-      "Everything in Free",
-      "Version control",
-      "Drift detection",
-      "3 organizations",
-      "30 snapshots",
-    ],
-    devices: 20,
-  },
-  {
-    id: "professional",
-    label: "Professional",
-    from: "#a78bfa",
-    to: "#7c3aed",
-    ring: "ring-violet-400",
-    features: [
-      "Everything in Essentials",
-      "Compliance checks",
-      "Bulk operations",
-      "Security posture",
-      "10 organizations",
-    ],
-    devices: 30,
-  },
-  {
-    id: "enterprise",
-    label: "Enterprise",
-    from: "#fbbf24",
-    to: "#f59e0b",
-    ring: "ring-amber-400",
-    features: [
-      "Everything in Professional",
-      "Unlimited organizations",
-      "Scheduled snapshots",
-      "Change management",
-      "Documentation export",
-      "Cross-region sync",
-    ],
-    devices: 40,
-  },
-  {
-    id: "msp",
-    label: "MSP",
-    from: "#3b82f6",
-    to: "#4f46e5",
-    ring: "ring-blue-500",
-    features: [
-      "Everything in Enterprise",
-      "Multi-tenant management",
-      "White-label",
-      "Priority support",
-    ],
-    devices: 50,
-  },
-];
+import { useAuth } from "@/src/context/AuthContext";
 
 export default function SubscriptionPage() {
   const { user, setUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+
   const [changingTier, setChangingTier] = useState(false);
   const [error, setError] = useState("");
-  // const [success, setSuccess] = useState("");
-  const [nameForm, setNameForm] = useState(user?.full_name ?? "");
-  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -106,7 +29,7 @@ export default function SubscriptionPage() {
       const data = res.data;
 
       setUser(data);
-      setNameForm(data.full_name || "");
+
       // console.log("User: ", data);
     } catch (err: any) {
       setError(err.message || "Failed to load profile");

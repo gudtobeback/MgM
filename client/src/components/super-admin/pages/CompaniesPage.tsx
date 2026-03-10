@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Plus, ChevronRight, Trash2 } from 'lucide-react';
-import { apiClient } from '../../../services/apiClient';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus, ChevronRight, Trash2 } from "lucide-react";
+import { apiClient } from "../../../services/apiClient";
+import { useSuperAdminLayout } from "../../layout/SuperAdminLayout";
+import CustomButton from "../../ui/CustomButton";
+import PageHeader from "../../ui/PageHeader";
 
 interface Company {
   id: number;
@@ -9,42 +13,43 @@ interface Company {
   created_at: string;
 }
 
-interface CompaniesPageProps {
-  onSelectCompany: (id: number) => void;
-}
+export function CompaniesPage() {
+  const { setSelectedCompanyId } = useSuperAdminLayout();
 
-export function CompaniesPage({ onSelectCompany }: CompaniesPageProps) {
+  const navigate = useNavigate();
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const load = async () => {
     try {
       const data = await apiClient.listAdminCompanies();
       setCompanies(data);
     } catch (err) {
-      console.error('Load companies error:', err);
+      console.error("Load companies error:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
     setCreating(true);
-    setError('');
+    setError("");
     try {
       await apiClient.createAdminCompany(newName.trim());
-      setNewName('');
+      setNewName("");
       setShowForm(false);
       await load();
     } catch (err: any) {
-      setError(err.message || 'Failed to create company');
+      setError(err.message || "Failed to create company");
     } finally {
       setCreating(false);
     }
@@ -52,93 +57,69 @@ export function CompaniesPage({ onSelectCompany }: CompaniesPageProps) {
 
   const handleDelete = async (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Delete this company? All associated users will lose their company assignment.')) return;
+    if (
+      !confirm(
+        "Delete this company? All associated users will lose their company assignment.",
+      )
+    )
+      return;
     try {
       await apiClient.deleteAdminCompany(id);
       await load();
     } catch (err: any) {
-      alert(err.message || 'Failed to delete company');
+      alert(err.message || "Failed to delete company");
     }
   };
 
-  const TH: React.CSSProperties = {
-    padding: '10px 16px', fontSize: '11px', fontWeight: 600,
-    color: 'var(--color-text-tertiary)', textAlign: 'left',
-    backgroundColor: 'var(--color-bg-secondary)',
-    borderBottom: '1px solid var(--color-border-subtle)',
-  };
-  const TD: React.CSSProperties = {
-    padding: '12px 16px', fontSize: '13px', color: 'var(--color-text-primary)',
-    borderBottom: '1px solid var(--color-border-subtle)',
-  };
-
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>Companies</h1>
-          <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
-            Manage customer companies and their users.
-          </p>
-        </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '9px 18px',
-            backgroundColor: '#2563eb', color: '#fff',
-            border: 'none', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          <Plus size={14} /> Add Company
-        </button>
-      </div>
+    <div className="flex flex-col gap-8 p-6">
+      <PageHeader
+        heading="Companies"
+        subHeading="Manage customer companies and their users."
+      >
+        <CustomButton onClick={() => setShowForm(!showForm)}>
+          <Plus size={20} /> Add Company
+        </CustomButton>
+      </PageHeader>
 
       {showForm && (
-        <div style={{
-          marginBottom: '20px', padding: '16px 20px',
-          border: '1px solid var(--color-border-primary)', borderRadius: '8px',
-          backgroundColor: 'var(--color-bg-secondary)',
-          display: 'flex', gap: '12px', alignItems: 'flex-start', flexWrap: 'wrap',
-        }}>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '6px' }}>
+        <div className="flex gap-3 items-start flex-wrap p-5 bg-white rounded-xl shadow-[0_0px_8px_rgba(0,0,0,0.10)]">
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-[12px] font-semibold text-[var(--color-text-secondary)] mb-1.5">
               COMPANY NAME
             </label>
+
             <input
               value={newName}
-              onChange={e => setNewName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleCreate()}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               placeholder="Acme Corp"
-              style={{
-                width: '100%', padding: '8px 12px', fontSize: '13px',
-                border: '1px solid var(--color-border-primary)', borderRadius: '5px',
-                backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)',
-                outline: 'none', boxSizing: 'border-box',
-              }}
+              className="w-full px-3 py-2 text-[13px] border border-[var(--color-border-primary)] rounded-[5px] bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] outline-none box-border"
             />
-            {error && <div style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px' }}>{error}</div>}
+
+            {error && (
+              <div className="text-[12px] text-[#dc2626] mt-1">{error}</div>
+            )}
           </div>
-          <div style={{ display: 'flex', gap: '8px', paddingTop: '22px' }}>
+
+          <div className="flex gap-2 pt-[22px]">
             <button
               onClick={handleCreate}
               disabled={creating || !newName.trim()}
-              style={{
-                padding: '8px 16px', backgroundColor: '#2563eb', color: '#fff',
-                border: 'none', borderRadius: '5px', fontSize: '13px', fontWeight: 600,
-                cursor: creating ? 'not-allowed' : 'pointer',
-              }}
+              className={`px-4 py-2 bg-[#2563eb] text-white rounded-[5px] text-[13px] font-semibold ${
+                creating ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
             >
-              {creating ? 'Creating…' : 'Create'}
+              {creating ? "Creating…" : "Create"}
             </button>
+
             <button
-              onClick={() => { setShowForm(false); setNewName(''); setError(''); }}
-              style={{
-                padding: '8px 14px', backgroundColor: 'var(--color-bg-primary)',
-                color: 'var(--color-text-secondary)',
-                border: '1px solid var(--color-border-primary)', borderRadius: '5px',
-                fontSize: '13px', cursor: 'pointer',
+              onClick={() => {
+                setShowForm(false);
+                setNewName("");
+                setError("");
               }}
+              className="px-[14px] py-2 bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)] border border-[var(--color-border-primary)] rounded-[5px] text-[13px] cursor-pointer"
             >
               Cancel
             </button>
@@ -146,77 +127,85 @@ export function CompaniesPage({ onSelectCompany }: CompaniesPageProps) {
         </div>
       )}
 
-      <div style={{ border: '1px solid var(--color-border-primary)', borderRadius: '8px', overflow: 'hidden' }}>
+      <div className="p-5 bg-white rounded-xl shadow-[0_0px_8px_rgba(0,0,0,0.10)]">
         {loading ? (
-          <div style={{ padding: '32px', textAlign: 'center', fontSize: '14px', color: 'var(--color-text-tertiary)' }}>
+          <div className="p-8 text-center text-[14px] text-[var(--color-text-tertiary)]">
             Loading companies…
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table
+            className="w-full border-collapse
+            [&_td]:px-2 [&_td]:py-2 [&_td]:text-[14px] [&_td]:text-center
+            [&_th]:px-2 [&_th]:py-2 [&_th]:text-[14px]"
+          >
             <thead>
               <tr>
-                <th style={TH}>Company Name</th>
-                <th style={{ ...TH, width: '120px' }}>Users</th>
-                <th style={{ ...TH, width: '160px' }}>Created</th>
-                <th style={{ ...TH, width: '80px' }}></th>
+                <th>Company Name</th>
+
+                <th>Users</th>
+
+                <th>Created</th>
+
+                <th></th>
               </tr>
             </thead>
+
             <tbody>
               {companies.length === 0 ? (
                 <tr>
-                  <td colSpan={4} style={{ ...TD, textAlign: 'center', color: 'var(--color-text-tertiary)' }}>
+                  <td colSpan={4} className="text-center">
                     No companies found
                   </td>
                 </tr>
-              ) : companies.map(c => (
-                <tr
-                  key={c.id}
-                  onClick={() => onSelectCompany(c.id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td style={TD}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 600 }}>{c.name}</span>
-                      {c.id === 1 && (
-                        <span style={{ fontSize: '10px', padding: '1px 6px', backgroundColor: '#e8f5eb', color: '#025115', borderRadius: '3px', border: '1px solid #bbdfc4' }}>
-                          Default
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td style={TD}>{c.user_count}</td>
-                  <td style={{ ...TD, fontSize: '12px', color: 'var(--color-text-tertiary)' }}>
-                    {new Date(c.created_at).toLocaleDateString()}
-                  </td>
-                  <td style={TD}>
-                    <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
-                      {c.id !== 1 && (
+              ) : (
+                companies.map((c, idx) => (
+                  <tr
+                    key={c.id}
+                    onClick={() => navigate(`/admin/companies/${c.id}`)}
+                    className={`${idx % 2 !== 0 && "bg-gray-100"} cursor-pointer`}
+                  >
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{c.name}</span>
+
+                        {c.id === 1 && (
+                          <span className="text-[10px] px-[6px] py-[1px] bg-[#e8f5eb] text-[#025115] rounded-[3px] border border-[#bbdfc4]">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td>{c.user_count}</td>
+
+                    <td>{new Date(c.created_at).toLocaleDateString()}</td>
+
+                    <td>
+                      <div className="flex gap-1 justify-end">
+                        {c.id !== 1 && (
+                          <button
+                            onClick={(e) => handleDelete(c.id, e)}
+                            className="px-2 py-1 bg-transparent border border-[var(--color-border-subtle)] rounded cursor-pointer text-[#dc2626] flex items-center"
+                            title="Delete company"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+
                         <button
-                          onClick={e => handleDelete(c.id, e)}
-                          style={{
-                            padding: '4px 8px', background: 'transparent',
-                            border: '1px solid var(--color-border-subtle)', borderRadius: '4px',
-                            cursor: 'pointer', color: '#dc2626', display: 'flex', alignItems: 'center',
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCompanyId(c.id);
                           }}
-                          title="Delete company"
+                          className="px-2 py-1 bg-transparent border border-[var(--color-border-subtle)] rounded cursor-pointer text-[var(--color-text-secondary)] flex items-center"
                         >
-                          <Trash2 size={13} />
+                          <ChevronRight size={13} />
                         </button>
-                      )}
-                      <button
-                        onClick={e => { e.stopPropagation(); onSelectCompany(c.id); }}
-                        style={{
-                          padding: '4px 8px', background: 'transparent',
-                          border: '1px solid var(--color-border-subtle)', borderRadius: '4px',
-                          cursor: 'pointer', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center',
-                        }}
-                      >
-                        <ChevronRight size={13} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         )}

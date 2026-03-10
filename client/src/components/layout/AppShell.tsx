@@ -1,50 +1,43 @@
 import React, { useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { TopBar } from "./TopBar";
-import { ToolMode, ROUTE_TO_TOOL_MODE } from "../../types/routes";
+
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+
 import { Toaster } from "../ui/sonner";
+
+import { TopBar } from "./TopBar";
+import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/src/context/AuthContext";
 
-interface AppShellProps {
-  selectedOrgId?: string | null;
-  selectedOrgName?: string;
+export const AppShell = () => {
+  const { authLoading, accessToken } = useAuth();
 
-  userPermissions?: Record<string, boolean>;
-}
-
-export const AppShell: React.FC<AppShellProps> = ({
-  selectedOrgName,
-  userPermissions,
-}) => {
-  const { user } = useAuth();
-
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
-  // Determine current tool mode from route
-  const currentToolMode: ToolMode =
-    ROUTE_TO_TOOL_MODE[location.pathname] || "selection";
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen font-semibold text-lg">
+        Restoring Session...
+      </div>
+    );
+  }
+
+  if (!accessToken) {
+    return <Navigate to="/auth" replace state={{ from: location }} />;
+  }
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div className="flex h-screen">
       <Sidebar
-        activeMode={currentToolMode}
-        selectedOrgName={selectedOrgName}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
-        userRole={user?.role}
-        userPermissions={userPermissions}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
         {/* Top Bar — full width, always at the top */}
         <div className="shrink-0 z-50">
-          <TopBar
-            user={user}
-            toolMode={currentToolMode}
-            selectedOrgName={selectedOrgName}
-          />
+          <TopBar />
         </div>
 
         {/* Main content — only this area scrolls, scrollbar hidden */}

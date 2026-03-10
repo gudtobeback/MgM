@@ -9,7 +9,7 @@ export interface Organization {
   created_at: string;
 }
 
-// Full Migration
+// Full Migration ----------------------
 export interface MigrationData {
   sourceApiKey: string;
   sourceRegion: string;
@@ -34,7 +34,7 @@ export interface MigrationData {
   restoreNetworkSuccessCount: number;
 }
 
-// Cat9k Migration
+// Cat9k Migration ---------------------
 export interface ParsedVlan {
   id: number;
   name: string;
@@ -118,7 +118,7 @@ export interface Cat9KData {
   wasStopped: boolean;
 }
 
-// Restore
+// Restore --------------------------
 export interface RestoreResults {
   log: string[];
   restored: number;

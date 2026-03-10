@@ -1,117 +1,113 @@
-import React, { useEffect, useState } from 'react';
-import { Building2, Users, Database, ArrowRight } from 'lucide-react';
-import { apiClient } from '../../../services/apiClient';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Building2, Users, Database } from "lucide-react";
+import { apiClient } from "../../../services/apiClient";
+import { TOOL_MODE_ROUTES } from "../../../types/routes";
+import SummaryCard from "../../ui/SummaryCard";
 
-interface OverviewPageProps {
-  onNavigate: (page: any) => void;
-}
+import PageHeader from "../../ui/PageHeader";
+import { useListAllUses } from "@/src/hooks/useListAllUses";
+import { useAuditLogs } from "@/src/hooks/useAuditLogs";
 
-export function OverviewPage({ onNavigate }: OverviewPageProps) {
-  const [stats, setStats] = useState({ companies: 0, users: 0, organizations: 0 });
+export function OverviewPage() {
+  const { users } = useListAllUses();
+
+  const { auditLogs } = useAuditLogs();
+
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    companies: 0,
+    users: 0,
+    audits: 0,
+    organizations: 0,
+  });
+
+  const loadcompanies = async () => {
+    try {
+      const companies = await apiClient.listAdminCompanies();
+
+      setStats((prev) => ({
+        ...prev,
+        companies: companies.length,
+      }));
+    } catch (error) {
+      console.error("Overview load error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [companies, users] = await Promise.all([
-          apiClient.listAdminCompanies(),
-          apiClient.listAdminUsers(),
-        ]);
-        setStats({
-          companies: companies.length,
-          users: users.length,
-          organizations: 0,
-        });
-      } catch (err) {
-        console.error('Overview load error:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    loadcompanies();
   }, []);
 
+  useEffect(() => {
+    setStats((prev) => ({
+      ...prev,
+      users: users.length,
+      audits: auditLogs.length,
+    }));
+  }, [users, auditLogs]);
+
   const statCards = [
-    { label: 'Companies', value: stats.companies, icon: <Building2 size={20} />, page: 'companies' },
-    { label: 'Total Users', value: stats.users, icon: <Users size={20} />, page: 'users' },
-    { label: 'Audit Events', value: '—', icon: <Database size={20} />, page: 'audit' },
+    {
+      label: "Companies",
+      value: stats?.companies,
+      icon: <Building2 size={20} />,
+      icon_bg_color: "bg-[#D398E7]",
+      page: "admin-companies",
+    },
+    {
+      label: "Total Users",
+      value: stats?.users,
+      icon: <Users size={20} />,
+      icon_bg_color: "bg-[#E89271]",
+      page: "admin-users",
+    },
+    {
+      label: "Audit Events",
+      value: stats?.audits,
+      icon: <Database size={20} />,
+      icon_bg_color: "bg-[#70A1E5]",
+      page: "admin-audit",
+    },
   ];
 
+  const handleNavigate = (page: string) => {
+    navigate(TOOL_MODE_ROUTES[page as keyof typeof TOOL_MODE_ROUTES]);
+  };
+
   return (
-    <div>
-      <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '6px' }}>
-          MSP Overview
-        </h1>
-        <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
-          Manage all companies, users, and system activity from this portal.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8 p-6">
+      <PageHeader
+        heading="MSP Overview"
+        subHeading="Manage all companies, users, and system activity from this portal."
+      />
 
       {loading ? (
-        <div style={{ fontSize: '14px', color: 'var(--color-text-tertiary)' }}>Loading…</div>
+        <div className="text-[14px] text-[var(--color-text-tertiary)]">
+          Loading…
+        </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
-          {statCards.map(card => (
+        <div className="grid grid-cols-3 gap-6">
+          {statCards.map((card) => (
             <div
               key={card.label}
-              onClick={() => onNavigate(card.page)}
-              style={{
-                border: '1px solid var(--color-border-primary)',
-                borderRadius: '10px',
-                padding: '24px',
-                backgroundColor: 'var(--color-bg-primary)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '16px',
-              }}
+              onClick={() => handleNavigate(card.page)}
+              className="cursor-pointer"
             >
-              <div style={{
-                width: '44px', height: '44px', borderRadius: '10px',
-                backgroundColor: '#e8f5eb',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#2563eb', flexShrink: 0,
-              }}>
-                {card.icon}
-              </div>
-              <div>
-                <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-text-primary)', lineHeight: 1.2 }}>
-                  {card.value}
-                </div>
-                <div style={{ fontSize: '13px', color: 'var(--color-text-tertiary)', marginTop: '2px' }}>
-                  {card.label}
-                </div>
-              </div>
+              <SummaryCard
+                icon={card?.icon}
+                icon_bg_color={card?.icon_bg_color}
+                value={card?.value}
+                label={card?.label}
+              />
             </div>
           ))}
         </div>
       )}
-
-      <div style={{ display: 'flex', gap: '12px' }}>
-        <button
-          onClick={() => onNavigate('companies')}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '9px 18px',
-            backgroundColor: '#2563eb', color: '#fff',
-            border: 'none', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          Manage Companies <ArrowRight size={13} />
-        </button>
-        <button
-          onClick={() => onNavigate('users')}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '9px 18px',
-            backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-primary)',
-            border: '1px solid var(--color-border-primary)', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          View All Users <ArrowRight size={13} />
-        </button>
-      </div>
     </div>
   );
 }
