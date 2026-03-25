@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 import { Input, Select } from "antd";
 import { Trash2 } from "lucide-react";
@@ -36,13 +36,15 @@ export function AllUsersPage() {
     }
   };
 
-  const filtered = users.filter(
-    (u) =>
-      !search ||
-      u.email.toLowerCase().includes(search.toLowerCase()) ||
-      (u.full_name || "").toLowerCase().includes(search.toLowerCase()) ||
-      (u.company_name || "").toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = useMemo(() => {
+    return users.filter(
+      (u) =>
+        !search ||
+        u.email.toLowerCase().includes(search.toLowerCase()) ||
+        (u.full_name || "").toLowerCase().includes(search.toLowerCase()) ||
+        (u.company_name || "").toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [search]);
 
   return (
     <div className="flex flex-col gap-8 p-6">
@@ -128,9 +130,9 @@ export function AllUsersPage() {
 
                         <td>
                           <button
+                            title="Delete user"
                             onClick={() => handleDelete(u.id)}
                             className="bg-none border-none cursor-pointer text-[#dc2626] flex items-center"
-                            title="Delete user"
                           >
                             <Trash2 size={13} />
                           </button>

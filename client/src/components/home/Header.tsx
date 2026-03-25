@@ -12,7 +12,7 @@ export default function Header() {
         onClick={() => navigate("/home")}
         className="text-[18px] font-semibold cursor-pointer"
       >
-        AegisOne Management
+        AurionOne Management
       </div>
 
       <div className="hidden md:flex items-center gap-8">

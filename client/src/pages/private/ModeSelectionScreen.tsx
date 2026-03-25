@@ -21,6 +21,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useOrganization } from "@/src/context/OrganizationContext";
 import SummaryCard from "@/src/components/ui/SummaryCard";
 import PageHeader from "@/src/components/ui/PageHeader";
+import axios from "axios";
 
 // ── Tool cards ────────────────────────────────────────────────────────────────
 const TOOLS: {
@@ -230,7 +231,7 @@ export const ModeSelectionScreen = () => {
         {/* Welcome Section */}
         <PageHeader
           heading={`Welcome back, ${firstName}`}
-          subHeading={`Unified AegisOne Management — ${organizations?.length || 0} organization connected.`}
+          subHeading={`Unified AurionOne Management — ${organizations?.length || 0} organization connected.`}
         >
           {/* <CustomButton
           onClick={() => handleNavigate("organizations")}

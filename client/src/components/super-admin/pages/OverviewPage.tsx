@@ -10,9 +10,9 @@ import { useListAllUses } from "@/src/hooks/useListAllUses";
 import { useAuditLogs } from "@/src/hooks/useAuditLogs";
 
 export function OverviewPage() {
-  const { users } = useListAllUses();
+  const { users, usersLoading } = useListAllUses();
 
-  const { auditLogs } = useAuditLogs();
+  const { auditLogs, auditLogsLoading } = useAuditLogs();
 
   const navigate = useNavigate();
 
@@ -86,7 +86,7 @@ export function OverviewPage() {
         subHeading="Manage all companies, users, and system activity from this portal."
       />
 
-      {loading ? (
+      {usersLoading || auditLogsLoading ? (
         <div className="text-[14px] text-[var(--color-text-tertiary)]">
           Loading…
         </div>

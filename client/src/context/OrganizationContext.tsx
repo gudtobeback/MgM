@@ -7,6 +7,7 @@ import { TOOL_MODE_ROUTES } from "../types/routes";
 import { apiEndpoints } from "../services/api";
 
 import { useAuth } from "./AuthContext";
+import axios from "axios";
 
 /* =========================
    Types
@@ -89,6 +90,21 @@ export const OrganizationProvider = ({
       setSelectedOrgName(organizations[0].meraki_org_name);
     }
   }, [organizations]);
+
+  // Test
+  const getJokes = async () => {
+    try {
+      const res = axios.get("http://192.168.0.188:8788/api/jokes");
+
+      console.log("Jokes: ", res);
+    } catch (error) {
+      console.error("Error Getting Jokes: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getJokes();
+  }, []);
 
   return (
     <OrganizationContext.Provider
