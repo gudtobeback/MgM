@@ -30,11 +30,11 @@ const sections: Section[] = [
           },
           {
             term: "User",
-            def: "Any individual accessing or using the Website or Services, whether on their own behalf or on behalf of a legal entity.",
+            def: "Any individual accessing or using the Website or Services, whether on their own behalf or on behalf of a legal entity. If you use the Services on behalf of an entity, you represent that you are authorized to bind that entity.",
           },
           {
             term: "Website",
-            def: "The official website operated by the Company, including all subdomains, dashboards, login portals, web applications, mobile applications, and any other digital platform through which Services are made available.",
+            def: "The official website operated by the Company, including all subdomains, dashboards, login portals, web applications, and interfaces, mobile applications, and any other digital platform or interface through which the Services are made available by the Company.",
           },
         ].map(({ term, def }) => (
           <div
@@ -60,36 +60,40 @@ const sections: Section[] = [
       <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
         <p>
           The Company provides a web-based platform that helps Users manage and
-          organise system setups — including full backups, restoring previous
-          versions, and applying saved setups to other systems.
+          organise their system setups. The Services allow Users to create full
+          backups of their systems, restore previous versions, and apply their
+          saved system setups to other systems.
         </p>
         <div className="p-4 bg-amber-50 border border-amber-100 rounded-lg text-amber-800 text-sm">
           <strong className="font-semibold">Important:</strong> The Platform
           only works with system information Users choose to share through
-          supported third-party systems. The Company does not access network
-          traffic, personal messages, files, financial data, or live system
-          data.
+          supported third-party systems. The Company does not access, view, or
+          handle your network traffic, personal messages, files, financial data,
+          or live system data.
         </div>
         <p>
-          The Services depend on third-party systems and APIs outside our
-          control. We cannot guarantee uninterrupted access if those systems
-          change or are discontinued.
+          The Services depend on the availability and functionality of
+          third-party systems and APIs. The Company does not control such
+          third-party systems and cannot guarantee uninterrupted access or
+          performance if those systems are changed, restricted, or discontinued.
         </p>
         <p>
-          The Platform is a technical tool to support configuration management —
-          it does not replace the User's internal review, approval, testing, or
-          change management processes.{" "}
+          The Platform is a technical tool intended to support configuration
+          management — it does not replace the User's internal review, approval,
+          testing, or change management processes.{" "}
           <strong className="text-slate-700 font-medium">
             Users remain fully responsible for reviewing and approving all
             configuration changes before implementation.
-          </strong>
+          </strong>{" "}
+          The Company is not responsible for any operational impact resulting
+          from configuration changes initiated by the User.
         </p>
         <p>
           The Platform is not designed to process sensitive personal data,
-          financial information, payment credentials, or regulated content. The
-          Services shall not be construed as network monitoring, managed
-          security, compliance certification, data hosting, or traffic analytics
-          services.
+          financial information, payment credentials, or regulated content
+          categories. The Services shall not be construed as network monitoring,
+          managed security, compliance certification, data hosting, or traffic
+          analytics services.
         </p>
       </div>
     ),
@@ -107,8 +111,11 @@ const sections: Section[] = [
             limited, non-exclusive, non-transferable, non-sublicensable,
             revocable license
           </strong>{" "}
-          to access and use the Platform solely for internal business operations
-          through the Website.
+          to access and use the Platform through the Website solely for your
+          internal business operations and only in connection with supported
+          third-party systems for which you have valid authorization. This
+          license does not constitute a sale of the Platform or any related
+          intellectual property.
         </p>
         <p>
           The Platform is made available on a hosted SaaS basis only. No source
@@ -139,7 +146,9 @@ const sections: Section[] = [
           The Company reserves the right to modify, suspend, or discontinue any
           feature at its sole discretion, provided this does not fundamentally
           deprive the User of the core licensed use during an active
-          subscription period.
+          subscription period. Nothing in this Agreement shall be interpreted as
+          granting any ownership rights, IP rights, or implied licenses in or to
+          the Platform, Website, or any related documentation or trademarks.
         </p>
       </div>
     ),
@@ -157,7 +166,9 @@ const sections: Section[] = [
           <strong className="text-slate-700 font-medium">
             automatically renew
           </strong>{" "}
-          unless cancelled prior to the renewal date.
+          for successive terms of equal duration unless cancelled prior to the
+          renewal date. Continued access following renewal constitutes
+          acceptance of the renewed term and applicable fees.
         </p>
         <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
           <p className="font-semibold text-slate-700 text-xs uppercase tracking-wider">
@@ -165,8 +176,8 @@ const sections: Section[] = [
           </p>
           <ul className="space-y-1.5">
             {[
-              "All fees are paid in advance and are exclusive of applicable taxes",
-              "Subscription fees are non-refundable and non-cancellable except where required by law",
+              "All fees are paid in advance and are exclusive of applicable taxes, levies, or governmental charges",
+              "Subscription fees are non-refundable and non-cancellable except where required by applicable law",
               "The Company may revise fees upon renewal with reasonable prior notice",
               "Continued use after notice constitutes acceptance of revised pricing",
             ].map((item) => (
@@ -178,14 +189,22 @@ const sections: Section[] = [
           </ul>
         </div>
         <p>
-          Usage is subject to plan limits (users, connected systems, backup
-          volume, API thresholds). Exceeding limits may result in upgrade
-          requirements, additional charges, or access restriction.
+          Usage is subject to plan limits (number of authorised users, connected
+          systems or organisations, backup volume, API usage thresholds, feature
+          availability tiers). Exceeding limits may result in upgrade
+          requirements, additional charges, suspension of excess usage, or
+          access restriction until compliance is restored.
+        </p>
+        <p>
+          You may upgrade your plan at any time subject to prorated charges.
+          Downgrades take effect at the end of the current term — no refunds or
+          credits are issued for unused portions of a higher-tier plan.
         </p>
         <p>
           Access may be suspended without liability for non-payment, Agreement
-          breach, suspected misuse, or security threats. Where practicable,
-          notice will be provided before suspension.
+          breach, suspected misuse, security threats, or activity adversely
+          affecting system stability. Where practicable, notice will be provided
+          before suspension.
         </p>
       </div>
     ),
@@ -199,18 +218,22 @@ const sections: Section[] = [
         <p>
           You are solely responsible for ensuring you have all necessary rights,
           authorisations, and administrative permissions to connect the Platform
-          to any third-party systems.
+          to any third-party systems, networks, or environments. By initiating
+          any integration or configuration activity, you represent and warrant
+          that you are duly authorised to access and modify the relevant
+          systems.
         </p>
         <ul className="space-y-2">
           {[
-            "Independently review, validate, and approve all configuration changes, migrations, and rollback operations prior to execution",
-            "Implement internal governance procedures, change-management workflows, and testing protocols before applying changes to production",
-            "Ensure use complies with all applicable laws, regulations, and third-party contractual obligations",
-            "Not transmit, store, or embed malicious code or scripts that could interfere with systems",
-            "Safeguard account credentials and promptly report any unauthorized access or security incidents",
+            "Independently review, validate, and approve all configuration changes, migrations, and rollback operations prior to and after execution",
+            "Implement internal governance procedures, change-management workflows, and testing protocols before applying changes to production environments",
+            "Maintain adequate backup strategies and risk mitigation controls — the Platform is not a substitute for independent system oversight or disaster recovery planning",
+            "Ensure use complies with all applicable laws, regulations, industry standards, and third-party contractual obligations",
+            "Not transmit, store, or embed malicious code, harmful scripts, or unauthorised automation routines that could interfere with systems",
+            "Safeguard account credentials and promptly report any unauthorised access, credential compromise, or security incidents",
             "Not impose excessive load on the Platform through automated scripts or bulk operations beyond your subscription plan",
-            "Not introduce sensitive personal data, financial information, or regulated data into configuration fields",
-            "Cooperate in good faith with any security investigation or compliance inquiry",
+            "Not introduce sensitive personal data, financial information, or regulated data into configuration fields or system metadata",
+            "Cooperate in good faith with any security investigation, technical incident, or compliance inquiry",
           ].map((item) => (
             <li key={item} className="flex items-start gap-3 text-slate-600">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-300 shrink-0" />
@@ -233,13 +256,13 @@ const sections: Section[] = [
         </p>
         <div className="space-y-2">
           {[
-            "Disrupting, degrading, or interfering with the integrity, performance, or security of the Platform",
-            "Automated extraction, scraping, crawling, data harvesting, stress testing, or high-volume automated activities beyond the subscription scope",
-            "Probing, scanning, or attempting to circumvent technical safeguards, rate limits, or access controls",
-            "Reverse engineering, decompiling, or attempting to derive the Platform's source code",
-            "Copying, modifying, translating, or creating derivative works of the Platform",
+            "Disrupting, degrading, or interfering with the integrity, performance, availability, or security of the Platform",
+            "Automated extraction, scraping, crawling, data harvesting, stress testing, load testing, or high-volume automated activities beyond the subscription scope",
+            "Probing, scanning, testing the vulnerability of, or circumventing technical safeguards, rate limits, or access controls",
+            "Reverse engineering, decompiling, disassembling, or attempting to derive the Platform's source code",
+            "Copying, modifying, translating, adapting, or creating derivative works of the Platform",
             "Using the Platform to develop a competing product or service",
-            "Accessing the Platform for benchmarking or competitive analysis without prior written consent",
+            "Accessing the Platform for benchmarking, performance testing, or competitive analysis without prior written consent",
           ].map((item) => (
             <div
               key={item}
@@ -250,6 +273,11 @@ const sections: Section[] = [
             </div>
           ))}
         </div>
+        <p className="text-sm text-slate-500">
+          Any use in contravention of this Clause may result in immediate
+          suspension or termination of access, without prejudice to any other
+          rights or remedies available to the Company.
+        </p>
       </div>
     ),
   },
@@ -261,8 +289,9 @@ const sections: Section[] = [
       <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
         <p>
           The Platform may integrate with or rely on third-party systems, cloud
-          infrastructure, application marketplaces, operating systems, and APIs
-          ("Third-Party Platforms") owned and operated by independent entities.
+          infrastructure providers, application marketplaces, operating systems,
+          and APIs ("Third-Party Platforms") owned and operated by independent
+          entities over whom the Company has no control.
         </p>
         <p>
           The Company is not responsible for interruptions, degradation, or loss
@@ -273,9 +302,9 @@ const sections: Section[] = [
             "Outages or service disruptions of Third-Party Platforms",
             "Changes to API structures, rate limits, or integration permissions",
             "Modifications to mobile operating systems or device environments",
-            "Removal or restriction of the application from any marketplace",
-            "Revocation of credentials issued by third-party systems",
-            "Security incidents originating within Third-Party Platforms",
+            "Removal, suspension, or restriction of the application from any marketplace",
+            "Revocation or limitation of credentials issued by third-party systems",
+            "Security incidents or failures originating within Third-Party Platforms",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2 text-slate-500">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 shrink-0" />
@@ -284,10 +313,12 @@ const sections: Section[] = [
           ))}
         </ul>
         <p>
-          You are responsible for ensuring your devices and connected systems
-          meet the technical requirements necessary to access the Services. You
-          must also comply with all terms governing your access to any connected
-          Third-Party Platforms.
+          You are responsible for ensuring your devices, operating systems, and
+          connected systems meet the technical requirements necessary to access
+          the Services. You must also comply with all terms governing your
+          access to any connected Third-Party Platforms. No third party shall be
+          deemed responsible for the Company's obligations under this Agreement,
+          and vice versa.
         </p>
       </div>
     ),
@@ -299,10 +330,11 @@ const sections: Section[] = [
     content: (
       <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
         <p>
-          The Platform operates solely at the configuration control plane level.
-          It does not inspect, monitor, intercept, or process network traffic,
-          communications content, payment information, or end-user personal
-          data.
+          The Platform operates solely as a configuration management and backup
+          tool at the control plane level. It does not inspect, monitor,
+          intercept, or process network traffic, communications content, payment
+          information, financial transaction data, or end-user personal data
+          transmitted through the User's network infrastructure.
         </p>
         <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
           <p className="font-semibold text-indigo-800 text-xs uppercase tracking-wider mb-2">
@@ -310,19 +342,27 @@ const sections: Section[] = [
           </p>
           <p className="text-indigo-700 text-sm">
             Data stored is limited to configuration metadata — firewall rules,
-            VLAN identifiers, SSID settings, device mappings, audit logs, and
-            similar technical records. This does not constitute customer content
-            or transactional data.
+            VLAN identifiers, SSID settings, configuration parameters, device
+            mappings, audit logs of configuration changes, and similar technical
+            records. This does not constitute customer content or transactional
+            data.
           </p>
         </div>
         <p>
-          The Company does not act as a processor of personal data belonging to
-          your customers or end-users.{" "}
+          The Company does not act as a processor or sub-processor of personal
+          data belonging to your customers or end-users.{" "}
           <strong className="text-slate-700 font-medium">
             You must not upload, transmit, or embed personal data, financial
-            information, or regulated sensitive information into configuration
-            fields.
+            information, payment data, or regulated sensitive information into
+            configuration fields or audit logs.
           </strong>
+        </p>
+        <p>
+          The Company implements commercially reasonable administrative and
+          technical safeguards appropriate to the limited nature of
+          Configuration Data processed. However, you remain solely responsible
+          for determining whether the Services meet your internal regulatory,
+          contractual, or compliance requirements.
         </p>
         <p>
           Personal data processing related to your account is governed by the{" "}
@@ -341,14 +381,19 @@ const sections: Section[] = [
     content: (
       <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
         <p>
-          The Website, Services, and all software, source code, algorithms,
-          interfaces, workflows, designs, documentation, trademarks, and all
-          updates and derivative works (collectively, "Company IP") are and
-          remain the exclusive property of the Company.
+          The Website, including any mobile application, and the Services,
+          together with all software, source code, object code, algorithms,
+          interfaces, workflows, designs, documentation, visual interfaces,
+          trade names, trademarks, logos, and all enhancements, modifications,
+          updates, and derivative works thereof (collectively, "Company
+          Intellectual Property") are and shall remain the exclusive property of
+          the Company.
         </p>
         <p>
-          No right, title, or interest in Company IP is transferred to you. All
-          rights not expressly granted are reserved.
+          No right, title, or interest in Company Intellectual Property is
+          transferred to you. All rights not expressly granted are reserved. You
+          shall not remove, obscure, or alter any proprietary notices,
+          trademarks, or copyright notices within the Website or Services.
         </p>
         <div className="p-4 bg-green-50 border border-green-100 rounded-lg">
           <p className="font-semibold text-green-800 text-xs uppercase tracking-wider mb-2">
@@ -357,15 +402,16 @@ const sections: Section[] = [
           <p className="text-green-700 text-sm">
             You retain all rights, title, and interest in your Configuration
             Data. You grant the Company a limited, non-exclusive, worldwide,
-            royalty-free license to host and process it solely to provide and
-            improve the Services.
+            royalty-free license to host, process, store, and transmit
+            Configuration Data solely for the purpose of providing and improving
+            the Services.
           </p>
         </div>
         <p>
           Any feedback, suggestions, or recommendations you provide may be used
           by the Company without restriction, obligation, or compensation. You
           hereby grant the Company a perpetual, irrevocable, royalty-free right
-          to incorporate such Feedback into the Services.
+          to incorporate such Feedback into the Services or other products.
         </p>
       </div>
     ),
@@ -389,11 +435,11 @@ const sections: Section[] = [
         </div>
         <ul className="space-y-1.5">
           {[
-            "No warranty of merchantability, fitness for purpose, or non-infringement",
+            "No warranty of merchantability, fitness for a particular purpose, satisfactory quality, or non-infringement",
             "No warranty of uninterrupted availability, accuracy, or reliability",
-            "No guarantee that Services will be error-free or secure",
-            "No warranty that configuration backups or rollbacks will prevent all disruptions",
-            "No representation regarding continued compatibility with third-party systems",
+            "No guarantee that Services will be error-free, secure, or free from defects",
+            "No warranty that configuration backups, migrations, or rollbacks will prevent all service interruptions or operational disruptions",
+            "No representation regarding continued compatibility with third-party systems, APIs, operating systems, or cloud infrastructure",
             "No warranty created by any oral or written advice from Company representatives",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2 text-slate-500">
@@ -403,6 +449,8 @@ const sections: Section[] = [
           ))}
         </ul>
         <p className="text-slate-500 text-xs">
+          The User assumes full responsibility for reviewing, validating,
+          testing, and approving all configuration changes prior to deployment.
           Nothing in this Agreement excludes any warranty that cannot be
           excluded under applicable law.
         </p>
@@ -420,26 +468,26 @@ const sections: Section[] = [
             Liability Cap
           </p>
           <p className="text-white text-sm leading-relaxed">
-            The Company's aggregate liability shall not exceed the total
-            subscription fees paid by the User during the{" "}
+            The Company's aggregate cumulative liability shall not exceed the
+            total subscription fees actually paid by the User during the{" "}
             <strong>3 months immediately preceding</strong> the event giving
             rise to the claim.
           </p>
         </div>
         <p>
           The Company shall not be liable for any indirect, incidental,
-          consequential, special, or punitive damages, including loss of
-          profits, revenue, business opportunity, goodwill, data, or cost of
-          substitute services.
+          consequential, special, exemplary, or punitive damages, including loss
+          of profits, revenue, business opportunity, goodwill, business
+          interruption, loss of data, or cost of substitute services.
         </p>
         <p>Specific exclusions include damages arising from:</p>
         <ul className="space-y-1.5">
           {[
-            "Configuration errors or deployment decisions made by the User",
+            "Configuration errors, misconfigurations, or deployment decisions made by the User",
             "Migration, rollback, or configuration changes implemented by the User",
-            "Outages or service failures attributable to Third-Party Platforms",
+            "Outages, API changes, access restrictions, or service failures attributable to Third-Party Platforms",
             "Unauthorized access resulting from the User's failure to safeguard credentials",
-            "Incompatibility with third-party systems, devices, or software",
+            "Incompatibility with third-party systems, devices, or software environments",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2 text-slate-500">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 shrink-0" />
@@ -465,12 +513,12 @@ const sections: Section[] = [
         <ul className="space-y-1.5">
           {[
             "Your use or misuse of the Services",
-            "Any configuration changes, migration, rollback, or deployment decisions you implement",
-            "Your violation of this Agreement or applicable laws",
-            "Unauthorized access resulting from your failure to maintain proper access controls",
+            "Any configuration changes, migration activities, rollback operations, or deployment decisions you implement through the Platform",
+            "Your violation of this Agreement or applicable laws or regulatory requirements",
+            "Unauthorized access to third-party systems resulting from your failure to maintain proper credentials or access controls",
             "Any claim made by a third party due to your acts or omissions",
             "Any fraud, misconduct, or negligence on your part",
-            "Any personal or regulated data embedded by you within configuration fields",
+            "Any personal data or regulated information embedded by you within configuration fields",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2 text-slate-500">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 shrink-0" />
@@ -478,6 +526,12 @@ const sections: Section[] = [
             </li>
           ))}
         </ul>
+        <p className="text-sm text-slate-500">
+          The Company's indemnification rights are independent of, and in
+          addition to, any other rights and remedies it may have at law or in
+          equity, including the right to seek specific performance, restitution,
+          or injunctive relief.
+        </p>
       </div>
     ),
   },
@@ -490,12 +544,13 @@ const sections: Section[] = [
         <p>
           The Company may suspend or restrict your access without prior notice
           if you breach this Agreement, threaten Platform security, create legal
-          or regulatory risk, have overdue payments, or if suspension is
-          required by law.
+          or regulatory risk, have overdue subscription payments, or if
+          suspension is required to comply with applicable law or a lawful
+          governmental request.
         </p>
         <p>
           You may terminate by discontinuing use and cancelling your
-          subscription.{" "}
+          subscription per the Website's cancellation procedures.{" "}
           <strong className="text-slate-700 font-medium">
             Termination does not entitle you to a refund.
           </strong>{" "}
@@ -503,8 +558,9 @@ const sections: Section[] = [
         </p>
         <p>
           The Company may terminate upon 15 days' written notice for material
-          breach (where cure is possible), immediately for incurable breach, or
-          if continued service becomes commercially impracticable.
+          breach where cure is possible, immediately for incurable breach, or if
+          continued provision becomes commercially impracticable or legally
+          restricted.
         </p>
         <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
           <p className="font-semibold text-slate-700 text-xs uppercase tracking-wider mb-2">
@@ -512,10 +568,10 @@ const sections: Section[] = [
           </p>
           <ul className="space-y-1.5">
             {[
-              "Your right to access the Services ceases immediately",
-              "Your account may be deactivated or deleted",
+              "Your right to access and use the Services ceases immediately",
+              "The Company may deactivate or delete your account",
               "The Company has no obligation to maintain Configuration Data beyond a reasonable transition period",
-              "You are solely responsible for exporting your Configuration Data beforehand",
+              "You are solely responsible for exporting your Configuration Data prior to termination",
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-slate-500">
                 <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 shrink-0" />
@@ -525,7 +581,9 @@ const sections: Section[] = [
           </ul>
         </div>
         <p className="text-xs text-slate-400">
-          Clauses 9, 10, 11, 12, and 15.1 survive termination of this Agreement.
+          Clauses 9 (Intellectual Property), 10 (Disclaimer of Warranties), 11
+          (Limitation of Liability), 12 (Indemnity), and 15.1 (Governing Law)
+          survive termination of this Agreement.
         </p>
       </div>
     ),
@@ -540,15 +598,15 @@ const sections: Section[] = [
           You agree to keep all Confidential Information of the Company strictly
           confidential and not disclose it to any third party without prior
           written consent. Confidential Information may only be used for the
-          purpose of this Agreement and not for personal benefit.
+          purpose of this Agreement and not for personal benefit. You must
+          ensure your directors, officers, and employees afforded access to
+          Confidential Information are bound by the same obligations.
         </p>
-        <p>
-          These confidentiality obligations do not apply to information that:
-        </p>
+        <p>These obligations do not apply to information that:</p>
         <ul className="space-y-1.5">
           {[
             "Becomes publicly available other than through your disclosure",
-            "Must be disclosed under applicable law or judicial process (with prior notice to the Company where practicable)",
+            "Must be disclosed under applicable law or judicial or regulatory process (with prior notice to the Company where practicable, and subject to arrangements to protect confidentiality)",
           ].map((item) => (
             <li key={item} className="flex items-start gap-2 text-slate-500">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-slate-400 shrink-0" />
@@ -559,7 +617,7 @@ const sections: Section[] = [
         <p>
           The Company may publish a general description of work performed under
           this Agreement on its website or third-party platforms to demonstrate
-          its experience.
+          its experience to potential clients.
         </p>
       </div>
     ),
@@ -573,19 +631,19 @@ const sections: Section[] = [
         {[
           {
             title: "Governing Law",
-            body: "This Agreement is governed by the laws of India. The courts in Mumbai shall have exclusive jurisdiction over all disputes arising out of or in connection with this Agreement.",
+            body: "This Agreement is governed in all respects by the laws of India. The courts in Mumbai shall have exclusive jurisdiction over all disputes, differences, controversies, and questions directly or indirectly arising under, out of, or in connection with this Agreement.",
           },
           {
             title: "Entire Agreement",
-            body: "This Agreement, together with the Privacy Policy and any subscription terms incorporated by reference, constitutes the entire agreement between you and the Company and supersedes all prior understandings.",
+            body: "This Agreement, together with the Privacy Policy and any subscription terms or pricing plans expressly incorporated by reference, constitutes the entire agreement between the Company and the User and supersedes all prior or contemporaneous understandings, communications, representations, or agreements, whether oral or written.",
           },
           {
             title: "Notices",
-            body: "Notices may be sent by email to the address associated with your account. You are responsible for maintaining an accurate email address. Email notices are deemed received upon confirmed transmission.",
+            body: "Notices may be sent by email to the address associated with your account, or by email to the Company at the contact details specified on the Website. Email notices are deemed received upon confirmed transmission. You are solely responsible for maintaining an accurate and current email address.",
           },
           {
             title: "Severability",
-            body: "If any provision is found invalid or unenforceable, it shall be severed and the remaining provisions shall continue in full force.",
+            body: "If any provision is found invalid or unenforceable, it shall be deemed severed and the parties shall use reasonable efforts to replace it with a provision of equivalent effect. The remaining provisions shall continue in full force.",
           },
           {
             title: "Relationship",
@@ -593,15 +651,15 @@ const sections: Section[] = [
           },
           {
             title: "Force Majeure",
-            body: "The Company is not liable for failures or delays caused by forces beyond its control, including strikes, government lockdowns, malware attacks, acts of war or terrorism, cyber-attacks, natural catastrophes, or utility interruptions.",
+            body: "The Company is not liable for failures or delays caused by forces beyond its control, including strikes, government lockdowns, quarantine restrictions, malware attacks, acts of war or terrorism, civil or military disturbances, nuclear or natural catastrophes, cyber-attacks, or loss or malfunction of utilities, communications, or computer services.",
           },
           {
             title: "No Waiver",
-            body: "No waiver of any right is effective unless in writing. Failure to enforce any term does not constitute a waiver of the Company's right to enforce it thereafter.",
+            body: "No waiver of any right is effective unless provided in writing. Failure to enforce any term does not constitute a waiver of the Company's right to enforce it thereafter.",
           },
           {
             title: "Modification",
-            body: "The Company may modify this Agreement at any time. Changes become effective upon publication on the Website. Continued use of the Services constitutes acceptance of the revised Agreement.",
+            body: "The Company may modify this Agreement at any time. Changes become effective upon publication on the Website, unless otherwise stated. Continued use of the Services following publication constitutes acceptance of the revised Agreement.",
           },
         ].map(({ title, body }) => (
           <div
@@ -621,13 +679,8 @@ const sections: Section[] = [
 
 export default function TermsAndConditions() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  useEffect(() => {}, []);
 
   const toggle = (id: string) => {
     setActiveSection((prev) => (prev === id ? null : id));
@@ -648,7 +701,7 @@ export default function TermsAndConditions() {
       <div className="mb-10">
         <div className="mb-6 flex items-center gap-2 px-5 py-2 w-fit text-[12px] bg-[#E1EDFF] border border-[#049FD9] rounded-full">
           <span className="flex h-1 w-1 rounded-full bg-black"></span>
-          Last updated: March 02, 2026
+          Last updated: March 30, 2026
         </div>
 
         <h1 className="text-4xl font-bold text-slate-900 tracking-tight mb-3">
@@ -662,12 +715,13 @@ export default function TermsAndConditions() {
         </p>
         <p className="text-slate-400 text-xs mt-2">
           If accepting on behalf of a company or legal entity, you represent
-          that you have authority to bind that entity.
+          that you have authority to bind that entity. References to "User"
+          shall include such entity.
         </p>
       </div>
 
       <div className="flex gap-8">
-        {/* Sidebar navigation — visible on wider screens */}
+        {/* Sidebar navigation */}
         <aside className="hidden lg:block w-52 shrink-0">
           <div className="sticky top-10">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
@@ -713,7 +767,7 @@ export default function TermsAndConditions() {
                 <div
                   key={section.id}
                   id={section.id}
-                  className={`rounded-md border transition-all duration-200 ${
+                  className={`rounded-xl border transition-all duration-200 ${
                     isOpen
                       ? "border-slate-300 shadow-sm"
                       : "border-slate-200 hover:border-slate-300"
@@ -752,7 +806,7 @@ export default function TermsAndConditions() {
             })}
           </div>
 
-          <div className="mt-8 ">
+          <div className="mt-8">
             <AlertCard variant="note">
               <p className="uppercase font-semibold">Acceptance</p>
               <p>

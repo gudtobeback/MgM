@@ -25,7 +25,7 @@ const sections = [
             },
             {
               title: "Financial Information",
-              desc: "Payment instrument information, transaction details, transaction history, preferences, method and mode of payment, and spending patterns.",
+              desc: "Payment instrument information, transaction details, transaction history, preferences, method, mode and manner of payment, spending patterns or trends, and other similar information.",
             },
             {
               title: "Technical Information",
@@ -48,12 +48,49 @@ const sections = [
             </div>
           ))}
         </div>
-        <p className="text-slate-600 leading-relaxed mt-4 text-sm">
-          The Website may request permissions such as sending messages and
-          accessing real-time location. You may decline, though this may limit
-          our ability to provide Services. We do not knowingly collect data from
-          children under 18 years of age.
-        </p>
+
+        <div className="mt-4 space-y-3 text-sm text-slate-600 leading-relaxed">
+          <p>
+            The Website may request permissions such as sending messages and
+            accessing real-time location. You may decline, though this may limit
+            our ability to provide Services. Where possible, we indicate which
+            fields are mandatory and which are optional.
+          </p>
+          <p>
+            We may automatically track certain information about your activity
+            on the Website for internal research on demographics, interests, and
+            behaviour — compiled and analysed on an aggregated basis. We may
+            also occasionally ask you to complete optional online surveys to
+            tailor your experience and display content according to your
+            preferences.
+          </p>
+          <p>
+            We use <strong className="text-slate-700">cookies</strong> on
+            certain pages to analyse web page flow, measure promotional
+            effectiveness, and promote trust and safety. Most cookies are
+            session cookies deleted at the end of a session. You may decline
+            cookies via your browser, though some features may be unavailable.
+            We place both permanent and temporary cookies; none contain
+            personally identifiable information.
+          </p>
+          <div className="p-4 bg-slate-50 border border-slate-100 rounded-lg">
+            <p className="font-semibold text-slate-700 text-xs uppercase tracking-wider mb-1">
+              Children under 18
+            </p>
+            <p className="text-sm text-slate-500">
+              We do not knowingly solicit data from or market to children under
+              18. If you become aware of any such data collected, please contact
+              us at{" "}
+              <a
+                href="mailto:privacy@aurionone.com"
+                className="text-indigo-600 hover:underline"
+              >
+                privacy@aurionone.com
+              </a>
+              . We will deactivate the account and promptly delete such data.
+            </p>
+          </div>
+        </div>
       </>
     ),
   },
@@ -66,14 +103,20 @@ const sections = [
         <p>We use Personal Information for the following purposes:</p>
         <ul className="space-y-2">
           {[
-            "To provide and communicate about our Services",
-            "To obtain feedback and improve your experience",
+            "To carry out obligations arising from your use of the Website or Services",
+            "To provide the Services and communicate with you about them",
+            "To obtain feedback on the Services obtained",
             "To process and analyse data through authorised third parties",
             "To enable subsidiaries or affiliates to offer their services",
+            "To post testimonials and provide personalised offers and recommendations",
+            "To contact you across multiple devices in relation to services or features",
+            "To operate, evaluate and improve the Company's business and Website",
+            "To generate aggregated insights and track user behaviour and trends",
             "To run personalised marketing and promotional campaigns",
             "To respond to requests, feedback, claims, or disputes",
             "To provide location-based services and personalised content",
             "To protect against fraud, illegal activity, and financial loss",
+            "To statistically analyse trends and service usage",
             "To conduct audits and quality assessments",
             "To comply with applicable laws and legal obligations",
           ].map((point) => (
@@ -114,7 +157,7 @@ const sections = [
             },
             {
               title: "Service Providers",
-              desc: "For storing, analysing, delivering products, security, customer service, marketing studies, and payment processing.",
+              desc: "For storing, analysing, delivering products, security, customer service, marketing studies, profiling, user analysis, and payment processing.",
             },
             {
               title: "Government Authorities",
@@ -122,11 +165,11 @@ const sections = [
             },
             {
               title: "Third-Party Advertisers",
-              desc: "Advertising companies may use cookie data to serve relevant ads when you visit the Website.",
+              desc: "Advertising companies may use cookie and tracking data to serve relevant ads when you visit the Website.",
             },
             {
               title: "Other Third Parties",
-              desc: "To enforce Terms of Use, protect against fraud, or in connection with business restructuring or mergers.",
+              desc: "To enforce Terms of Use, protect against fraud, for risk management, advisory or dispute resolution, or where necessary to protect vital interests.",
             },
           ].map((item) => (
             <div
@@ -145,6 +188,13 @@ const sections = [
             </div>
           ))}
         </div>
+        <p className="text-slate-500 text-sm leading-relaxed">
+          We may transfer Personal Information in connection with a merger,
+          acquisition, reorganisation, or restructuring of the business. We also
+          use third-party online payment gateways; information shared during
+          transactions is accessible to those operators, including your online
+          purchase history.
+        </p>
       </div>
     ),
   },
@@ -155,9 +205,23 @@ const sections = [
     content: (
       <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
         <p>
-          We maintain adequate security measures to protect your Personal
-          Information from loss, misuse, and unauthorised alteration. All
-          Personal Information collected is hosted on servers located in India.
+          The Website has adequate security measures in place to protect against
+          loss, misuse, and alteration. Once your information is in our
+          possession, we adhere to security guidelines protecting it against
+          unauthorised access. However, no Website can fully eliminate security
+          risks.
+        </p>
+        <p>
+          If you suspect any unauthorised use of your account, notify us
+          immediately at{" "}
+          <a
+            href="mailto:privacy@aurionone.com"
+            className="text-indigo-600 hover:underline"
+          >
+            privacy@aurionone.com
+          </a>
+          . All Personal Information collected is hosted on servers located in
+          India.
         </p>
         <p>
           We retain Personal Information for as long as necessary to provide
@@ -169,8 +233,8 @@ const sections = [
           <strong className="font-semibold">Important:</strong> We are not
           responsible for breaches caused by third-party actions or Force
           Majeure Events — including acts of government, hacking, natural
-          disasters, civil unrest, or other events beyond our reasonable
-          control.
+          disasters, civil unrest, computer crashes, breach of security and
+          encryption, or poor internet service.
         </div>
       </div>
     ),
@@ -188,7 +252,7 @@ const sections = [
         <ul className="space-y-2">
           {[
             "Access, review, and modify your information by logging into your account",
-            "Withdraw consent by contacting us in writing at our support email",
+            "Withdraw consent by writing to us at privacy@aurionone.com",
             "Opt-out of promotional mailers via the unsubscribe link in any email",
             "Opt-out of non-essential marketing communications after account setup",
           ].map((right) => (
@@ -211,15 +275,30 @@ const sections = [
     content: (
       <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
         <p>
-          The Website may include hyperlinks to external websites. We have no
-          control over such third-party links and are not liable for any loss or
-          damage arising from collection or disclosure of Personal Information
-          via those links.
+          The Website may include hyperlinks to external websites ("Third Party
+          Links"). We have no control over such links and are not liable for any
+          loss or damage arising from disclosure of Personal Information via
+          those links. We are not responsible for any breach of security by any
+          third party that receives your Personal Information.
+        </p>
+        <p>
+          Personal data shall be retained only for as long as necessary to
+          fulfil the purposes for which it was collected or as required by law.
+          Upon fulfilment of those purposes or withdrawal of consent, data shall
+          be deleted or rendered inaccessible, unless retention is required by
+          law.
+        </p>
+        <p>
+          The Company shall not be held responsible for any loss, damage, or
+          misuse attributable to a Force Majeure Event — including sabotage,
+          fire, flood, explosion, acts of God, civil commotion, strikes, riots,
+          war, acts of government, computer hacking, or any similar event beyond
+          our control.
         </p>
         <p>
           If any provision of this Privacy Policy is found invalid or
-          unenforceable by a court, that provision will be deemed deleted, and
-          the remaining provisions will remain in effect.
+          unenforceable, it will be deemed deleted and the remaining provisions
+          will remain in full effect.
         </p>
         <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
           <p className="font-semibold text-slate-800 text-xs uppercase tracking-wider mb-2">
@@ -232,13 +311,21 @@ const sections = [
           </p>
           <div className="space-y-1 text-sm text-slate-600">
             <p>
-              <span className="font-medium">Name:</span> To be updated
+              <span className="font-medium">Name:</span> Chetan Anchan
             </p>
             <p>
-              <span className="font-medium">Email:</span> To be updated
+              <span className="font-medium">Email:</span>{" "}
+              <a
+                href="mailto:Chetan@dealmytime.com"
+                className="text-indigo-600 hover:underline"
+              >
+                Chetan@dealmytime.com
+              </a>
             </p>
             <p>
-              <span className="font-medium">Address:</span> To be updated
+              <span className="font-medium">Address:</span> Unit 115,
+              InspireHub, JP Road, 4 Bunglows, Opp Gurudwara, DN Nagar, Andheri
+              West – 400058
             </p>
           </div>
         </div>
@@ -385,8 +472,14 @@ export default function PrivacyPolicy() {
             </p>
             <p className="text-sm text-slate-500">
               For any questions or comments regarding this Privacy Policy,
-              please reach out to our support team. Contact details will be
-              updated shortly.
+              please write to us at{" "}
+              <a
+                href="mailto:privacy@aurionone.com"
+                className="text-indigo-600 hover:underline"
+              >
+                privacy@aurionone.com
+              </a>
+              .
             </p>
           </div>
 

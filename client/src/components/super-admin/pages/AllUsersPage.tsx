@@ -39,12 +39,11 @@ export function AllUsersPage() {
   const filtered = useMemo(() => {
     return users.filter(
       (u) =>
-        !search ||
-        u.email.toLowerCase().includes(search.toLowerCase()) ||
+        (u.email || "").toLowerCase().includes(search.toLowerCase()) ||
         (u.full_name || "").toLowerCase().includes(search.toLowerCase()) ||
         (u.company_name || "").toLowerCase().includes(search.toLowerCase()),
     );
-  }, [search]);
+  }, [search, users]);
 
   return (
     <div className="flex flex-col gap-8 p-6">
@@ -92,7 +91,7 @@ export function AllUsersPage() {
                 </thead>
 
                 <tbody>
-                  {filtered.length === 0 ? (
+                  {filtered?.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="text-center">
                         {search
@@ -101,7 +100,7 @@ export function AllUsersPage() {
                       </td>
                     </tr>
                   ) : (
-                    filtered.map((u, idx) => (
+                    filtered?.map((u, idx) => (
                       <tr key={u.id} className={idx % 2 !== 0 && "bg-gray-100"}>
                         <td>{u.email}</td>
 
