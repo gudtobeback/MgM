@@ -71,7 +71,7 @@ export const AuthScreen = () => {
           className="text-center cursor-pointer"
         >
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-            AurionOne<span className="text-[#049FD9]">Migrate</span>
+            Aurion<span className="text-[#049FD9]">One</span>
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             Enterprise-grade network migration

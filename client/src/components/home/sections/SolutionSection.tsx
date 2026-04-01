@@ -39,7 +39,7 @@ export default function SolutionSection() {
       divider_color: "border-white/80",
       icon: <Layers size={20} className="text-[#049FD9]" />,
       icon_bg: "bg-white",
-      title: "AurionOne Management",
+      title: "AurionOne",
       title_color: "text-white",
       subTitle: "Automated platform",
       subTitle_color: "text-white/80",

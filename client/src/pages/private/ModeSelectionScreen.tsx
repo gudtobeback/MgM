@@ -231,7 +231,7 @@ export const ModeSelectionScreen = () => {
         {/* Welcome Section */}
         <PageHeader
           heading={`Welcome back, ${firstName}`}
-          subHeading={`Unified AurionOne Management — ${organizations?.length || 0} organization connected.`}
+          subHeading={`Unified AurionOne — ${organizations?.length || 0} organization connected.`}
         >
           {/* <CustomButton
           onClick={() => handleNavigate("organizations")}
@@ -397,7 +397,7 @@ export const ModeSelectionScreen = () => {
 
       {/* Footer */}
       <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-lg shadow-[0_0px_8px_rgba(0,0,0,0.10)]">
-        © 2026 Meraki Management. All rights reserved.
+        © 2026 AurionOne. All rights reserved.
       </div>
     </div>
   );

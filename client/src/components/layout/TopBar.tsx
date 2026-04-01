@@ -33,7 +33,7 @@ export const TopBar = () => {
 
         <div className="flex flex-col">
           <p className="font-bold text-[20px] text-gray-800">
-            AurionOne Management Platform
+            AurionOne Platform
           </p>
 
           {/* <p className="text-[10px]">via Cisco Integration</p> */}

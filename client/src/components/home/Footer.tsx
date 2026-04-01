@@ -59,7 +59,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-around gap-6">
           <div className="flex flex-col gap-1">
             <div className="font-bold text-[24px] mb-1">
-              AurionOne Management
+              AurionOne
             </div>
             <p className="text-[12px] w-[300px]">
               A purpose-built operations platform for Cisco Meraki
@@ -99,7 +99,7 @@ export default function Footer() {
       <div className="h-px rounded-xl bg-gradient-to-r from-[#FAFAFA] via-[#049FD9] to-[#FAFAFA]"></div>
 
       <div className="py-4 text-center text-[12px]">
-        © 2026 AurionOne Management. All rights reserved.
+        © 2026 AurionOne. All rights reserved.
       </div>
     </div>
   );
