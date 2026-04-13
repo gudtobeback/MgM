@@ -62,7 +62,7 @@ export default function Footer() {
       <div className="flex flex-col gap-10 md:gap-15">
         {/* Start */}
         <div className="flex flex-col items-center justify-cente gap-5 p-6 bg-white rounded-2xl">
-          <p className="font-medium text-[30px] sm:text-[34px] leading-12">
+          <p className="font-medium text-[30px] sm:text-[34px] leading-tight md:leading-12">
             Start Your First Migration Today
           </p>
 

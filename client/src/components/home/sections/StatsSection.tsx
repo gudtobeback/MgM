@@ -17,7 +17,7 @@ export default function StatsSection() {
             Trusted by Teams That Scale Fast
           </p>
 
-          <p className="absolute -bottom-1 right-23 sm:right-0 border-2 border-[#D7FB71] w-[100px] rounded" />
+          <p className="absolute bottonm-1 lg:-bottom-1 right-23 sm:right-0 border-2 border-[#D7FB71] w-[100px] rounded" />
         </div>
 
         {/* Grid */}
