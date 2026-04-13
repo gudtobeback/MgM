@@ -1,220 +1,153 @@
 import React from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Check, Settings, MoveRight } from "lucide-react";
+import { Check, Rocket, Star, Flame } from "lucide-react";
 
-import SectionHeading from "../SectionHeading";
-import SectionDescription from "../SectionDescription";
+const iconSize = 18;
 
-import CustomButton from "../../ui/CustomButton";
-
-import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
+const subscriptionPlans = [
+  {
+    icon: <Rocket size={iconSize} />,
+    title: "Starter Plan",
+    description: "Perfect for small businesses getting started",
+    pricing: "$299.00",
+    features: [
+      "Up to 10 devices",
+      "Fully Automated Migration",
+      "Pre-migration org backup (ZIP)",
+      "Configuration restore",
+      "Cross-region support",
+      "Stage-by-stage rollback",
+      "Email Support",
+    ],
+    text_color: "text-black",
+    bg_color: "bg-white",
+    subscriptionTier: "starter",
+  },
+  {
+    icon: <Star size={iconSize} fill="black" />,
+    title: "Professional Plan",
+    description: "For growing businesses with advanced needs",
+    pricing: "$799.00",
+    features: [
+      "Up to 50 devices",
+      "Fully Automated Migration",
+      "Pre-migration org backup (ZIP)",
+      "Configuration restore",
+      "Migration verification report",
+      "Pre-migration validation",
+      "Priority support",
+    ],
+    text_color: "text-white",
+    bg_color: "bg-[#015C95]",
+    subscriptionTier: "professional",
+  },
+  {
+    icon: <Flame size={iconSize} fill="black" />,
+    title: "Enterprise Plan",
+    description: "Unlimited scale for large organizations",
+    pricing: "Custom",
+    features: [
+      "Unlimited devices",
+      "Fully Automated Migration",
+      "Pre-migration org backup (ZIP)",
+      "Configuration restore",
+      "Dedicated migration engineer",
+      "Custom migration schedule",
+      "24/7 premium support",
+    ],
+    text_color: "text-black",
+    bg_color: "bg-white",
+    subscriptionTier: "enterprise",
+  },
+];
 
 export default function PricingSection() {
-  const fadeRef = useFadeInOnScroll();
-
   const navigate = useNavigate();
 
-  const iconSize = 18;
-
-  const tableBody = [
-    {
-      feature: "Fully Automated Migration",
-      basic: <Check size={iconSize} />,
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Pre-migration org backup (ZIP)",
-      basic: <Check size={iconSize} />,
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Configuration restore",
-      basic: <Check size={iconSize} />,
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Cross-region support",
-      basic: <Check size={iconSize} />,
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Stage-by-stage rollback",
-      basic: <Check size={iconSize} />,
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Migration verification report",
-      basic: "-",
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Pre-migration validation",
-      basic: "-",
-      pro: <Check size={iconSize} />,
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Priority support",
-      basic: "Email",
-      pro: "Priority",
-      enterprise: "24/7",
-    },
-    {
-      feature: "Post-migration support period",
-      basic: "30 days",
-      pro: "90 days",
-      enterprise: "Ongoing",
-    },
-    {
-      feature: "Dedicated migration engineer",
-      basic: "-",
-      pro: "-",
-      enterprise: <Check size={iconSize} />,
-    },
-    {
-      feature: "Custom migration schedule",
-      basic: "-",
-      pro: "-",
-      enterprise: <Check size={iconSize} />,
-    },
-  ];
-
-  const plans = [
-    {
-      name: "Starter",
-      price: "$300",
-      subtitle: "Up to 20 devices",
-      highlighted: false,
-    },
-    {
-      name: "Professional",
-      price: "$750",
-      subtitle: "21 - 50 devices",
-      highlighted: true,
-      badge: "The Most Popular",
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      subtitle: "50+ devices",
-      highlighted: false,
-    },
-  ];
-
   return (
-    <div
-      id="pricing"
-      ref={fadeRef}
-      className="home-section fade-in-scroll bg-white border-b border-gray-200"
-    >
-      <div className="flex flex-col items-center gap-8">
-        {/* Section Heading */}
-        <SectionHeading text="Our Pricing" variant="blue" />
+    <div id="pricing" className="flex flex-col items-center gap-10 px-5">
+      {/* Heading */}
+      <div className="flex flex-col items-center justify-center gap-5">
+        <div className="text-center text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14">
+          <span>Simple, </span>
+          <span className="block sm:inline font-bold text-[#015C95]">
+            Transparent Pricing
+          </span>
+        </div>
 
-        <SectionDescription
-          des1="Simple, one-time pricing."
-          des2="No subscriptions. Pay once per migration project. Compare this to 8–12 hours of admin time and the risk of manual errors."
-        />
+        <p className="text-center text-[12px] sm:text-[13px]">
+          Transparent pricing with no hidden fees. Start with a 30-day free
+          trial.
+        </p>
+      </div>
 
-        <table
-          className="w-full
-            [&_th]:px-2 [&_th]:py-3 [&_th]:min-w-[100px] [&_th]:whitespace-nowrap
-            [&_td]:px-2 [&_td]:py-3 [&_td]:min-w-[100px] [&_td]:whitespace-nowrap"
-        >
-          <thead>
-            <tr>
-              <th className="text-[16px]">
-                <div className="flex items-center gap-3">
-                  <Settings size={iconSize} strokeWidth={3} /> Features
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-3 p-3 bg-[#F2F2F2] rounded-xl">
+        {subscriptionPlans?.map((card, idx) => {
+          const isProfessional = card?.subscriptionTier === "professional";
+
+          return (
+            <div
+              key={card?.title || idx}
+              className={`p-5 flex flex-col gap-5 w-full lg:w-[350px] ${card?.bg_color} rounded-lg`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-1.5 bg-[#D7FB71] rounded-md">
+                  {card?.icon}
                 </div>
-              </th>
 
-              {/* Plans */}
-              {plans.map((plan, index) => (
-                <th key={index} className="max-w-[100px]">
-                  <div
-                    className={`relative p-4 text-sm border border-[#E5E5E4] rounded-2xl ${
-                      plan.highlighted
-                        ? "bg-[#049FD9] text-white"
-                        : "bg-[#F7F5EE] text-black"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center gap-3">
-                      <p>{plan.name}</p>
+                <p
+                  className={`font-medium text-sm uppercase ${isProfessional ? "text-white" : "text-[#015C95]"}`}
+                >
+                  {card?.title}
+                </p>
+              </div>
 
-                      <div className="flex items-end gap-1">
-                        <span className="text-[16px] font-bold">
-                          {plan.price}
-                        </span>
+              <p className={`text-[13px] ${card?.text_color}`}>
+                {card?.description}
+              </p>
 
-                        <span
-                          className={`font-medium text-[12px] ${
-                            plan.highlighted ? "text-white/80" : "text-black/60"
-                          }`}
-                        >
-                          {plan.subtitle}
-                        </span>
-                      </div>
+              <p className="flex items-center gap-3">
+                <span className={`font-medium text-[30px] ${card?.text_color}`}>
+                  {card?.pricing}
+                </span>
+                <span
+                  className={`text-sm ${isProfessional ? "text-white" : "text-[#7B7B7B]"}`}
+                >
+                  / month
+                </span>
+              </p>
 
-                      <CustomButton
-                        onClick={() => navigate("/auth")}
-                        className="text-center text-[12px] w-full"
-                        text_prop={
-                          plan.highlighted ? "text-black/80" : "text-white"
-                        }
-                        bg_prop={
-                          plan.highlighted
-                            ? "bg-[#F7F5EE] hover:bg-[#e7e5dd]"
-                            : "bg-[#049FD9] hover:bg-[#0e8dbb]"
-                        }
-                      >
-                        Get Started <MoveRight size={16} />
-                      </CustomButton>
+              <button
+                className={`px-5 py-2 font-medium text-sm ${isProfessional ? "text-black bg-[#D7FB71]" : "text-white bg-[#015C95]"} rounded-full`}
+              >
+                Get Started
+              </button>
+
+              <p className={`mt-1 font-medium text-sm ${card?.text_color}`}>
+                What's Included
+              </p>
+
+              <div className="flex flex-col gap-4">
+                {card?.features?.map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div
+                      className={`p-0.5 ${isProfessional ? "bg-white" : "bg-[#015C95]"} rounded-full`}
+                    >
+                      <Check
+                        strokeWidth={3}
+                        size={10}
+                        className={`${isProfessional ? "text-[#015C95]" : "text-white"}`}
+                      />
                     </div>
 
-                    {plan.highlighted && plan.badge && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-8 bg-red-400 px-3 py-1 rounded-md">
-                        <p className="font-medium text-[12px] text-white whitespace-nowrap">
-                          {plan.badge}
-                        </p>
-                      </div>
-                    )}
+                    <p className={`text-xs ${card?.text_color}`}>{feature}</p>
                   </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {tableBody.map((row, index) => (
-              <tr key={index} className="text-[13px] border-b border-gray-200">
-                <td className="font-medium">{row.feature}</td>
-                <td className="text-center font-bold place-items-center">
-                  <div className="flex items-center justify-center">
-                    {row.basic}
-                  </div>
-                </td>
-                <td className="text-center font-bold place-items-center bg-[#181F2C08]">
-                  <div className="flex items-center justify-center">
-                    {row.pro}
-                  </div>
-                </td>
-                <td className="text-center font-bold place-items-center">
-                  <div className="flex items-center justify-center">
-                    {row.enterprise}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

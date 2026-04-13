@@ -107,7 +107,7 @@ function UserProtectedRoute() {
 
 function PublicLayout() {
   return (
-    <div className="text-black/80">
+    <div className="relative text-black/80 px-2">
       <Header />
 
       {/* Body */}

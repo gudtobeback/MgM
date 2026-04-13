@@ -1,26 +1,26 @@
 import React from "react";
 
 import HeroSection from "../../components/home/sections/HeroSection";
-import ChallengesSection from "../../components/home/sections/ChallengesSection";
-import SolutionSection from "../../components/home/sections/SolutionSection";
-import HowItWorksSection from "../../components/home/sections/HowItWorksSection";
 import PricingSection from "../../components/home/sections/PricingSection";
 import GetStartedSection from "../../components/home/sections/GetStartedSection";
+import BriefSection from "../../components/home/sections/BriefSection";
+import StatsSection from "../../components/home/sections/StatsSection";
+import QuestionsSection from "../../components/home/sections/QuestionsSection";
 
 export default function Home() {
   return (
-    <>
+    <div className="flex flex-col gap-20">
       <HeroSection />
 
-      <ChallengesSection />
+      <GetStartedSection />
 
-      <SolutionSection />
-
-      <HowItWorksSection />
+      <BriefSection />
 
       <PricingSection />
 
-      <GetStartedSection />
-    </>
+      <StatsSection />
+
+      <QuestionsSection />
+    </div>
   );
 }
