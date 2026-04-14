@@ -45,7 +45,7 @@ export const TopBar = () => {
         {selectedOrgName && (
           <button
             onClick={() => navigate(TOOL_MODE_ROUTES.organizations)}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 font-medium text-[12px] border rounded-md"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 font-medium text-[12px] border border-[#B0AFAF] rounded-md"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />

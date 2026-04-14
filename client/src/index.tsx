@@ -31,7 +31,7 @@ root.render(
   <ConfigProvider
     theme={{
       token: {
-        fontFamily: "Inter, sans-serif",
+        fontFamily: "Poppins, sans-serif",
       },
     }}
   >

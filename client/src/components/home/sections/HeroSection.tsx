@@ -20,11 +20,10 @@ export default function HeroSection() {
           muted
           playsInline
         >
-          <source src="/images/meraki_homepage-2.mp4" type="video/mp4" />
+          <source src="/images/sky-animation.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0" />
-
+        {/* Content */}
         <div className="relative flex items-center justify-center min-h-[500px] sm:min-h-[600px] px-6">
           <div className="flex flex-col gap-6 text-center text-white w-full max-w-[900px]">
             <p className="text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14">
@@ -72,7 +71,7 @@ export default function HeroSection() {
 
           {/* Video */}
           <video className="w-full h-full object-cover" autoPlay>
-            <source src="/images/demo_video.mp4" type="video/mp4" />
+            <source src="/images/sky-animation.mp4" type="video/mp4" />
           </video>
         </div>
       )}

@@ -82,7 +82,7 @@ export default function PricingSection() {
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-3 p-3 bg-[#F2F2F2] rounded-xl">
+      <div className="flex flex-col xl:flex-row items-center justify-center gap-3 p-3 bg-[#F2F2F2] rounded-xl">
         {subscriptionPlans?.map((card, idx) => {
           const isProfessional = card?.subscriptionTier === "professional";
 

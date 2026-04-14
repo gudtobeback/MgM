@@ -74,7 +74,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`mb-4 p-7 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-150 ${
+        className={`mb-4 p-7 border-2 border-gray-300 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-150 ${
           dragging
             ? "border-blue-600 bg-green-50"
             : "border-border bg-secondary"

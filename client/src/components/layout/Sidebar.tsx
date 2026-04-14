@@ -163,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <nav
-      className={`flex flex-col h-full overflow-y-auto bg-white border-r ${!collapsed && "min-w-[200px]"}`}
+      className={`flex flex-col h-full overflow-y-auto bg-white border-r border-gray-200 ${!collapsed && "min-w-[200px]"}`}
     >
       <header className="shrink-0 flex items-center justify-between h-18 px-3">
         {!collapsed && (
@@ -174,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <button
           onClick={onToggleCollapse}
-          className="w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
+          className="w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-all"
         >
           {collapsed ? <ArrowRight size={18} /> : <Menu size={18} />}
         </button>
@@ -209,7 +209,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="w-full">
                   <button
                     onClick={handleItemClick}
-                    className={`flex items-center w-full p-2.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                    className={`flex items-center w-full p-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
                       collapsed ? "justify-center" : "gap-3"
                     } ${
                       groupActive
@@ -228,7 +228,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <ChevronRight
                             size={14}
                             className={`transition-transform duration-200 ${
-                              isExpanded ? "rotate-45" : ""
+                              isExpanded ? "rotate-90" : ""
                             }`}
                           />
                         )}
@@ -244,7 +244,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <button
                             key={child.id}
                             onClick={() => handleNavigate(child.id)}
-                            className={`flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 text-left ${
+                            className={`flex items-center w-full py-2 px-3 text-[13px] rounded-md transition-all duration-200 cursor-pointer text-left ${
                               childActive
                                 ? "bg-blue-50 text-[#049FD9] font-medium"
                                 : "text-gray-600 hover:bg-white/50 hover:text-gray-900"

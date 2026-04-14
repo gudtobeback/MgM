@@ -13,15 +13,26 @@ export default function Header() {
 
   const textColor = isHome ? "text-white" : "text-black";
 
+  const navigateToSection = (sectionId: string) => {
+    if (isHome) {
+      const el = document.getElementById(sectionId);
+      el?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(`/home#${sectionId}`);
+    }
+
+    setIsOpen(false);
+  };
+
   return (
     <>
       {/* HEADER (UNCHANGED) */}
       <nav
-        className={`absolute top-0 left-0 w-full h-20 z-30 px-6 md:px-16 flex items-center justify-between transition-all duration-300
+        className={`w-full h-20 z-30 px-6 md:px-16 flex items-center justify-between transition-all duration-300
         ${
           isHome
-            ? "bg-transparent md:bg-transparent"
-            : "bg-white shadow-sm"
+            ? "absolute top-0 left-0 bg-transparent md:bg-transparent"
+            : "bg-white"
         }`}
       >
         {/* Logo */}
@@ -34,13 +45,22 @@ export default function Header() {
 
         {/* Desktop Menu */}
         <div className={`hidden md:flex items-center gap-8 ${textColor}`}>
-          <a href="#features" className="text-[13px] hover:text-blue-600">
+          <a
+            onClick={() => navigateToSection("features")}
+            className="text-[13px] hover:text-black cursor-pointer"
+          >
             Features
           </a>
-          <a href="#how" className="text-[13px] hover:text-blue-600">
+          <a
+            onClick={() => navigateToSection("how")}
+            className="text-[13px] hover:text-black cursor-pointer"
+          >
             How it works
           </a>
-          <a href="#pricing" className="text-[13px] hover:text-blue-600">
+          <a
+            onClick={() => navigateToSection("pricing")}
+            className="text-[13px] hover:text-black cursor-pointer"
+          >
             Pricing
           </a>
         </div>
@@ -49,13 +69,11 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-5">
           <button
             onClick={() => navigate("/auth")}
-            className={`text-[13px] ${textColor}`}
+            className={`text-[13px] ${textColor} cursor-pointer`}
           >
             Login
           </button>
-          <OvalButton onClick={() => navigate("/auth")}>
-            Get a Demo
-          </OvalButton>
+          <OvalButton onClick={() => navigate("/auth")}>Get a Demo</OvalButton>
         </div>
 
         {/* Mobile Hamburger (UNCHANGED UI) */}
@@ -76,10 +94,9 @@ export default function Header() {
 
       {/* SIDE DRAWER (mobile only) */}
       <div
-        className={`fixed top-0 right-0 h-full w-[260px] md:hidden z-50
+        className={`fixed top-0 right-0 h-full w-[260px] md:hidden z-50 bg-white text-black
         transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "translate-x-full"}
-        ${isHome ? "bg-white text-black" : "bg-black text-white"}
         shadow-lg`}
       >
         {/* Top Bar */}
@@ -92,15 +109,9 @@ export default function Header() {
 
         {/* Links (same spacing style as your dropdown) */}
         <div className="flex flex-col gap-6 px-6 py-6 text-[13px]">
-          <a href="#features" onClick={() => setIsOpen(false)}>
-            Features
-          </a>
-          <a href="#how" onClick={() => setIsOpen(false)}>
-            How it works
-          </a>
-          <a href="#pricing" onClick={() => setIsOpen(false)}>
-            Pricing
-          </a>
+          <a onClick={() => navigateToSection("features")}>Features</a>
+          <a onClick={() => navigateToSection("how")}>How it works</a>
+          <a onClick={() => navigateToSection("pricing")}>Pricing</a>
 
           <button
             onClick={() => {

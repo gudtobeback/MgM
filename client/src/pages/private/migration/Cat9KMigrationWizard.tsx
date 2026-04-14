@@ -196,10 +196,10 @@ export function Cat9KMigrationWizard({
   // Steps 5-6 are auto/results — hide the navigation
   const isAutoStep = currentStep >= 5;
 
-  const heading = steps?.find((step) => step?.id == currentStep).heading;
+  const heading = steps?.find((step) => step?.id == currentStep)?.heading;
   const description = steps?.find(
     (step) => step?.id == currentStep,
-  ).description;
+  )?.description;
 
   return (
     <div className="px-16 py-8">
@@ -217,7 +217,7 @@ export function Cat9KMigrationWizard({
 
         {/* Navigation */}
         {!isAutoStep && (
-          <div className="flex items-center justify-between bg-white border-t-2 px-10 py-6">
+          <div className="flex items-center justify-between bg-white border-t-2 border-gray-200 px-10 py-6">
             <CustomButton
               onClick={handleBack}
               disabled={currentStep === 1}

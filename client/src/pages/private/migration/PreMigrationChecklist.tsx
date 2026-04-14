@@ -1,13 +1,26 @@
+import CustomButton from "@/src/components/ui/CustomButton";
 import React from "react";
 
-const Section = ({ title, children }) => (
-  <div className="bg-white shadow-sm border rounded-xl p-6 mb-6">
+const Section = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-6 mb-6">
     <h2 className="text-lg font-semibold mb-4">{title}</h2>
     {children}
   </div>
 );
 
-const Badge = ({ text, type }) => {
+const Badge = ({
+  text,
+  type,
+}: {
+  text: string;
+  type: "success" | "danger" | "warning";
+}) => {
   const styles = {
     success: "bg-green-100 text-green-700",
     danger: "bg-red-100 text-red-700",
@@ -19,7 +32,7 @@ const Badge = ({ text, type }) => {
   );
 };
 
-export default function PreMigrationChecklist() {
+export default function PreMigrationChecklist({ agree }: { agree: any }) {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -34,7 +47,7 @@ export default function PreMigrationChecklist() {
           </p>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border">
+            <table className="w-full text-sm border border-gray-200">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="p-2 text-left">Source Org</th>
@@ -43,21 +56,21 @@ export default function PreMigrationChecklist() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t">
+                <tr className="border-t border-gray-200">
                   <td className="p-2">Co-Term</td>
                   <td className="p-2">Co-Term</td>
                   <td className="p-2">
                     <Badge text="Supported" type="success" />
                   </td>
                 </tr>
-                <tr className="border-t">
+                <tr className="border-t border-gray-200">
                   <td className="p-2">Per-Device</td>
                   <td className="p-2">Per-Device (new org)</td>
                   <td className="p-2">
                     <Badge text="Supported" type="success" />
                   </td>
                 </tr>
-                <tr className="border-t">
+                <tr className="border-t border-gray-200">
                   <td className="p-2">Per-Device</td>
                   <td className="p-2">Co-Term</td>
                   <td className="p-2">
@@ -113,6 +126,12 @@ export default function PreMigrationChecklist() {
             <li>Allow HTTPS (port 443) to api.meraki.com</li>
           </ul>
         </Section>
+
+        <div className="w-full flex justify-end">
+          <CustomButton onClick={agree} className="self-end">
+            Agree
+          </CustomButton>
+        </div>
       </div>
     </div>
   );

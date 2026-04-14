@@ -12,7 +12,8 @@ export default function QuestionsSection() {
     <div
       id="how"
       ref={fadeRef}
-      className="flex flex-col lg:flex-row items-start gap-10 lg:gap-4 px-5 lg:px-25"
+      className="flex flex-col items-start gap-10 px-5
+      lg:flex-row lg:gap-6 lg:px-10 xl:px-25"
     >
       {/* Right Container */}
       <div className="flex flex-col gap-5 w-full lg:w-[450px]">

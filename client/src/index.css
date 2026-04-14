@@ -290,3 +290,48 @@ h6 {
 .delay-500 {
   animation-delay: 500ms;
 }
+
+/* Migration SVG */
+/* incoming packets */
+.dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: moveToGear 2s linear infinite;
+}
+
+.dot1 { animation-delay: 0s; }
+.dot2 { animation-delay: 0.5s; }
+.dot3 { animation-delay: 1s; }
+
+@keyframes moveToGear {
+  0% { transform: translateX(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateX(100px); opacity: 0; }
+}
+
+/* outgoing packets */
+.dot-out {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: moveToDest 2s linear infinite;
+}
+
+.dot4 { animation-delay: 0.3s; }
+.dot5 { animation-delay: 0.9s; }
+
+@keyframes moveToDest {
+  0% { transform: translateX(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateX(90px); opacity: 0; }
+}
+
+.gear {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

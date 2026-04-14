@@ -61,12 +61,12 @@ export default function Footer() {
     <div className="bg-[url('/images/cloud.jpg')] bg-cover rounded-t-3xl overflow-hidden p-5 mt-20">
       <div className="flex flex-col gap-10 md:gap-15">
         {/* Start */}
-        <div className="flex flex-col items-center justify-cente gap-5 p-6 bg-white rounded-2xl">
-          <p className="font-medium text-[30px] sm:text-[34px] leading-tight md:leading-12">
+        <div className="flex flex-col items-center justify-center gap-5 p-6 bg-white rounded-2xl">
+          <p className="font-medium text-center text-[30px] sm:text-[34px] leading-tight md:leading-12">
             Start Your First Migration Today
           </p>
 
-          <p className="text-sm">
+          <p className="text-center text-sm">
             No downtime. No risk. No manual effort. Just faster, smarter network
             operations.
           </p>
@@ -103,7 +103,7 @@ export default function Footer() {
               <a
                 key={idx}
                 href={product?.hash}
-                className="font-light text-xs hover:text-blue-500"
+                className="font-light text-xs hover:text-black"
               >
                 {product?.name}
               </a>
@@ -116,7 +116,7 @@ export default function Footer() {
               <NavLink
                 key={idx}
                 to={company?.to}
-                className="font-light text-xs hover:text-blue-500"
+                className="font-light text-xs hover:text-black"
               >
                 {company?.name}
               </NavLink>
