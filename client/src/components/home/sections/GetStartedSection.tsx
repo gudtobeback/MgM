@@ -93,6 +93,14 @@ export default function GetStartedSection() {
           </OvalButton>
         </div>
 
+        {/* <video
+          src="/images/Get-started-3.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        /> */}
+
         {/* Migration SVG */}
         <div className="flex justify-center items-center h-[160px] lg:h-[220px]">
           <svg viewBox="0 0 400 200" className="w-full max-w-[400px] h-full">

@@ -1,36 +1,40 @@
 import React from "react";
 
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 
-import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
 import OvalButton from "./OvalButton";
+
+import { useFadeInOnScroll } from "@/src/hooks/useFadeInOnScroll";
 
 export default function Footer() {
   const fadeRef = useFadeInOnScroll();
 
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const isHome = pathname === "/" || pathname === "/home";
 
   const products = [
     {
       name: "Features",
-      hash: "#features",
+      hash: "features",
     },
     {
       name: "Pricing",
-      hash: "#pricing",
+      hash: "pricing",
     },
     {
       name: "How It Works",
-      hash: "#how",
+      hash: "how",
     },
     {
       name: "Documentation",
-      hash: "#",
+      hash: "",
     },
     {
       name: "FAQ",
-      hash: "#",
+      hash: "",
     },
   ];
 
@@ -56,6 +60,15 @@ export default function Footer() {
       to: "/terms",
     },
   ];
+
+  const navigateToSection = (sectionId: string) => {
+    if (isHome) {
+      const el = document.getElementById(sectionId);
+      el?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(`/home#${sectionId}`);
+    }
+  };
 
   return (
     <div className="bg-[url('/images/cloud.jpg')] bg-cover rounded-t-3xl overflow-hidden p-5 mt-20">
@@ -102,8 +115,8 @@ export default function Footer() {
             {products?.map((product, idx) => (
               <a
                 key={idx}
-                href={product?.hash}
-                className="font-light text-xs hover:text-black"
+                onClick={() => navigateToSection(product?.hash)}
+                className="font-light text-xs hover:text-black cursor-pointer"
               >
                 {product?.name}
               </a>

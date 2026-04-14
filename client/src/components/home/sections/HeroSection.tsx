@@ -20,7 +20,7 @@ export default function HeroSection() {
           muted
           playsInline
         >
-          <source src="/images/sky-animation.mp4" type="video/mp4" />
+          <source src="/images/sky-video-2.mp4" type="video/mp4" />
         </video>
 
         {/* Content */}
@@ -71,7 +71,7 @@ export default function HeroSection() {
 
           {/* Video */}
           <video className="w-full h-full object-cover" autoPlay>
-            <source src="/images/sky-animation.mp4" type="video/mp4" />
+            <source src="/images/sky-video-2.mp4" type="video/mp4" />
           </video>
         </div>
       )}
