@@ -4,7 +4,7 @@ type PageHeaderProps = {
   heading?: string;
   subHeading?: string;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function PageHeader({
@@ -15,8 +15,8 @@ export default function PageHeader({
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-col gap-2">
-        <p className="font-semibold">{heading}</p>
-        <p className="text-xs text-black/60">{subHeading}</p>
+        <p className="font-semibold text-2xl text-[#003E68]">{heading}</p>
+        <p className="font-medium text-xs text-[#64748B]">{subHeading}</p>
       </div>
 
       {children}

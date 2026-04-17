@@ -28,11 +28,11 @@ export default function Header() {
     <>
       {/* HEADER (UNCHANGED) */}
       <nav
-        className={`w-full h-20 z-30 px-6 md:px-16 flex items-center justify-between transition-all duration-300
+        className={`w-full z-30 px-6 md:px-16 flex items-center justify-between transition-all duration-300
         ${
           isHome
-            ? "absolute top-0 left-0 bg-transparent md:bg-transparent"
-            : "bg-white"
+            ? "absolute top-0 left-0 h-20 bg-transparent md:bg-transparent"
+            : "bg-white h-15"
         }`}
       >
         {/* Logo */}

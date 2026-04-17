@@ -36,12 +36,10 @@ export const AppShell = () => {
 
       <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
         {/* Top Bar — full width, always at the top */}
-        <div className="shrink-0 z-50">
-          <TopBar />
-        </div>
+        <div className="shrink-0 z-50">{/* <TopBar /> */}</div>
 
         {/* Main content — only this area scrolls, scrollbar hidden */}
-        <main className="flex-1 overflow-y-auto no-scrollbar min-w-0 bg-[#F9F9F9]">
+        <main className="flex-1 overflow-y-auto no-scrollbar min-w-0 bg-[#F8FAFC]">
           <div className="min-h-full">
             <Outlet />
           </div>

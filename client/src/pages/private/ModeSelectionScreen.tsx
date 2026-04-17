@@ -9,6 +9,7 @@ import {
   ServerCog,
   HardDriveUpload,
   Plus,
+  Zap,
   Globe,
   RefreshCw,
   EllipsisVertical,
@@ -35,28 +36,28 @@ const TOOLS: {
     id: "migration",
     label: "Full Migration",
     description: "Migrate devices and configurations between organizations",
-    icon: <RefreshCw size={18} color="#0F55EC" />,
+    icon: <RefreshCw size={18} color="#003E68" />,
     icon_bg_color: "bg-[#DBEAFE]",
   },
   {
     id: "restore",
     label: "Restore Backup",
     description: "Restore a previous configuration snapshot to your org",
-    icon: <HardDriveUpload size={18} color="#0F9F91" />,
+    icon: <HardDriveUpload size={18} color="#003E68" />,
     icon_bg_color: "bg-[#DCFCE7]",
   },
   {
     id: "cat9k",
     label: "Cat9K → Meraki",
     description: "Translate IOS-XE running-config to Meraki MS switch config",
-    icon: <ServerCog size={18} color="#6E1FF6" />,
+    icon: <ServerCog size={18} color="#003E68" />,
     icon_bg_color: "bg-[#EDE9FE]",
   },
   {
     id: "backup",
     label: "Backup Config",
     description: "Snapshot your org and save to ZIP before any change",
-    icon: <HardDriveDownload size={18} color="#0F9F91" />,
+    icon: <HardDriveDownload size={18} color="#003E68" />,
     icon_bg_color: "bg-[#CCFBF1]",
   },
   // {
@@ -230,8 +231,8 @@ export const ModeSelectionScreen = () => {
       <div className="flex-1 flex flex-col gap-8 p-6 w-full">
         {/* Welcome Section */}
         <PageHeader
-          heading={`Welcome back, ${firstName}`}
-          subHeading={`Unified AurionOne — ${organizations?.length || 0} organization connected.`}
+          heading="Migration Overview"
+          subHeading="Monitor your migrations, system health, and activity in real time."
         >
           {/* <CustomButton
           onClick={() => handleNavigate("organizations")}
@@ -242,7 +243,7 @@ export const ModeSelectionScreen = () => {
         </PageHeader>
 
         {/* Summay Cards */}
-        {/* <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-4 gap-6">
           {SUMMARY.map((card, idx) => (
             <div
               key={card?.label || idx}
@@ -256,7 +257,7 @@ export const ModeSelectionScreen = () => {
               />
             </div>
           ))}
-        </div> */}
+        </div>
 
         {/* Hero Row: Quick Access Tools + Device Distribution */}
         {/* <div className="grid grid-cols-12 gap-6">
@@ -365,27 +366,26 @@ export const ModeSelectionScreen = () => {
       </div> */}
 
         {/* Platform Tools */}
-        <div className="flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0px_0px_8px_rgba(0,0,0,0.10)]">
-          <div className="text-[16px] font-bold">Platform Tools</div>
+        <div className="p-5 flex flex-col gap-4 bg-white border border-[#C1C7D11A] rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+          <div className="flex items-center gap-3 font-semibold text-[16px] text-[#003E68]">
+            <Zap size={20} />
+            <span className="">Platform Tools</span>
+          </div>
 
           <div className="grid grid-cols-20 gap-5">
             {TOOLS.map((tool, index) => (
               <button
                 key={tool.id || index}
                 onClick={() => handleNavigate(tool.id)}
-                className={`col-span-20 sm:col-span-10 lg:col-span-5 flex items-start gap-3 p-4 text-left rounded-lg border border-[#EFEFEF] hover:shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-all`}
+                className={`col-span-20 sm:col-span-10 lg:col-span-5 p-3.5 flex flex-col gap-2 bg-[#003E680D] border border-[#003E681A] rounded-2xl transition-all`}
               >
-                <div
-                  className={`shrink-0 flex items-center justify-center w-9 h-9 ${tool?.icon_bg_color} rounded-xl`}
-                >
-                  {tool.icon}
-                </div>
+                {tool.icon}
 
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-foreground mb-1 group-hover:text-blue-600 transition-colors">
+                <div className="space-y-1 text-left">
+                  <h3 className="text-sm font-semibold text-[#003E68] mb-1 group-hover:text-blue-600 transition-all">
                     {tool.label}
                   </h3>
-                  <p className="text-xs text-[#ADB8CC] leading-relaxed line-clamp-2">
+                  <p className="text-[11px] text-[#191C1D] leading-relaxed line-clamp-2">
                     {tool.description}
                   </p>
                 </div>
@@ -396,7 +396,7 @@ export const ModeSelectionScreen = () => {
       </div>
 
       {/* Footer */}
-      <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-lg shadow-[0_0px_8px_rgba(0,0,0,0.10)]">
+      <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
         © 2026 AurionOne. All rights reserved.
       </div>
     </div>

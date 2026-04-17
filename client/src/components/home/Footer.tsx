@@ -100,7 +100,7 @@ export default function Footer() {
         </div>
 
         {/* Links */}
-        <div className="grid grid-cols-12 gap-8 md:gap-10 text-white">
+        <div className="grid grid-cols-12 gap-6 md:gap-10 text-white">
           <div className="col-span-12 md:col-span-5 flex flex-col gap-1">
             <div className="font-bold text-[20px] mb-1">AurionOne</div>
             <p className="text-xs text-white/60 text-wrap">
@@ -139,12 +139,12 @@ export default function Footer() {
           <div className="col-span-12 md:col-span-3 flex flex-col gap-2">
             <p className="font-light text-white">Subscribe our newsletter</p>
 
-            <div className="p-1.5 flex items-center bg-white rounded-full">
-              <div className="translate-x-2 w-auto">
+            <div className="p-1.5 flex items-center justify-between bg-white rounded-full">
+              <div className="w-[150px]">
                 <input
                   type="email"
                   placeholder="Enter your Email"
-                  className="text-sm text-black focus:outline-none focus:ring-0"
+                  className="pl-2 text-sm text-black focus:outline-none focus:ring-0"
                 />
               </div>
 

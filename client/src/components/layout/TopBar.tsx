@@ -68,7 +68,7 @@ export const TopBar = () => {
           </span>
         )}
 
-        <button
+        {/* <button
           onClick={() => navigate(TOOL_MODE_ROUTES.profile)}
           className="flex items-center gap-2 pl-1.5 pr-3 py-1 border border-[#B0AFAF] rounded-lg hover:bg-white/70 transition-all duration-200 group"
         >
@@ -81,7 +81,7 @@ export const TopBar = () => {
               {displayName}
             </div>
           </div>
-        </button>
+        </button> */}
       </div>
     </header>
   );

@@ -1,17 +1,125 @@
 import React, { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-import { Input } from "antd";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
-import LabelInput from "@/src/components/ui/LabelInput";
-import CustomButton from "../../components/ui/CustomButton";
+import {
+  Loader2,
+  ArrowRight,
+  Mail,
+  User,
+  Eye,
+  EyeOff,
+  LockKeyholeOpen,
+} from "lucide-react";
 
 import { apiEndpoints } from "@/src/services/api";
 
 import { useAuth } from "@/src/context/AuthContext";
+import { useForm } from "react-hook-form";
 
-const { Password } = Input;
+const commonInputClass =
+  "w-full pl-12 p-3 outline-none text-sm placeholder:text-[#C1C7D1] border border-[#C1C7D133] rounded-3xl";
+
+const errorClass = (error: any) => {
+  return error
+    ? "border-2 border-red-400"
+    : "border-[#C1C7D133] focus:border-transparent focus:ring ring-[#015C95]";
+};
+
+function FormField({
+  id,
+  label,
+  className,
+  children,
+  attachment,
+}: {
+  id: any;
+  label: any;
+  className?: any;
+  children?: any;
+  attachment?: any;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between gap-3">
+        <label
+          htmlFor={id}
+          className={`${className} font-bold text-xs text-[#015C95]`}
+        >
+          {label}
+        </label>
+
+        {attachment}
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
+const CustomInput = React.forwardRef(
+  ({ icon, error, className, ...props }: any, ref: any) => {
+    const Icon = icon;
+
+    return (
+      <div className="relative">
+        <input
+          ref={ref} // ✅ CRITICAL FIX
+          {...props}
+          className={`${className} ${errorClass(error)} ${commonInputClass}`}
+        />
+
+        {Icon && (
+          <Icon
+            size={18}
+            className="absolute top-1/2 -translate-y-1/2 left-4"
+            color="#717781"
+          />
+        )}
+      </div>
+    );
+  },
+);
+
+const CustomInputPassword = React.forwardRef(
+  ({ icon, error, className, ...props }: any, ref: any) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const Icon = icon;
+
+    return (
+      <div className="relative">
+        <input
+          ref={ref} // ✅ CRITICAL FIX
+          {...props}
+          type={showPassword ? "text" : "password"}
+          className={`${className} ${errorClass(error)} ${commonInputClass}`}
+        />
+
+        <Icon
+          size={18}
+          className="absolute top-1/2 -translate-y-1/2 left-4"
+          color="#717781"
+        />
+
+        <button type="button" onClick={() => setShowPassword((prev) => !prev)}>
+          {showPassword ? (
+            <EyeOff
+              size={18}
+              className="absolute top-1/2 -translate-y-1/2 right-4"
+              color="#717781"
+            />
+          ) : (
+            <Eye
+              size={18}
+              className="absolute top-1/2 -translate-y-1/2 right-4"
+              color="#717781"
+            />
+          )}
+        </button>
+      </div>
+    );
+  },
+);
 
 export const AuthScreen = () => {
   const { login } = useAuth();
@@ -19,31 +127,23 @@ export const AuthScreen = () => {
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(true);
-  const [error, setError] = useState("");
 
-  const [loading, setLoading] = useState(false);
-
-  const [sendPayload, setSendPayload] = useState({
-    email: null,
-    password: null,
-    fullName: null,
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    shouldUnregister: true, // 🔥 IMPORTANT
   });
 
-  const changePayload = (field: any, value: any) => {
-    setSendPayload((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const loginRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
+  const loginRegister = async (payload: any) => {
     try {
       let res;
       if (isLogin) {
-        res = await apiEndpoints.login(sendPayload);
+        res = await apiEndpoints.login(payload);
       } else {
-        res = await apiEndpoints.register(sendPayload);
+        res = await apiEndpoints.register(payload);
       }
 
       const data = res.data;
@@ -55,141 +155,185 @@ export const AuthScreen = () => {
       console.log("Logged User Data: ", data?.user);
       navigate("/selection");
     } catch (error) {
-      setError(error?.message);
       console.error("Error Logging In: ", error);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-4 bg-gradient-to-b from-slate-50 to-slate-100 font-sans text-slate-800">
-      <div className="w-full max-w-[420px] flex flex-col gap-6">
-        {/* Brand */}
-        <div
-          onClick={() => navigate("/home")}
-          className="text-center cursor-pointer"
-        >
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-            Aurion<span className="text-[#049FD9]">One</span>
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Enterprise-grade network migration
+    <div className="min-h-screen w-full flex flex-col lg:flex-row items-center justify-center">
+      <div className="bg-[url('/images/auth_page_image.png')] bg-cover w-full h-full lg:h-screen lg:w-1/2">
+        <div className="flex flex-col gap-10 p-10 lg:p-16">
+          <p className="font-semibold text-[18px] text-white">AurionOne</p>
+
+          <p className="text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
+            <span className="font-medium text-[#D7FB71]">
+              Automate Network Migrations
+            </span>{" "}
+            for the Next Generation
+          </p>
+
+          <p className="font-light text-[12px] sm:text-[13px] text-[#9BCBFF]">
+            Automate network migrations with zero downtime, real-time
+            validation, and intelligent execution—without manual effort.
           </p>
         </div>
+      </div>
 
-        {/* Auth Card */}
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-8 flex flex-col gap-6">
-          {/* Toggle */}
-          <div className="flex bg-slate-100 rounded-lg p-1">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 text-sm font-semibold rounded-md transition ${
-                isLogin ? "bg-white shadow text-slate-900" : "text-slate-500"
-              }`}
-            >
-              Sign In
-            </button>
-
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 text-sm font-semibold rounded-md transition ${
-                !isLogin ? "bg-white shadow text-slate-900" : "text-slate-500"
-              }`}
-            >
-              Create Account
-            </button>
+      <div className="w-full lg:h-screen lg:w-1/2">
+        <div className="flex flex-col justify-center gap-8 px-10 py-10 lg:px-30 h-full w-full">
+          <div className="font-medium text-xl sm:text-2xl text-[#015C95]">
+            {isLogin ? "Welcome Back" : "Create Your Free Account"}
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-100">
-              <p className="text-xs text-red-600 font-medium">{error}</p>
-            </div>
-          )}
-
           {/* Inputs */}
-          <div className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit(loginRegister)}
+            className="flex flex-col gap-4"
+          >
             {!isLogin && (
-              <LabelInput id="fullname" label="Full Name" required>
-                <Input
+              <FormField id="fullname" label="Full Name">
+                <CustomInput
                   id="fullname"
-                  placeholder="Jane Doe"
-                  value={sendPayload?.fullName}
-                  onChange={(e) => changePayload("fullName", e.target.value)}
+                  icon={User}
+                  placeholder="e.g. Jhon Doe"
+                  {...register("fullname", {
+                    required: "Full Name is required!",
+                  })}
                 />
-              </LabelInput>
+
+                {errors?.fullname?.message && (
+                  <p className="text-xs text-red-600">
+                    {String(errors.fullname.message)}
+                  </p>
+                )}
+              </FormField>
             )}
 
-            <LabelInput id="email" label="Email" required>
-              <Input
+            <FormField id="email" label="Email Address">
+              <CustomInput
                 id="email"
                 type="email"
-                placeholder="example@company.com"
-                value={sendPayload?.email}
-                onChange={(e) => changePayload("email", e.target.value)}
+                icon={Mail}
+                placeholder="e.g. name@company.com"
+                {...register("email", {
+                  required: "Email is required!",
+                })}
+                error={errors?.email}
               />
-            </LabelInput>
 
-            <LabelInput id="password" label="Password" required>
-              <Password
-                id="password"
-                placeholder="••••••••"
-                value={sendPayload?.password}
-                onChange={(e) => changePayload("password", e.target.value)}
-              />
-            </LabelInput>
+              {errors?.email?.message && (
+                <p className="text-xs text-red-600">
+                  {String(errors?.email?.message)}
+                </p>
+              )}
+            </FormField>
 
-            <CustomButton
-              onClick={loginRegister}
-              disabled={loading}
-              className="w-full"
+            <FormField
+              id="password"
+              label="Password"
+              attachment={
+                isLogin && (
+                  <div className="font-medium text-xs text-[#015C95] cursor-pointer">
+                    Forgot Password?
+                  </div>
+                )
+              }
             >
-              {loading ? (
+              <CustomInputPassword
+                id="password"
+                icon={LockKeyholeOpen}
+                placeholder="********"
+                {...register("password", {
+                  required: "Password is required!",
+                })}
+                error={errors?.password}
+              />
+
+              {errors?.password?.message && (
+                <p className="text-xs text-red-600">
+                  {String(errors?.password?.message)}
+                </p>
+              )}
+            </FormField>
+
+            <button
+              type="submit"
+              className="px-4 py-2.5 w-full flex items-center justify-center gap-2 font-medium text-md bg-[#D7FB71] rounded-full cursor-pointer"
+            >
+              {isSubmitting ? (
                 <Loader2 size={18} className="animate-spin" />
               ) : (
                 <>
-                  {isLogin ? "Sign In" : "Create Account"}
+                  {isLogin ? "Sign In" : "Get Started For Free"}
                   <ArrowRight size={18} />
                 </>
               )}
-            </CustomButton>
-          </div>
-        </div>
-
-        {/* Demo Access */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
-          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">
-            Quick Demo Access
-          </p>
-
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={() => {
-                setSendPayload({
-                  email: "admin@demo.com",
-                  password: "Admin1234!",
-                });
-                setIsLogin(true);
-              }}
-              className="px-3 py-2 text-xs font-semibold rounded-md border border-slate-200 hover:border-blue-300 hover:text-blue-600 transition"
-            >
-              Admin User
             </button>
+          </form>
 
-            <button
-              onClick={() => {
-                setSendPayload({
-                  email: "free@demo.com",
-                  password: "Demo1234!",
-                });
-                setIsLogin(true);
-              }}
-              className="px-3 py-2 text-xs font-semibold rounded-md border border-slate-200 hover:border-blue-300 hover:text-blue-600 transition"
-            >
-              Free User
-            </button>
-          </div>
+          {isLogin && (
+            <div className="flex flex-col gap-5">
+              <div className="flex items-center gap-3">
+                <div className="flex-1 border-b border-[#E7E8E9]"></div>
+                <div className="text-xs text-[#C1C7D1] uppercase">
+                  or continue with
+                </div>
+                <div className="flex-1 border-b border-[#E7E8E9]"></div>
+              </div>
+
+              <div className="flex items-center justify-center gap-6 lg:gap-8">
+                <button className="px-7 py-2.5 flex items-center gap-2 font-medium text-[16px] hover:bg-gray-100 border border-gray-100 hover:border-gray-200 rounded-full cursor-pointer transition-all">
+                  <img src="/images/google.svg" alt="" className="size-4" />
+                  Google
+                </button>
+                <button className="px-7 py-2.5 flex items-center gap-2 font-medium text-[16px] hover:bg-gray-100 border border-gray-100 hover:border-gray-200 rounded-full cursor-pointer transition-all">
+                  <img
+                    src="/images/github_light.svg"
+                    alt=""
+                    className="size-4"
+                  />
+                  Github
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isLogin ? (
+            <p className="font-semibold text-xs mx-auto">
+              Don't have an account?{" "}
+              <span
+                onClick={() => setIsLogin(false)}
+                className="text-[#015C95] cursor-pointer"
+              >
+                Sign Up
+              </span>
+            </p>
+          ) : (
+            <p className="font-semibold text-xs mx-auto">
+              Already have an account?{" "}
+              <span
+                onClick={() => setIsLogin(true)}
+                className="text-[#015C95] cursor-pointer"
+              >
+                Sign In
+              </span>
+            </p>
+          )}
+
+          {!isLogin && (
+            <p className="text-center text-xs text-[#717781]">
+              By creating an account, you agree to our{" "}
+              <Link to="/terms" className="font-semibold underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy-policy" className="font-semibold underline">
+                Privacy Policy
+              </Link>
+              . Your data is protected with enterprise-grade security and
+              encryption.
+            </p>
+          )}
         </div>
       </div>
     </div>
