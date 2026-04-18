@@ -14,112 +14,12 @@ import {
 
 import { apiEndpoints } from "@/src/services/api";
 
+import FormField from "@/src/components/ui/FormField";
+import { CustomInput } from "@/src/components/ui/CustomInput";
+import { CustomInputPassword } from "@/src/components/ui/CustomInputPassword";
+
 import { useAuth } from "@/src/context/AuthContext";
 import { useForm } from "react-hook-form";
-
-const commonInputClass =
-  "w-full pl-12 p-3 outline-none text-sm placeholder:text-[#C1C7D1] border border-[#C1C7D133] rounded-3xl";
-
-const errorClass = (error: any) => {
-  return error
-    ? "border-2 border-red-400"
-    : "border-[#C1C7D133] focus:border-transparent focus:ring ring-[#015C95]";
-};
-
-function FormField({
-  id,
-  label,
-  className,
-  children,
-  attachment,
-}: {
-  id: any;
-  label: any;
-  className?: any;
-  children?: any;
-  attachment?: any;
-}) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between gap-3">
-        <label
-          htmlFor={id}
-          className={`${className} font-bold text-xs text-[#015C95]`}
-        >
-          {label}
-        </label>
-
-        {attachment}
-      </div>
-
-      {children}
-    </div>
-  );
-}
-
-const CustomInput = React.forwardRef(
-  ({ icon, error, className, ...props }: any, ref: any) => {
-    const Icon = icon;
-
-    return (
-      <div className="relative">
-        <input
-          ref={ref} // ✅ CRITICAL FIX
-          {...props}
-          className={`${className} ${errorClass(error)} ${commonInputClass}`}
-        />
-
-        {Icon && (
-          <Icon
-            size={18}
-            className="absolute top-1/2 -translate-y-1/2 left-4"
-            color="#717781"
-          />
-        )}
-      </div>
-    );
-  },
-);
-
-const CustomInputPassword = React.forwardRef(
-  ({ icon, error, className, ...props }: any, ref: any) => {
-    const [showPassword, setShowPassword] = useState(false);
-    const Icon = icon;
-
-    return (
-      <div className="relative">
-        <input
-          ref={ref} // ✅ CRITICAL FIX
-          {...props}
-          type={showPassword ? "text" : "password"}
-          className={`${className} ${errorClass(error)} ${commonInputClass}`}
-        />
-
-        <Icon
-          size={18}
-          className="absolute top-1/2 -translate-y-1/2 left-4"
-          color="#717781"
-        />
-
-        <button type="button" onClick={() => setShowPassword((prev) => !prev)}>
-          {showPassword ? (
-            <EyeOff
-              size={18}
-              className="absolute top-1/2 -translate-y-1/2 right-4"
-              color="#717781"
-            />
-          ) : (
-            <Eye
-              size={18}
-              className="absolute top-1/2 -translate-y-1/2 right-4"
-              color="#717781"
-            />
-          )}
-        </button>
-      </div>
-    );
-  },
-);
 
 export const AuthScreen = () => {
   const { login } = useAuth();

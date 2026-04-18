@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { Select } from "antd";
-import { Loader2 } from "lucide-react";
+import { Loader2, ClipboardList } from "lucide-react";
 
 import StepHeadingCard from "../StepHeadingCard";
 
@@ -14,6 +14,9 @@ import {
 } from "../../../services/merakiService";
 
 import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
+import InformationCard from "../InformationCard";
+import FormField from "../../ui/FormField";
+import CustomSelect from "../../ui/CustomSelect";
 
 interface DestinationOrganizationStepProps {
   data: {
@@ -117,14 +120,14 @@ export function DestinationOrganizationStep({
     };
   }, [data.destinationOrg, data.destinationApiKey]);
 
-  const handleOrgChange = (orgId: string) => {
+  const handleOrgChange = (orgId: string | number | null) => {
     const org = organizations.find((o) => o.id === orgId);
     if (org) {
       onUpdate({ destinationOrg: org, destinationNetwork: null }); // Reset network on org change
     }
   };
 
-  const handleNetworkChange = (networkId: string) => {
+  const handleNetworkChange = (networkId: string | number | null) => {
     const network = networks.find((n) => n.id === networkId);
     if (network) {
       onUpdate({ destinationNetwork: network });
@@ -132,7 +135,7 @@ export function DestinationOrganizationStep({
   };
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       {loading ? (
         <div className="flex flex-col items-center justify-center h-full">
           <Loader2 className="w-8 h-8 animate-spin text-green-600" />
@@ -143,65 +146,79 @@ export function DestinationOrganizationStep({
       ) : error ? (
         <AlertCard variant="error">{error}</AlertCard>
       ) : (
-        <div className="flex flex-col gap-6">
-          <LabelInput
-            id="destination-organization"
-            label="Destination Organization (dashboard.meraki.in)"
-            colSpan=""
-            required
-          >
-            <Select
+        <div className="flex items-start gap-6">
+          <div className="p-5 w-full flex flex-col gap-6 bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+            <FormField
               id="destination-organization"
-              placeholder="Select source organization"
-              value={data.destinationOrg?.id || null}
-              options={organizations.map((org) => ({
-                value: org?.id,
-                label: org?.name,
-              }))}
-              onChange={handleOrgChange}
-            />
-          </LabelInput>
-
-          {data.destinationOrg && (
-            <LabelInput
-              id="destination-network"
-              label="Destination Network"
-              colSpan=""
-              required
+              label="Destination Organization (dashboard.meraki.in)"
+              className="text-[13px] uppercase"
             >
-              <Select
-                id="destination-network"
-                placeholder={
-                  loadingNetworks
-                    ? "Loading networks..."
-                    : "Select destination network"
-                }
-                value={data.destinationNetwork?.id || null}
-                options={networks.map((net) => ({
-                  value: net?.id,
-                  label: net?.name,
+              <CustomSelect
+                id="destination-organization"
+                placeholder="Select source organization"
+                value={data.destinationOrg?.id || null}
+                options={organizations.map((org) => ({
+                  value: org?.id,
+                  label: org?.name,
                 }))}
-                onChange={handleNetworkChange}
-                disabled={loadingNetworks || networks.length === 0}
+                onChange={handleOrgChange}
               />
-            </LabelInput>
-          )}
+            </FormField>
+
+            {data.destinationOrg && (
+              <FormField
+                id="destination-network"
+                label="Destination Network"
+                className="text-[13px] uppercase"
+              >
+                <CustomSelect
+                  id="destination-network"
+                  placeholder={
+                    loadingNetworks
+                      ? "Loading networks..."
+                      : "Select destination network"
+                  }
+                  value={data.destinationNetwork?.id || null}
+                  options={networks.map((net) => ({
+                    value: net?.id,
+                    label: net?.name,
+                  }))}
+                  onChange={handleNetworkChange}
+                  disabled={loadingNetworks || networks.length === 0}
+                />
+              </FormField>
+            )}
+          </div>
 
           {/* Note */}
           {(data.destinationOrg || data.destinationNetwork) && (
-            <AlertCard variant="note">
+            <InformationCard
+              icon={ClipboardList}
+              label="Selection Summary"
+              className="w-[600px]"
+            >
               {data.destinationOrg && (
-                <p>
-                  <strong>Organization:</strong> {data.destinationOrg.name}
-                </p>
+                <div className="p-3 flex flex-col gap-1 bg-white/10 rounded-lg">
+                  <div className="font-medium text-[11px] text-[#D0F059CC]">
+                    Selected Organization :{" "}
+                  </div>
+                  <div className="text-xs text-white">
+                    {data.destinationOrg.name}
+                  </div>
+                </div>
               )}
 
               {data.destinationNetwork && (
-                <p>
-                  <strong>Network:</strong> {data.destinationNetwork.name}
-                </p>
+                <div className="p-3 flex flex-col gap-1 bg-white/10 rounded-lg">
+                  <div className="font-medium text-[11px] text-[#D0F059CC]">
+                    Selected Network :{" "}
+                  </div>
+                  <div className="text-xs text-white">
+                    {data.destinationNetwork.name}
+                  </div>
+                </div>
               )}
-            </AlertCard>
+            </InformationCard>
           )}
         </div>
       )}

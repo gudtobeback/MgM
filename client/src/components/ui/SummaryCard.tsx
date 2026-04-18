@@ -21,17 +21,18 @@ export default function SummaryCard({
     >
       <div className="border-2 border-[#003E68]"></div>
 
-      <div className="flex items-center gap-5 p-5">
-        <div className={`mt-2 p-2.5 text-white ${icon_bg_color} rounded-full`}>
-          {icon}
+      <div className="flex flex-col gap-3 p-5">
+        <div className="flex items-center gap-3">
+          <img
+            src="/images/Terminal.png"
+            alt=""
+            className="p-1 size-6 rounded-full bg-gray-100"
+          />
+
+          <p className="font-medium text-[#003E68]">{label}</p>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <div className="text-[28px] font-semibold">{value}</div>
-          <div className="text-xs font-medium text-[#797979] tracking-wider">
-            {label}
-          </div>
-        </div>
+        <div className="font-semibold text-2xl text-[#015C95]">{value}</div>
       </div>
     </div>
   );

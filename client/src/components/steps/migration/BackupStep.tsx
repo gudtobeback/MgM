@@ -112,7 +112,7 @@ export function BackupStep({
   }, []);
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <ProcedureCard
         icon={
           isBackingUp ? (
@@ -139,6 +139,7 @@ export function BackupStep({
             {log}
           </div>
         ))}
+
         {error && (
           <div className="text-red-600 mt-2 font-semibold">{error}</div>
         )}

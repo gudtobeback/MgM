@@ -1,5 +1,6 @@
 import React from "react";
 import { Progress } from "antd";
+import { Check } from "lucide-react";
 
 type StepBarProps = {
   steps?: any;
@@ -32,71 +33,34 @@ export default function StepBar({
   return (
     <nav
       aria-label="Migration steps"
-      className={`${className} -mt-2 pb-4 bg-white border-b border-[#87D2ED] overflow-hidden`}
+      className={`${className} w-full p-4 pb-9 bg-white border border-[#C1C7D11A] rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]`}
     >
-      {/* ── Step names — evenly spaced, same total width as the container ── */}
-      <div
-        style={{
-          display: "flex",
-          marginTop: "6px",
-        }}
-      >
-        {steps.map((step: any, index: number) => {
-          const isCompleted = activeIndex > index;
-          const isActive = activeIndex === index;
-
-          const textColor = isActive
-            ? ACTIVE_COLOR
-            : isCompleted
-              ? COMPLETED_COLOR
-              : INACTIVE_COLOR;
+      <div className="flex items-start gap-1">
+        {steps?.map((step: any, idx: any) => {
+          const { id, name } = step;
+          const isActive = activeIndex + 1 === id;
+          const isComplete = id < activeIndex + 1;
 
           return (
-            <div
-              key={step.id}
-              style={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "10px",
-                  fontWeight: isActive || isCompleted ? 600 : 500,
-                  color: textColor,
-                  textAlign: "center",
-                  lineHeight: 1.3,
-                  whiteSpace: "nowrap",
-                  transition: "color 200ms",
-                }}
-              >
-                {step.name}
-              </span>
-            </div>
+            <>
+              <div className="relative flex flex-col items-center gap-2 w-full text-xs">
+                <div
+                  className={`w-7 h-7 flex items-center justify-center ${isComplete ? "text-white bg-[#003E68]" : isActive ? "font-semibold text-[#003E68] bg-[#D0F059]" : "text-[#94A3B8] bg-[#EDEEEF]"}  rounded-full`}
+                >
+                  {isComplete ? <Check strokeWidth={3} size={16} /> : id}
+                </div>
+
+                <div
+                  className={`absolute mt-9 text-nowrap text-[11px] ${isComplete ? "font-semibold text-[#003E68]" : isActive ? "font-semibold text-[#003E68]" : "text-[#94A3B8]"}`}
+                >
+                  {name}
+                </div>
+              </div>
+
+              <div className="last:hidden mt-4 border-b border-[#EDEEEF] w-full"></div>
+            </>
           );
         })}
-      </div>
-
-      {/* ── Progress bar — inset by halfStep% on each side to align with label centers ── */}
-      <div
-        style={{
-          paddingLeft: `${halfStep}%`,
-          paddingRight: `${halfStep}%`,
-        }}
-      >
-        <Progress
-          percent={percentage}
-          strokeColor={{
-            "0%": "#059669",
-            "100%": "#049FD9",
-          }}
-          trailColor="#e5e7eb"
-          strokeWidth={8}
-          showInfo={false}
-          style={{ display: "block", margin: 0 }}
-          status="active"
-        />
       </div>
     </nav>
   );

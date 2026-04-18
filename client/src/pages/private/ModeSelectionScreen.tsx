@@ -13,6 +13,7 @@ import {
   Globe,
   RefreshCw,
   EllipsisVertical,
+  FileStack,
 } from "lucide-react";
 
 import CustomButton from "../../components/ui/CustomButton";
@@ -190,78 +191,48 @@ export const ModeSelectionScreen = () => {
 
   const quickAccessTools = [
     {
-      name: "Samuel Goodwin",
-      function: "Full Migration",
-      time: "08:30",
-      description: "Migrate devices & configurations",
+      id: "#1050",
+      devices: "5 Devices",
+      status: "Running",
+      progress: "65",
+      time: "6 min",
       action: <EllipsisVertical size={12} />,
     },
     {
-      name: "Samuel Goodwin",
-      function: "Full Migration",
-      time: "08:30",
-      description: "Migrate devices & configurations",
+      id: "#1050",
+      devices: "5 Devices",
+      status: "Completed",
+      progress: "100",
+      time: "6 min",
       action: <EllipsisVertical size={12} />,
     },
     {
-      name: "Samuel Goodwin",
-      function: "Full Migration",
-      time: "08:30",
-      description: "Migrate devices & configurations",
-      action: <EllipsisVertical size={12} />,
-    },
-    {
-      name: "Samuel Goodwin",
-      function: "Full Migration",
-      time: "08:30",
-      description: "Migrate devices & configurations",
-      action: <EllipsisVertical size={12} />,
-    },
-    {
-      name: "Samuel Goodwin",
-      function: "Full Migration",
-      time: "08:30",
-      description: "Migrate devices & configurations",
+      id: "#1050",
+      devices: "5 Devices",
+      status: "Failed",
+      progress: "-",
+      time: "6 min",
       action: <EllipsisVertical size={12} />,
     },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-1 flex flex-col gap-8 p-6 w-full">
-        {/* Welcome Section */}
-        <PageHeader
-          heading="Migration Overview"
-          subHeading="Monitor your migrations, system health, and activity in real time."
-        >
-          {/* <CustomButton
-          onClick={() => handleNavigate("organizations")}
-          className="px-6 py-3 text-sm"
-        >
-          <Plus size={20} /> Add Organization
-        </CustomButton> */}
-        </PageHeader>
-
-        {/* Summay Cards */}
-        <div className="grid grid-cols-4 gap-6">
-          {SUMMARY.map((card, idx) => (
-            <div
-              key={card?.label || idx}
-              className="col-span-4 md:col-span-2 lg:col-span-1"
-            >
-              <SummaryCard
-                icon={card?.icon}
-                icon_bg_color={card?.icon_bg_color}
-                value={card?.value}
-                label={card?.label}
-              />
-            </div>
-          ))}
+    <div className="min-h-screen p-6 flex flex-col gap-8">
+      {/* Welcome Section */}
+      <PageHeader
+        heading="Migration Overview"
+        subHeading="Monitor your migrations, system health, and activity in real time."
+      >
+        <div className="px-3 py-1.5 flex items-center gap-2 bg-[#D7FB71] rounded-full">
+          <div className="p-0.5 bg-[#015C95] rounded-full"></div>
+          <div className="font-semibold text-[11px] text-[#015C95]">
+            LIVE ENGINE
+          </div>
         </div>
+      </PageHeader>
 
-        {/* Hero Row: Quick Access Tools + Device Distribution */}
-        {/* <div className="grid grid-cols-12 gap-6">
-        Quick Access Tools
+      {/* Hero Row: Quick Access Tools + Device Distribution */}
+      {/* <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 md:col-span-8 flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <div className="text-md font-bold flex items-center gap-2">
             Quick Access Tools
@@ -289,7 +260,6 @@ export const ModeSelectionScreen = () => {
           </div>
         </div>
 
-        Device Distribution
         <div className="col-span-12 md:col-span-4 flex flex-col gap-4 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
           <div className="text-md font-bold flex items-center gap-2">
             Device Distribution
@@ -365,8 +335,26 @@ export const ModeSelectionScreen = () => {
         </div>
       </div> */}
 
+      <div className="flex-1 grid grid-cols-12 gap-6 place-content-start w-full">
+        {/* Summay Cards */}
+        <div className="col-span-12 grid grid-cols-4 gap-6">
+          {SUMMARY.map((card, idx) => (
+            <div
+              key={card?.label || idx}
+              className="col-span-4 md:col-span-2 lg:col-span-1"
+            >
+              <SummaryCard
+                icon={card?.icon}
+                icon_bg_color={card?.icon_bg_color}
+                value={card?.value}
+                label={card?.label}
+              />
+            </div>
+          ))}
+        </div>
+
         {/* Platform Tools */}
-        <div className="p-5 flex flex-col gap-4 bg-white border border-[#C1C7D11A] rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+        <div className="col-span-12 md:col-span-10 p-5 flex flex-col gap-4 bg-white border border-[#C1C7D11A] rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
           <div className="flex items-center gap-3 font-semibold text-[16px] text-[#003E68]">
             <Zap size={20} />
             <span className="">Platform Tools</span>
@@ -393,10 +381,94 @@ export const ModeSelectionScreen = () => {
             ))}
           </div>
         </div>
+
+        <div className="col-span-12 md:col-span-2 p-5 flex flex-col items-center justify-center gap-6 bg-[#D7FB71] rounded-3xl">
+          <div className="space-y-1 font-semibold text-center text-xs text-[#003E68]">
+            <p>Devices</p>
+            <p>Protective</p>
+          </div>
+
+          <p className="font-semibold text-5xl text-[#003E68]">78</p>
+        </div>
+
+        <div className="col-span-12 md:col-span-8 p-5 flex flex-col gap-4 bg-white border border-[#C1C7D11A] rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+          <div className="flex items-center gap-3 font-semibold text-[16px] text-[#003E68]">
+            <FileStack size={20} />
+            <span className="">Active Migrations</span>
+          </div>
+
+          <table
+            className="border-collapse
+                [&_td]:px-2 [&_td]:py-2 [&_td]:text-xs
+                [&_th]:px-2 [&_th]:py-2 [&_th]:text-normal [&_th]:text-xs [&_th]:text-start [&_th]:text-[#015C95]"
+          >
+            <thead>
+              <tr>
+                <th>MIGRATION ID</th>
+                <th>DEVICES</th>
+                <th>STATUS</th>
+                <th>PROGRESS</th>
+                <th>TIME</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {quickAccessTools?.map((tools, idx) => {
+                const color = {
+                  Running: {
+                    text_color: "text-[#004A7A]",
+                    bg_color: "bg-[#D0E4FF]",
+                    color: "#004A7A",
+                  },
+                  Completed: {
+                    text_color: "text-[#596C00]",
+                    bg_color: "bg-[#D0F059]",
+                    color: "#596C00",
+                  },
+                  Failed: {
+                    text_color: "text-[#93000A]",
+                    bg_color: "bg-[#FFDAD6]",
+                    color: "#004A7A",
+                  },
+                };
+
+                return (
+                  <tr>
+                    <td className="font-semibold text-[#003E68]">
+                      {tools?.id}
+                    </td>
+                    <td className="text-[#475569]">{tools?.devices}</td>
+                    <td>
+                      <span
+                        className={`px-2 py-1 font-medium text-[11px] ${color[tools?.status]?.text_color} leading-tight ${color[tools?.status]?.bg_color} rounded-sm`}
+                      >
+                        {tools?.status}
+                      </span>
+                    </td>
+                    <td>
+                      {tools?.status !== "Failed" ? (
+                        <Progress
+                          percent={Number(tools?.progress)}
+                          size="small"
+                          strokeColor={color[tools?.status]?.color}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td className="text-[#64748B]">{tools?.time}</td>
+                    <td className="flex justify-center">{tools?.action}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="m-6 p-5 text-xs text-center text-black/60 bg-white rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+      <div className="p-5 text-xs text-center text-black/60 bg-white rounded-3xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
         © 2026 AurionOne. All rights reserved.
       </div>
     </div>

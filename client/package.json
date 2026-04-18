@@ -45,6 +45,7 @@
     "cors": "^2.8.5",
     "date-fns": "^3.3.1",
     "dotenv": "^17.2.3",
+    "downshift": "^9.3.2",
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
     "http": "^0.0.1-security",

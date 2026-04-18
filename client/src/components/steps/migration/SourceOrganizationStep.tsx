@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { Select } from "antd";
-import { Loader2 } from "lucide-react";
+import { Loader2, ClipboardList } from "lucide-react";
 
 import StepHeadingCard from "../StepHeadingCard";
 
@@ -14,6 +14,9 @@ import {
 } from "../../../services/merakiService";
 
 import { MerakiOrganization, MerakiNetwork } from "../../../types/types";
+import FormField from "../../ui/FormField";
+import CustomSelect from "../../ui/CustomSelect";
+import InformationCard from "../InformationCard";
 
 interface SourceOrganizationStepProps {
   data: {
@@ -117,14 +120,14 @@ export function SourceOrganizationStep({
     };
   }, [data.sourceOrg, data.sourceApiKey]);
 
-  const handleOrgChange = (orgId: string) => {
+  const handleOrgChange = (orgId: string | number | null) => {
     const org = organizations.find((o) => o.id === orgId);
     if (org) {
       onUpdate({ sourceOrg: org, sourceNetwork: null }); // Reset network on org change
     }
   };
 
-  const handleNetworkChange = (networkId: string) => {
+  const handleNetworkChange = (networkId: string | number | null) => {
     const network = networks.find((n) => n.id === networkId);
     if (network) {
       onUpdate({ sourceNetwork: network });
@@ -132,7 +135,7 @@ export function SourceOrganizationStep({
   };
 
   return (
-    <div className="step-card-inner-layout">
+    <div>
       {loading ? (
         <div className="flex flex-col items-center justify-center h-full p-6">
           <Loader2 className="w-8 h-8 animate-spin text-[#2563eb]" />
@@ -143,65 +146,79 @@ export function SourceOrganizationStep({
       ) : error ? (
         <AlertCard variant="error">{error}</AlertCard>
       ) : (
-        <div className="flex flex-col gap-6">
-          <LabelInput
-            id="source-organization"
-            label="Source Organization (dashboard.meraki.com)"
-            colSpan=""
-            required
-          >
-            <Select
+        <div className="flex items-start gap-6">
+          <div className="p-5 w-full flex flex-col gap-6 bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+            <FormField
               id="source-organization"
-              placeholder="Select source organization"
-              value={data.sourceOrg?.id || null}
-              options={organizations.map((org) => ({
-                value: org?.id,
-                label: org?.name,
-              }))}
-              onChange={handleOrgChange}
-            />
-          </LabelInput>
-
-          {data.sourceOrg && (
-            <LabelInput
-              id="source-network"
-              label="Source Network"
-              colSpan=""
-              required
+              label="Source Organization (dashboard.meraki.com)"
+              className="text-[13px] uppercase"
             >
-              <Select
-                id="source-network"
-                placeholder={
-                  loadingNetworks
-                    ? "Loading networks..."
-                    : "Select source network"
-                }
-                value={data.sourceNetwork?.id || null}
-                options={networks.map((net) => ({
-                  value: net?.id,
-                  label: net?.name,
+              <CustomSelect
+                id="source-organization"
+                placeholder="Select source organization"
+                value={data.sourceOrg?.id || null}
+                options={organizations.map((org) => ({
+                  value: org?.id,
+                  label: org?.name,
                 }))}
-                onChange={handleNetworkChange}
-                disabled={loadingNetworks || networks.length === 0}
+                onChange={handleOrgChange}
               />
-            </LabelInput>
-          )}
+            </FormField>
+
+            {data.sourceOrg && (
+              <FormField
+                id="source-network"
+                label="Source Network"
+                className="text-[13px] uppercase"
+              >
+                <CustomSelect
+                  id="source-network"
+                  placeholder={
+                    loadingNetworks
+                      ? "Loading networks..."
+                      : "Select source network"
+                  }
+                  value={data.sourceNetwork?.id || null}
+                  options={networks.map((net) => ({
+                    value: net?.id,
+                    label: net?.name,
+                  }))}
+                  onChange={handleNetworkChange}
+                  disabled={loadingNetworks || networks.length === 0}
+                />
+              </FormField>
+            )}
+          </div>
 
           {/* Note */}
           {(data.sourceOrg || data.sourceNetwork) && (
-            <AlertCard variant="note">
+            <InformationCard
+              icon={ClipboardList}
+              label="Selection Summary"
+              className="w-[600px]"
+            >
               {data.sourceOrg && (
-                <p>
-                  <strong>Organization:</strong> {data.sourceOrg.name}
-                </p>
+                <div className="p-3 flex flex-col gap-1 bg-white/10 rounded-lg">
+                  <div className="font-medium text-[11px] text-[#D0F059CC]">
+                    Selected Organization :{" "}
+                  </div>
+                  <div className="text-xs text-white">
+                    {data.sourceOrg.name}
+                  </div>
+                </div>
               )}
 
               {data.sourceNetwork && (
-                <p>
-                  <strong>Network:</strong> {data.sourceNetwork.name}
-                </p>
+                <div className="p-3 flex flex-col gap-1 bg-white/10 rounded-lg">
+                  <div className="font-medium text-[11px] text-[#D0F059CC]">
+                    Selected Network :{" "}
+                  </div>
+                  <div className="text-xs text-white">
+                    {data.sourceNetwork.name}
+                  </div>
+                </div>
               )}
-            </AlertCard>
+            </InformationCard>
           )}
         </div>
       )}

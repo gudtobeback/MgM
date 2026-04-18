@@ -21,7 +21,6 @@ import {
 
 import { MigrationData } from "../../../types/types";
 
-
 interface PreliminaryConfigStepProps {
   data: MigrationData;
   onUpdate: (data: Partial<MigrationData>) => void;
@@ -272,7 +271,7 @@ export function PreliminaryConfigStep({
   }, []);
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <ProcedureCard
         icon={
           isRunning ? (

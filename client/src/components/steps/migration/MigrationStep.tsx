@@ -8,6 +8,7 @@ import {
   ArrowRight,
   AlertTriangle,
   Undo2,
+  CircleAlert,
 } from "lucide-react";
 
 import LogsCard from "../LogsCard";
@@ -26,6 +27,7 @@ import {
 
 import { MerakiDeviceDetails, MigrationData } from "../../../types/types";
 import ProcedureCard from "../ProcedureCard";
+import OvalButton from "../../home/OvalButton";
 
 // Tracks how far migration progressed — used to skip completed stages on retry
 // and to know how far to unwind on rollback.
@@ -426,7 +428,7 @@ export function MigrationStep({
     stageReached.current < 4 ? stageLabel[stageReached.current + 1] : "";
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <ProcedureCard
         icon={
           isMigrating || isRollingBack ? (
@@ -470,24 +472,30 @@ export function MigrationStep({
 
       {showRetry && (
         <>
-          <AlertCard variant="error">
-            <p>
-              <strong>Failed at: </strong> <br />
-              {failedStageText} <br />
-              {error}
-            </p>
-          </AlertCard>
+          {/* Warning */}
+          <div className="p-4 flex gap-3 bg-red-50 border-l-4 border-red-600">
+            <CircleAlert size={18} className="mt-0.5 text-red-600" />
+
+            <div className="space-y-1 text-sm">
+              <div className="font-semibold text-red-600">Failed at:</div>
+              <div className="text-red-600">
+                {failedStageText} <br />
+                {error}
+              </div>
+            </div>
+          </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-1 flex flex-col items-center gap-3">
-              <CustomButton
+              <OvalButton
                 onClick={handleRetry}
+                text_prop="text-white"
                 bg_prop="bg-green-600 enabled:hover:bg-green-700"
-                className="w-full"
+                className="w-full justify-center"
               >
                 <RefreshCw size={16} />
                 Retry from Stage {stageReached.current + 1}
-              </CustomButton>
+              </OvalButton>
 
               <p className="text-xs text-center">
                 Resumes from Stage {stageReached.current + 1} — skips
@@ -496,14 +504,15 @@ export function MigrationStep({
             </div>
 
             <div className="col-span-1 flex flex-col items-center gap-3">
-              <CustomButton
+              <OvalButton
                 onClick={handleRollback}
+                text_prop="text-white"
                 bg_prop="bg-red-600 enabled:hover:bg-red-700"
-                className="w-full"
+                className="w-full justify-center"
               >
                 <Undo2 size={16} />
                 Roll Back
-              </CustomButton>
+              </OvalButton>
 
               <p className="text-xs text-center">
                 Undoes all completed stages and returns devices to the source
@@ -512,10 +521,13 @@ export function MigrationStep({
             </div>
 
             <div className="col-span-1 flex flex-col items-center gap-3">
-              <CustomButton onClick={handleSkip} className="w-full">
+              <OvalButton
+                onClick={handleSkip}
+                className="w-full justify-center"
+              >
                 Skip to Restore
                 <ArrowRight size={16} />
-              </CustomButton>
+              </OvalButton>
 
               <p className="text-xs text-center">
                 Use if you fixed the issue manually in the Meraki dashboard.
@@ -526,13 +538,22 @@ export function MigrationStep({
       )}
 
       {rollbackDone && (
-        <AlertCard variant="warning">
-          <p>
-            <strong>Rollback complete. </strong>Please verify device status in
-            both dashboards before retrying. Restart the wizard when you are
-            ready to attempt migration again.
-          </p>
-        </AlertCard>
+        <div className="p-4 flex gap-3 bg-amber-50 border-l-4 border-amber-500">
+          <CircleAlert size={18} className="mt-0.5 text-amber-600" />
+
+          <div className="space-y-1 text-sm">
+            <div className="font-semibold text-amber-600">
+              Rollback complete.
+            </div>
+            <div className="text-amber-600">
+              <p>
+                Please verify device status in both dashboards before retrying.
+                Restart the wizard when you are ready to attempt migration
+                again.
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

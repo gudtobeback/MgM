@@ -31,10 +31,10 @@ export default function AlertCard({
   };
 
   const icons = {
-    success: <CircleCheck size={18} className="text-green-600" />,
-    warning: <TriangleAlert size={18} className="text-amber-600" />,
-    alert: <CircleAlert size={18} className="text-red-600" />,
-    error: <XCircle size={18} className="text-red-700" />,
+    success: <CircleCheck size={18} className="text-green-600 shrink-0" />,
+    warning: <TriangleAlert size={18} className="text-amber-600 shrink-0" />,
+    alert: <CircleAlert size={18} className="text-red-600 shrink-0" />,
+    error: <XCircle size={18} className="text-red-700 shrink-0" />,
   };
 
   return (

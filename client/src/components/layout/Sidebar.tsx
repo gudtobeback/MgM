@@ -73,7 +73,7 @@ const CUSTOMER_NAV_ITEMS: NavItem[] = [
   // },
   {
     id: "migration",
-    label: "Migration",
+    label: "AurionOne Migration",
     icon: <ArrowRightLeft size={18} />,
     children: [
       { id: "migration", label: "Full Migration" },
@@ -82,7 +82,7 @@ const CUSTOMER_NAV_ITEMS: NavItem[] = [
   },
   {
     id: "backup",
-    label: "Backup & Recovery",
+    label: "AurionOne Backup & Recovery",
     icon: <HardDriveDownload size={18} />,
     children: [
       { id: "backup", label: "Backup Config" },
@@ -174,7 +174,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <nav className={`h-full px-2 flex flex-col bg-[#003E68] overflow-y-auto transition-all`}>
+    <nav
+      className={`h-full px-2 flex flex-col bg-[#003E68] overflow-y-auto transition-all max-w-[250px]`}
+    >
       <header className="h-18 shrink-0 flex items-center justify-center">
         {!collapsed && (
           <div className="ml-2 flex-1 font-bold text-[20px] text-white">
@@ -287,7 +289,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Icon size={16} />
 
                 {!collapsed && (
-                  <p className="flex-1 text-left text-[13px] leading-tight">
+                  <p className="flex-1 text-left text-[13px] leading-tight line-clamp-1">
                     {label}
                   </p>
                 )}

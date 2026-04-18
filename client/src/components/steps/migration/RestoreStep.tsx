@@ -247,7 +247,7 @@ export function RestoreStep({
   }, []);
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <ProcedureCard
         icon={
           isRestoring ? (
@@ -274,6 +274,7 @@ export function RestoreStep({
             {log}
           </div>
         ))}
+
         {error && (
           <div className="text-red-600 mt-2 font-semibold">{error}</div>
         )}

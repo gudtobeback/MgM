@@ -7,12 +7,15 @@ import {
   ShieldCheck,
   HardDriveUpload,
   DatabaseZap,
+  CircleAlert,
+  FolderClosed,
 } from "lucide-react";
 
 import { Card } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import AlertCard from "../../ui/AlertCard";
 import CustomButton from "../../ui/CustomButton";
+import OvalButton from "../../home/OvalButton";
 
 import { MigrationData } from "../../../types/types";
 import { formatLogDuration } from "@/src/utilities/formatLogDuration";
@@ -60,7 +63,7 @@ export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
   const formattedDuration = formatLogDuration(logDuration);
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 py-6">
         <div
           className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-2 ${hasMigrationErrors ? "bg-orange-100" : "bg-green-100"}`}
@@ -122,25 +125,33 @@ export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
       </div>
 
       {/* Download Full backup */}
-      <div className="flex flex-col gap-5 p-6 rounded-lg border border-[#87D2ED] w-full">
-        <p>Backup File Information</p>
+      <div className="p-6 flex flex-col gap-5 bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+        <div className="flex items-center gap-3 text-[#003E68]">
+          <FolderClosed className="" />
+          <p className="font-semibold">Backup File Information</p>
+        </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
-            <FileArchive size={24} className="text-green-600" />
+        <div className="p-4 flex items-center gap-4 bg-[#F3F4F5] rounded-md">
+          <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+            <FileArchive size={24} className="text-[#003E68]" />
           </div>
 
           <div className="flex-1 space-y-1">
-            <p className="font-mono">{filename}</p>
-            <p className="text-muted-foreground text-sm">
+            <p className="font-semibold text-sm text-[#0F172A]">{filename}</p>
+            <p className="text-sm text-[#64748B]">
               Size: {fileSize} MB | Created: {timestamp}
             </p>
           </div>
 
-          <CustomButton onClick={handleDownload} disabled={!backupBlob}>
+          <OvalButton
+            onClick={handleDownload}
+            text_prop="text-white"
+            bg_prop="bg-[#003E68]"
+            disabled={!backupBlob}
+          >
             <Download size={16} />
             Download Full Backup
-          </CustomButton>
+          </OvalButton>
         </div>
       </div>
 
@@ -170,32 +181,42 @@ export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
       )}
 
       {/* Note */}
-      <AlertCard variant="note">
-        <p className="font-bold">Next Steps:</p>
+      <div className="p-4 flex gap-3 bg-[#D0E4FF4D] border-l-4 border-[#003E68]">
+        <CircleAlert size={18} className="mt-0.5 text-[#004A7A]" />
 
-        <ol className="list-decimal list-inside space-y-1">
-          <li>
-            Verify the migrated devices in the{" "}
-            <a
-              href={`https://dashboard.meraki.in/o/${destinationOrg?.id}/n/${destinationNetwork?.id}/manage/nodes/list`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline font-semibold"
-            >
-              destination dashboard
-            </a>
-            .
-          </li>
-          <li>
-            The full backup file can be used for a manual restore if needed.
-          </li>
-        </ol>
-      </AlertCard>
+        <div className="space-y-1 text-sm">
+          <div className="font-semibold text-[#004A7A]">Next Steps:</div>
+          <div className="text-[#004A7A]">
+            <ol className="list-decimal list-inside space-y-1">
+              <li>
+                Verify the migrated devices in the{" "}
+                <a
+                  href={`https://dashboard.meraki.in/o/${destinationOrg?.id}/n/${destinationNetwork?.id}/manage/nodes/list`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline font-semibold"
+                >
+                  destination dashboard
+                </a>
+                .
+              </li>
+              <li>
+                The full backup file can be used for a manual restore if needed.
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
 
-      <CustomButton onClick={onReset} className="w-fit">
+      <OvalButton
+        onClick={onReset}
+        text_prop="text-white"
+        bg_prop="bg-[#003E68]"
+        className="w-fit"
+      >
         <RefreshCw size={16} />
         Start New Migration
-      </CustomButton>
+      </OvalButton>
     </div>
   );
 }

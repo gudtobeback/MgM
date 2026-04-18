@@ -21,6 +21,8 @@ import { DestinationOrganizationStep } from "../../../components/steps/migration
 import { getNetworkDevices } from "../../../services/merakiService";
 
 import { MigrationData } from "../../../types/types";
+import PageHeader from "@/src/components/ui/PageHeader";
+import OvalButton from "@/src/components/home/OvalButton";
 
 const steps = [
   {
@@ -304,43 +306,36 @@ export function MigrationWizard() {
   )?.description;
 
   return (
-    <div className="px-16 py-8">
+    <div className="p-8">
       {isChecked ? (
         // Step content
-        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
-          <div className="step-card-layout">
-            {/* Heading */}
-            <StepHeadingCard heading={heading} subHeading={description} />
+        <div className="flex flex-col gap-8">
+          {/* Step indicator */}
+          <StepBar steps={steps} currentStep={currentStep} />
 
-            {/* Step indicator */}
-            <StepBar steps={steps} currentStep={currentStep} />
+          {/* Heading */}
+          <PageHeader heading={heading} subHeading={description} />
 
-            {/* shadow-[0_2px_16px_rgba(0,0,0,0.25)] */}
-            {renderStep()}
-          </div>
+          {/* shadow-[0_2px_16px_rgba(0,0,0,0.25)] */}
+          {renderStep()}
 
           {/* Navigation */}
           {!isAutoStep && (
-            <div className="flex items-center justify-between bg-white border-t-2 border-gray-200 px-10 py-6">
-              <CustomButton
+            <div className="flex items-center justify-between border-t border-gray-200 px-10 py-6">
+              <OvalButton
                 onClick={handleBack}
                 disabled={currentStep === 1}
                 text_prop="text-black"
-                bg_prop="bg-white"
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
+                bg_prop="bg-gray-100 hover:bg-gray-200"
               >
                 <ArrowLeft size={16} />
                 Back
-              </CustomButton>
+              </OvalButton>
 
-              <CustomButton
-                onClick={handleNext}
-                disabled={!canProceedToNext()}
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-              >
+              <OvalButton onClick={handleNext} disabled={!canProceedToNext()}>
                 Next
                 <ArrowRight size={16} />
-              </CustomButton>
+              </OvalButton>
             </div>
           )}
         </div>
