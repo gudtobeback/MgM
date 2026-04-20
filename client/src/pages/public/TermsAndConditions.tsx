@@ -779,7 +779,7 @@ export default function TermsAndConditions() {
           </div>
 
           <div className="mt-8">
-            <AlertCard variant="note">
+            <AlertCard variant="blue">
               <p className="uppercase font-semibold">Acceptance</p>
               <p>
                 By using the Platform or Services, you acknowledge that you have

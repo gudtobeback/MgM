@@ -63,7 +63,12 @@ export const AuthScreen = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row items-center justify-center">
       <div className="bg-[url('/images/auth_page_image.png')] bg-cover w-full h-full lg:h-screen lg:w-1/2">
         <div className="flex flex-col gap-10 p-10 lg:p-16">
-          <p className="font-semibold text-[18px] text-white">AurionOne</p>
+          <p
+            onClick={() => navigate("/home")}
+            className="font-semibold text-[18px] text-white"
+          >
+            AurionOne
+          </p>
 
           <p className="text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
             <span className="font-medium text-[#D7FB71]">
@@ -72,7 +77,7 @@ export const AuthScreen = () => {
             for the Next Generation
           </p>
 
-          <p className="font-light text-[12px] sm:text-[13px] text-[#9BCBFF]">
+          <p className="font-light text-[13px] sm:text-sm text-[#9BCBFF]">
             Automate network migrations with zero downtime, real-time
             validation, and intelligent execution—without manual effort.
           </p>
@@ -185,14 +190,6 @@ export const AuthScreen = () => {
                 <button className="px-7 py-2.5 flex items-center gap-2 font-medium text-[16px] hover:bg-gray-100 border border-gray-100 hover:border-gray-200 rounded-full cursor-pointer transition-all">
                   <img src="/images/google.svg" alt="" className="size-4" />
                   Google
-                </button>
-                <button className="px-7 py-2.5 flex items-center gap-2 font-medium text-[16px] hover:bg-gray-100 border border-gray-100 hover:border-gray-200 rounded-full cursor-pointer transition-all">
-                  <img
-                    src="/images/github_light.svg"
-                    alt=""
-                    className="size-4"
-                  />
-                  Github
                 </button>
               </div>
             </div>

@@ -51,6 +51,7 @@ export function SourceConnectionStep({
     <div className="flex items-start gap-6">
       <div className="w-full bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
         <div className="p-5 flex items-center justify-between border-b border-gray-200">
+          {/* Title Card */}
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#EDEEEF] rounded-md">
               <Earth className="text-[#003E68]" />
@@ -79,6 +80,7 @@ export function SourceConnectionStep({
           )}
         </div>
 
+        {/* Form */}
         <div className="p-5 flex flex-col gap-6">
           <FormField
             id="region"

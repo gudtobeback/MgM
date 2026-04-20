@@ -76,7 +76,7 @@ export default function PricingSection() {
           </span>
         </div>
 
-        <p className="text-center text-[12px] sm:text-[13px]">
+        <p className="text-center text-[13px] sm:text-sm">
           Transparent pricing with no hidden fees. Start with a 30-day free
           trial.
         </p>
@@ -103,7 +103,7 @@ export default function PricingSection() {
                 </p>
               </div>
 
-              <p className={`text-[13px] ${card?.text_color}`}>
+              <p className={`text-[13px] sm:text-sm ${card?.text_color}`}>
                 {card?.description}
               </p>
 

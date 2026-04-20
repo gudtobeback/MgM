@@ -65,7 +65,7 @@ export default function GetStartedSection() {
       {/* Right Container */}
       <div className="flex flex-wrap gap-5 items-center justify-center lg:justify-between w-full lg:w-[400px]">
         <div className="flex flex-col gap-5 items-start max-w-[550px]">
-          <div className="text-[12px] sm:text-[13px] px-2.5 py-1 bg-[#D7FB71] rounded-full">
+          <div className="text-[11px] sm:text-[12px] px-2.5 py-1 bg-[#D7FB71] rounded-full">
             Quick Setup
           </div>
 
@@ -79,7 +79,7 @@ export default function GetStartedSection() {
             <p className="absolute -bottom-1 left-13 sm:left-23 md:left-40 border-2 border-[#D7FB71] w-[100px] rounded" />
           </div>
 
-          <p className="text-[12px] sm:text-[13px]">
+          <p className="text-[13px] sm:text-sm">
             Simplify network operations with intelligent automation, real-time
             control, and zero manual overhead.
           </p>
@@ -100,8 +100,6 @@ export default function GetStartedSection() {
           muted
           playsInline
         />
-
-
       </div>
 
       {/* Left Container */}

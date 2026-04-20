@@ -1,3 +1,5 @@
+import OvalButton from "@/src/components/home/OvalButton";
+import AlertCard from "@/src/components/ui/AlertCard";
 import CustomButton from "@/src/components/ui/CustomButton";
 import React from "react";
 
@@ -8,8 +10,8 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-6 mb-6">
-    <h2 className="text-lg font-semibold mb-4">{title}</h2>
+  <div className="p-6 bg-white border-[#C1C7D11A] rounded-xl shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+    <h2 className="text-md text-[#003E68] font-semibold mb-4">{title}</h2>
     {children}
   </div>
 );
@@ -34,46 +36,50 @@ const Badge = ({
 
 export default function PreMigrationChecklist({ agree }: { agree: any }) {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">
-          Meraki Migrate — Pre-Migration Checklist
-        </h1>
+    <div className="min-h-screen w-full flex flex-col gap-6">
+      <p className="mb-4 font-semibold text-2xl text-[#003E68]">
+        Pre-Migration Checklist
+      </p>
 
-        {/* Licensing */}
-        <Section title="1. Licensing — Validate First">
-          <p className="text-sm text-gray-600 mb-4">
+      {/* Licensing */}
+      <Section title="1. Licensing — Validate First">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-gray-600">
             Licensing must be resolved before starting the migration.
           </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-gray-200">
-              <thead className="bg-gray-100">
+          <div className="overflow-x-auto rounded-2xl">
+            <table
+              className="w-full text-xs
+            [&_th]:py-3 [&_th]:px-2 [&_th]:font-medium [&_th]:text-[#015C95]
+            [&_td]:py-3 [&_td]:px-2 [&_td]:font-medium [&_td]:text-center"
+            >
+              <thead className="bg-[#F3F4F5]">
                 <tr>
-                  <th className="p-2 text-left">Source Org</th>
-                  <th className="p-2 text-left">Target Org</th>
-                  <th className="p-2 text-left">Status</th>
+                  <th>Source Org</th>
+                  <th>Target Org</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-t border-gray-200">
-                  <td className="p-2">Co-Term</td>
-                  <td className="p-2">Co-Term</td>
-                  <td className="p-2">
+                <tr>
+                  <td>Co-Term</td>
+                  <td>Co-Term</td>
+                  <td>
                     <Badge text="Supported" type="success" />
                   </td>
                 </tr>
-                <tr className="border-t border-gray-200">
-                  <td className="p-2">Per-Device</td>
-                  <td className="p-2">Per-Device (new org)</td>
-                  <td className="p-2">
+                <tr>
+                  <td>Per-Device</td>
+                  <td>Per-Device (new org)</td>
+                  <td>
                     <Badge text="Supported" type="success" />
                   </td>
                 </tr>
-                <tr className="border-t border-gray-200">
-                  <td className="p-2">Per-Device</td>
-                  <td className="p-2">Co-Term</td>
-                  <td className="p-2">
+                <tr>
+                  <td>Per-Device</td>
+                  <td>Co-Term</td>
+                  <td>
                     <Badge text="Not Possible" type="danger" />
                   </td>
                 </tr>
@@ -81,57 +87,57 @@ export default function PreMigrationChecklist({ agree }: { agree: any }) {
             </table>
           </div>
 
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded">
-            <p className="text-sm text-red-700 font-medium">
-              ⛔ Per-Device → Co-Term is a hard blocker.
+          <AlertCard isIcon={false} variant="red">
+            <p className="font-medium">
+              Per-Device → Co-Term is a hard blocker.
             </p>
-            <p className="text-sm text-red-600 mt-1">
-              Migration cannot proceed due to platform restrictions.
-            </p>
-          </div>
-        </Section>
+            <p>Migration cannot proceed due to platform restrictions.</p>
+          </AlertCard>
+        </div>
+      </Section>
 
-        {/* Network */}
-        <Section title="2. Network — Run Outside Migrating Network">
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded mb-4">
-            <p className="text-sm text-yellow-700 font-medium">
-              ⚠️ Devices will restart during migration.
+      {/* Network */}
+      <Section title="2. Network — Run Outside Migrating Network">
+        <div className="flex flex-col gap-4">
+          <AlertCard variant="yellow">
+            <p className="font-medium">
+              Devices will restart during migration.
             </p>
-          </div>
+          </AlertCard>
 
           <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
             <li>Use a separate network (4G/5G or different office)</li>
             <li>Use a jump server or cloud VM</li>
             <li>Ensure stable connection before starting</li>
           </ul>
-        </Section>
-
-        {/* Order */}
-        <Section title="3. Correct Order of Operations">
-          <ol className="list-decimal pl-5 text-sm text-gray-700 space-y-2">
-            <li>Validate licensing model</li>
-            <li>Complete license migration</li>
-            <li>Confirm licenses are active</li>
-            <li>Run tool outside migrating network</li>
-            <li>Start migration workflow</li>
-          </ol>
-        </Section>
-
-        {/* Requirements */}
-        <Section title="4. Other Requirements">
-          <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
-            <li>User must be Org Admin in both orgs</li>
-            <li>Enable Meraki Dashboard API</li>
-            <li>Target org must be pre-created</li>
-            <li>Allow HTTPS (port 443) to api.meraki.com</li>
-          </ul>
-        </Section>
-
-        <div className="w-full flex justify-end">
-          <CustomButton onClick={agree} className="self-end">
-            Agree
-          </CustomButton>
         </div>
+      </Section>
+
+      {/* Order */}
+      <Section title="3. Correct Order of Operations">
+        <ol className="list-decimal pl-5 text-sm text-gray-700 space-y-2">
+          <li>Validate licensing model</li>
+          <li>Complete license migration</li>
+          <li>Confirm licenses are active</li>
+          <li>Run tool outside migrating network</li>
+          <li>Start migration workflow</li>
+        </ol>
+      </Section>
+
+      {/* Requirements */}
+      <Section title="4. Other Requirements">
+        <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
+          <li>User must be Org Admin in both orgs</li>
+          <li>Enable Meraki Dashboard API</li>
+          <li>Target org must be pre-created</li>
+          <li>Allow HTTPS (port 443) to api.meraki.com</li>
+        </ul>
+      </Section>
+
+      <div className="w-full flex justify-end">
+        <OvalButton onClick={agree} className="self-end">
+          Agree & Continue
+        </OvalButton>
       </div>
     </div>
   );

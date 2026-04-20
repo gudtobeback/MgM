@@ -284,7 +284,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={label || idx}
                 onClick={onClick}
-                className={`${collapsed ? "p-2.5" : "px-4 py-2.5"} w-full flex items-center gap-3 font-medium text-white hover:text-black hover:bg-[#F6FCDE] rounded-full cursor-pointer transition-all`}
+                className={`${collapsed ? "p-2.5" : "px-4 py-2.5"} w-full flex items-center justify-center gap-3 font-medium text-white hover:text-black hover:bg-[#F6FCDE] rounded-full cursor-pointer transition-all`}
               >
                 <Icon size={16} />
 
@@ -303,7 +303,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Admin Button */}
         <button
           onClick={() => navigate(TOOL_MODE_ROUTES.profile)}
-          className="p-0.5 flex items-center justify-center gap-2 text-white hover:text-black hover:bg-[#F6FCDE] rounded-full cursor-pointer transition-all"
+          className="p-0.5 flex items-center gap-2 text-white hover:text-black hover:bg-[#F6FCDE] rounded-full cursor-pointer transition-all"
         >
           <img src="/images/6596121.png" alt="User Image" className="size-6" />
 

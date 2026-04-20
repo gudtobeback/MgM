@@ -53,32 +53,28 @@ export function DestinationSetupStep({
   return (
     <div className="flex flex-col gap-6">
       {/* Warning */}
-      <div className="p-4 flex gap-3 bg-[#D0E4FF4D] border-l-4 border-[#003E68]">
-        <CircleAlert size={18} className="mt-0.5 text-[#004A7A]" />
+      <AlertCard variant="blue">
+        <div className="font-semibold ">Before proceeding:</div>
 
-        <div className="space-y-1 text-sm">
-          <div className="font-semibold text-[#004A7A]">Before proceeding:</div>
-          <div className="text-[#004A7A]">
+        <div>
+          <p>
+            Make sure you have created an organization in the destination
+            dashboard.
+          </p>
+          {!isCustom && selectedRegion.dashboard && (
             <p>
-              Make sure you have created an organization in the destination
-              dashboard.
+              If you haven't, open{" "}
+              <span className="font-semibold">{selectedRegion.dashboard}</span>{" "}
+              and create one first.
             </p>
-            {!isCustom && selectedRegion.dashboard && (
-              <p>
-                If you haven't, open{" "}
-                <span className="font-semibold">
-                  {selectedRegion.dashboard}
-                </span>{" "}
-                and create one first.
-              </p>
-            )}
-          </div>
+          )}
         </div>
-      </div>
+      </AlertCard>
 
       <div className="flex items-start gap-6">
         <div className="w-full bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
           <div className="p-5 flex items-center justify-between border-b border-gray-200">
+            {/* Title Card */}
             <div className="flex items-center gap-3">
               <div className="p-2 bg-[#EDEEEF] rounded-md">
                 <Earth className="text-[#003E68]" />
@@ -117,6 +113,7 @@ export function DestinationSetupStep({
             )}
           </div>
 
+          {/* Form */}
           <div className="p-5 flex flex-col gap-6">
             <FormField
               id="region"

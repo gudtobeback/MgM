@@ -120,7 +120,7 @@ export default function BriefSection() {
             <p className="absolute -bottom-1 left-13 sm:left-23 md:left-40 border-2 border-[#D7FB71] w-[100px] rounded" />
           </div>
 
-          <p className="text-[12px] sm:text-[13px] text-white">
+          <p className="text-[13px] sm:text-sm text-white">
             Simplify network operations with intelligent automation,
             <br />
             real-time control, and zero manual overhead.

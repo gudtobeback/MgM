@@ -406,7 +406,7 @@ export default function PrivacyPolicy() {
           </div>
 
           <div className="mt-4">
-            <AlertCard variant="info">
+            <AlertCard variant="blue">
               We use cookies to enhance your experience. Session cookies are
               deleted at the end of each session. You may decline cookies via
               your browser settings, though this may limit certain Website

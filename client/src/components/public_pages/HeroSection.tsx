@@ -9,7 +9,7 @@ export default function HeroSection({
 }) {
   return (
     <div className="bg-[url('/images/cloud.jpg')] bg-cover rounded-b-3xl overflow-hidden">
-      <div className="flex flex-col justify-center gap-6 p-5 lg:h-[300px] lg:px-25 lg:py-0">
+      <div className="flex flex-col justify-center gap-5 p-5 lg:h-[300px] lg:px-25 lg:py-0">
         <div className="px-3 py-1.5 text-[11px] w-fit bg-[#D7FB71] rounded-full">
           Trust & Transfer
         </div>
@@ -18,7 +18,7 @@ export default function HeroSection({
           {title}
         </p>
 
-        <p className="text-[12px] sm:text-[13px] text-white">{desc}</p>
+        <p className="text-[13px] sm:text-sm text-white">{desc}</p>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { ArrowRightLeft } from "lucide-react";
 
 type ProcedureCardProps = {
   icon?: React.ReactNode;
-  heading?: string;
+  heading?: string | null;
   subHeading?: string;
   variant?: string;
   className?: string;

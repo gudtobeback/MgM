@@ -11,7 +11,6 @@ import { BackupStep } from "../../../components/steps/migration/BackupStep";
 import { RestoreStep } from "../../../components/steps/migration/RestoreStep";
 import { ResultsStep } from "../../../components/steps/migration/ResultsStep";
 import { MigrationStep } from "../../../components/steps/migration/MigrationStep";
-import StepHeadingCard from "@/src/components/steps/StepHeadingCard";
 import { SourceConnectionStep } from "../../../components/steps/migration/SourceConnectionStep";
 import { DestinationSetupStep } from "../../../components/steps/migration/DestinationSetupStep";
 import { PreliminaryConfigStep } from "../../../components/steps/migration/PreliminaryConfigStep";
@@ -326,7 +325,7 @@ export function MigrationWizard() {
                 onClick={handleBack}
                 disabled={currentStep === 1}
                 text_prop="text-black"
-                bg_prop="bg-gray-100 hover:bg-gray-200"
+                bg_prop="bg-gray-100 enabled:hover:bg-gray-200"
               >
                 <ArrowLeft size={16} />
                 Back

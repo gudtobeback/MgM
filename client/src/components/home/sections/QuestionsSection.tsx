@@ -27,7 +27,7 @@ export default function QuestionsSection() {
           <p className="absolute -bottom-1 left-13 sm:left-23 md:left-40 border-2 border-[#D7FB71] w-[100px] rounded" />
         </div>
 
-        <p className="text-[12px] sm:text-[13px]">
+        <p className="text-[13px] sm:text-sm">
           Get answers to common questions here
         </p>
       </div>

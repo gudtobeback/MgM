@@ -144,7 +144,7 @@ export function SourceOrganizationStep({
           </p>
         </div>
       ) : error ? (
-        <AlertCard variant="error">{error}</AlertCard>
+        <AlertCard variant="red">{error}</AlertCard>
       ) : (
         <div className="flex items-start gap-6">
           <div className="p-5 w-full flex flex-col gap-6 bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">

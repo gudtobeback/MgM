@@ -473,17 +473,13 @@ export function MigrationStep({
       {showRetry && (
         <>
           {/* Warning */}
-          <div className="p-4 flex gap-3 bg-red-50 border-l-4 border-red-600">
-            <CircleAlert size={18} className="mt-0.5 text-red-600" />
-
-            <div className="space-y-1 text-sm">
-              <div className="font-semibold text-red-600">Failed at:</div>
-              <div className="text-red-600">
-                {failedStageText} <br />
-                {error}
-              </div>
+          <AlertCard variant="red">
+            <div className="font-semibold">Failed at:</div>
+            <div>
+              {failedStageText} <br />
+              {error}
             </div>
-          </div>
+          </AlertCard>
 
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-1 flex flex-col items-center gap-3">

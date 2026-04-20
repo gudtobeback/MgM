@@ -8,43 +8,35 @@ import {
 } from "lucide-react";
 
 type AlertCardProps = {
+  isIcon?: Boolean;
   children: React.ReactNode;
-  variant?: "note" | "success" | "warning" | "alert" | "error" | "info";
+  variant?: "red" | "blue" | "green" | "yellow";
 };
 
 export default function AlertCard({
+  isIcon = true,
   children,
-  variant = "info",
+  variant = "blue",
 }: AlertCardProps) {
   const styles = {
-    success: "text-green-800 bg-green-50 border border-green-200",
-
-    note: "text-emerald-800 bg-emerald-50 border border-emerald-200",
-
-    warning: "text-amber-800 bg-amber-50 border border-amber-200",
-
-    alert: "text-red-800 bg-red-50 border border-red-200",
-
-    error: "text-red-900 bg-red-100 border border-red-300",
-
-    info: "text-[#049FD9] bg-[#F6FDFF] border border-[#87D2ED]",
+    red: "text-[#93000A] bg-[#FFDAD64D] border-[#BA1A1A]",
+    blue: "text-[#004A7A] bg-[#D0E4FF4D] border-[#003E68]",
+    green: "text-green-600 bg-green-50 border-green-600",
+    yellow: "text-amber-600 bg-amber-50 border-amber-500",
   };
 
   const icons = {
-    success: <CircleCheck size={18} className="text-green-600 shrink-0" />,
-    warning: <TriangleAlert size={18} className="text-amber-600 shrink-0" />,
-    alert: <CircleAlert size={18} className="text-red-600 shrink-0" />,
-    error: <XCircle size={18} className="text-red-700 shrink-0" />,
+    red: <XCircle size={18} className="mt-0.5 shrink-0" />,
+    blue: <CircleAlert size={18} className="mt-0.5 shrink-0" />,
+    green: <CircleCheck size={18} className="mt-0.5 shrink-0" />,
+    yellow: <TriangleAlert size={18} className="mt-0.5 shrink-0" />,
   };
 
   return (
-    <div
-      className={`w-full rounded-md border px-4 py-3 text-[13px] ${styles[variant]}`}
-    >
-      <div className="flex items-start gap-3">
-        {icons[variant] || ""}
-        <div className="flex flex-col gap-1">{children}</div>
-      </div>
+    <div className={`p-4 flex gap-3 border-l-4 ${styles[variant]}`}>
+      {(isIcon && icons[variant]) || ""}
+
+      <div className="space-y-1 text-sm">{children}</div>
     </div>
   );
 }

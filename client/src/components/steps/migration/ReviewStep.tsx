@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Input } from "antd";
-import { Loader2, ArrowRight, CircleAlert } from "lucide-react";
+import { Loader2, ArrowRight, CircleAlert, TriangleAlert } from "lucide-react";
 
 import DomainCard from "../DomainCard";
 import StepHeadingCard from "../StepHeadingCard";
@@ -44,23 +44,16 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
       ) : (
         <div className="flex flex-col gap-6">
           {/* Warning */}
-          <div className="p-4 flex gap-3 bg-amber-50 border-l-4 border-amber-500">
-            <CircleAlert size={18} className="mt-0.5 text-amber-600" />
+          <AlertCard variant="yellow">
+            <div className="font-semibold">Warning : Irreversible Action</div>
 
-            <div className="space-y-1 text-sm">
-              <div className="font-semibold text-amber-600">
-                Warning : Irreversible Action
-              </div>
-              <div className="text-amber-600">
-                <p>
-                  This action is irreversible. All devices will be unclaimed
-                  from the source and moved. This will cause a service
-                  interruption for all devices being migrated. A full backup
-                  will be created automatically before migration begins.
-                </p>
-              </div>
-            </div>
-          </div>
+            <p>
+              This action is irreversible. All devices will be unclaimed from
+              the source and moved. This will cause a service interruption for
+              all devices being migrated. A full backup will be created
+              automatically before migration begins.
+            </p>
+          </AlertCard>
 
           {/* Source & Destination */}
           <div className="flex items-center justify-between gap-5">
@@ -94,6 +87,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
               </div>
             </div>
 
+            {/* Devices */}
             <div className="flex flex-col items-center gap-10">
               <ArrowRight size={40} className="p-2 bg-[#D0F059] rounded-full" />
 
@@ -133,6 +127,7 @@ export function ReviewStep({ data, onUpdate, isLoading }: ReviewStepProps) {
             </div>
           </div>
 
+          {/* Form */}
           <div className="p-5 w-full flex flex-col gap-6 bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
             <FormField
               id="confirmation"

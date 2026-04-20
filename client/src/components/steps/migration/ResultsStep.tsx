@@ -4,17 +4,15 @@ import {
   FileArchive,
   RefreshCw,
   XCircle,
-  ShieldCheck,
-  HardDriveUpload,
-  DatabaseZap,
-  CircleAlert,
   FolderClosed,
+  CloudUpload,
+  ServerCog,
+  RotateCcw,
 } from "lucide-react";
 
 import { Card } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import AlertCard from "../../ui/AlertCard";
-import CustomButton from "../../ui/CustomButton";
 import OvalButton from "../../home/OvalButton";
 
 import { MigrationData } from "../../../types/types";
@@ -66,62 +64,123 @@ export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 py-6">
         <div
-          className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-2 ${hasMigrationErrors ? "bg-orange-100" : "bg-green-100"}`}
+          className={`p-3 mb-2 mx-auto rounded-full ${hasMigrationErrors ? "bg-orange-100" : "bg-green-100"}`}
         >
           <CheckCircle2
-            size={40}
-            className={`${hasMigrationErrors ? "text-orange-600" : "text-green-600"}`}
+            size={30}
+            className={`${hasMigrationErrors ? "text-orange-500" : "text-green-600"}`}
           />
         </div>
-        <p className="text-2xl font-bold">Migration Process Complete</p>
+
+        <p className="font-bold text-2xl text-[#003E68]">
+          Migration Process Complete
+        </p>
+
         <p className="text-green-600">
           Migration completed in <strong>{formattedDuration}...</strong>
         </p>
-        <p className="text-muted-foreground">
-          {hasMigrationErrors
-            ? "Migration completed with some errors."
-            : `Successfully migrated devices from ${sourceOrg?.name} to ${destinationOrg?.name}.`}
+
+        <p className="text-[#64748B]">
+          {hasMigrationErrors ? (
+            <p>Migration completed with some errors.</p>
+          ) : (
+            <p>
+              Successfully migrated devices from{" "}
+              <span className="font-medium">{sourceOrg?.name}</span> to{" "}
+              <span className="font-medium">{destinationOrg?.name}</span>.
+            </p>
+          )}
         </p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-4 w-full">
-        <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={20} />
-            Backup
+        {[
+          {
+            icon: (
+              <div className="p-2 bg-[#D0E4FF4D] rounded-lg">
+                <CloudUpload size={20} color="#003E68" />
+              </div>
+            ),
+            stepNo: "06",
+            label: "Backup: Complete",
+            description:
+              "Pre-migration snapshot successfully encrypted and stored.",
+          },
+          {
+            icon: (
+              <div className="p-2 bg-[#D0F0594D] rounded-lg">
+                <ServerCog size={20} color="#191C1D" />
+              </div>
+            ),
+            stepNo: "08",
+            label: "Migration: ",
+            description: (
+              <div>
+                <p className="flex items-center gap-2">
+                  <div className="p-0.5 bg-[#D0F059] rounded-full"></div>
+                  <span>{migrationSuccess.length} Moved</span>
+                </p>
+
+                <p className="flex items-center gap-2">
+                  {migrationSuccess.length > 0 && (
+                    <>
+                      <div className="p-0.5 bg-red-500 rounded-full"></div>
+                      <p className="text-red-500">{6} Failed</p>
+                    </>
+                  )}
+                </p>
+              </div>
+            ),
+          },
+          {
+            icon: (
+              <div className="p-2 bg-[#00568D] rounded-lg">
+                <RotateCcw size={20} color="white" />
+              </div>
+            ),
+            stepNo: "09",
+            label: "Restore: Confirmed",
+            description: (
+              <div>
+                <p className="flex items-center gap-2">
+                  <div className="p-0.5 bg-[#D0F059] rounded-full"></div>
+                  <span>
+                    {restoreDeviceSuccessCount} Device configs restored
+                  </span>
+                </p>
+
+                <p className="flex items-center gap-2">
+                  <div className="p-0.5 bg-[#D0F059] rounded-full"></div>
+                  <span>
+                    {restoreNetworkSuccessCount} Network configs restored
+                  </span>
+                </p>
+              </div>
+            ),
+          },
+        ].map((data, idx) => (
+          <div
+            key={data.label || idx}
+            className={`col-span-3 sm:col-span-1 p-5 flex flex-col gap-5 bg-white border border-[#C1C7D11A] rounded-md shadow-[0_0_1px_0_rgba(0,0,0,0.25)]`}
+          >
+            <div className="flex items-center justify-between">
+              {data?.icon}
+
+              <div className="font-medium uppercase text-xs text-[#94A3B8]">
+                step {data?.stepNo}
+              </div>
+            </div>
+
+            <div className="space-y-1 text-left">
+              <h3 className="text-lg font-semibold text-[#003E68] mb-1 group-hover:text-blue-600 transition-all">
+                {data.label}
+              </h3>
+              <p className="text-[11px] text-[#64748B] leading-relaxed line-clamp-2">
+                {data.description}
+              </p>
+            </div>
           </div>
-
-          <p className="text-2xl font-bold">Complete</p>
-        </div>
-
-        <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
-          <div className="flex items-center gap-2">
-            <HardDriveUpload size={20} />
-            Migration
-          </div>
-
-          <p className="text-2xl font-bold">
-            {migrationSuccess.length}{" "}
-            <span className="text-lg text-muted-foreground">Moved</span>
-          </p>
-          {migrationErrors.length > 0 && (
-            <p className="text-red-500">{migrationErrors.length} Failed</p>
-          )}
-        </div>
-
-        <div className="col-span-1 flex flex-col items-center justify-between gap-3 p-6 rounded-lg border border-[#87D2ED] w-full">
-          <div className="flex items-center gap-2">
-            <DatabaseZap size={20} />
-            Restore
-          </div>
-
-          <p className="text-sm">
-            {restoreDeviceSuccessCount} Device configs restored
-          </p>
-          <p className="text-sm">
-            {restoreNetworkSuccessCount} Network configs restored
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* Download Full backup */}
@@ -181,32 +240,27 @@ export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
       )}
 
       {/* Note */}
-      <div className="p-4 flex gap-3 bg-[#D0E4FF4D] border-l-4 border-[#003E68]">
-        <CircleAlert size={18} className="mt-0.5 text-[#004A7A]" />
+      <AlertCard variant="blue">
+        <div className="font-semibold">Next Steps:</div>
 
-        <div className="space-y-1 text-sm">
-          <div className="font-semibold text-[#004A7A]">Next Steps:</div>
-          <div className="text-[#004A7A]">
-            <ol className="list-decimal list-inside space-y-1">
-              <li>
-                Verify the migrated devices in the{" "}
-                <a
-                  href={`https://dashboard.meraki.in/o/${destinationOrg?.id}/n/${destinationNetwork?.id}/manage/nodes/list`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline font-semibold"
-                >
-                  destination dashboard
-                </a>
-                .
-              </li>
-              <li>
-                The full backup file can be used for a manual restore if needed.
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
+        <ol className="list-decimal list-inside space-y-1">
+          <li>
+            Verify the migrated devices in the{" "}
+            <a
+              href={`https://dashboard.meraki.in/o/${destinationOrg?.id}/n/${destinationNetwork?.id}/manage/nodes/list`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-semibold"
+            >
+              destination dashboard
+            </a>
+            .
+          </li>
+          <li>
+            The full backup file can be used for a manual restore if needed.
+          </li>
+        </ol>
+      </AlertCard>
 
       <OvalButton
         onClick={onReset}

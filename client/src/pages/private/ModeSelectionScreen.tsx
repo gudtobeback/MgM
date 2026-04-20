@@ -23,7 +23,6 @@ import { useAuth } from "@/src/context/AuthContext";
 import { useOrganization } from "@/src/context/OrganizationContext";
 import SummaryCard from "@/src/components/ui/SummaryCard";
 import PageHeader from "@/src/components/ui/PageHeader";
-import axios from "axios";
 
 // ── Tool cards ────────────────────────────────────────────────────────────────
 const TOOLS: {

@@ -41,7 +41,7 @@ export default function Footer() {
   const companys = [
     {
       name: "About Us",
-      to: "#",
+      to: "/about_us",
     },
     {
       name: "Contact",

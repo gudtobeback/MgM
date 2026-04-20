@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { useLocation } from "react-router-dom";
 
-import HeroSection from "../../components/home/sections/HeroSection";
+import HomeHeroSection from "../../components/home/sections/HomeHeroSection";
 import PricingSection from "../../components/home/sections/PricingSection";
 import GetStartedSection from "../../components/home/sections/GetStartedSection";
 import BriefSection from "../../components/home/sections/BriefSection";
@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-20">
-      <HeroSection />
+      <HomeHeroSection />
 
       <GetStartedSection />
 

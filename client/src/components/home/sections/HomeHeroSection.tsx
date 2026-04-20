@@ -4,7 +4,7 @@ import { ArrowUpRight, ArrowLeft } from "lucide-react";
 
 import OvalButton from "../OvalButton";
 
-export default function HeroSection() {
+export default function HomeHeroSection() {
   const navigate = useNavigate();
 
   const [showDemo, setShowDemo] = useState(false);
@@ -32,7 +32,7 @@ export default function HeroSection() {
               in Minutes, Not Days
             </p>
 
-            <p className="font-light text-[12px] sm:text-[13px] max-w-[600px] mx-auto">
+            <p className="font-light text-[13px] sm:text-sm max-w-[600px] mx-auto">
               Eliminate manual configs, reduce downtime, and scale operations
               effortlessly.
             </p>

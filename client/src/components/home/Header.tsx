@@ -47,19 +47,19 @@ export default function Header() {
         <div className={`hidden md:flex items-center gap-8 ${textColor}`}>
           <a
             onClick={() => navigateToSection("features")}
-            className="text-[13px] hover:text-black cursor-pointer"
+            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
           >
             Features
           </a>
           <a
             onClick={() => navigateToSection("how")}
-            className="text-[13px] hover:text-black cursor-pointer"
+            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
           >
             How it works
           </a>
           <a
             onClick={() => navigateToSection("pricing")}
-            className="text-[13px] hover:text-black cursor-pointer"
+            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
           >
             Pricing
           </a>
@@ -69,7 +69,7 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-5">
           <button
             onClick={() => navigate("/auth")}
-            className={`text-[13px] ${textColor} cursor-pointer`}
+            className={`text-[13px] sm:text-sm ${textColor} cursor-pointer`}
           >
             Login
           </button>
@@ -108,7 +108,7 @@ export default function Header() {
         </div>
 
         {/* Links (same spacing style as your dropdown) */}
-        <div className="flex flex-col gap-6 px-6 py-6 text-[13px]">
+        <div className="flex flex-col gap-6 px-6 py-6 text-[13px] sm:text-sm">
           <a onClick={() => navigateToSection("features")}>Features</a>
           <a onClick={() => navigateToSection("how")}>How it works</a>
           <a onClick={() => navigateToSection("pricing")}>Pricing</a>
