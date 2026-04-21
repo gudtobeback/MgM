@@ -10,7 +10,7 @@ export default function QuestionsSection() {
 
   return (
     <div
-      id="how"
+      id="FAQ"
       ref={fadeRef}
       className="flex flex-col items-start gap-10 px-5
       lg:flex-row lg:gap-6 lg:px-10 xl:px-25"

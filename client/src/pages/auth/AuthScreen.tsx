@@ -65,7 +65,7 @@ export const AuthScreen = () => {
         <div className="flex flex-col gap-10 p-10 lg:p-16">
           <p
             onClick={() => navigate("/home")}
-            className="font-semibold text-[18px] text-white"
+            className="font-semibold text-[18px] text-white cursor-pointer"
           >
             AurionOne
           </p>
@@ -231,6 +231,15 @@ export const AuthScreen = () => {
               encryption.
             </p>
           )}
+
+          <button
+            onClick={() =>
+              reset({ email: "admin@demo.com", password: "Admin1234!" })
+            }
+            className="mx-auto px-3 py-2 w-fit font-medium text-xs text-gray-500 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-md cursor-pointer"
+          >
+            Demo Credentails
+          </button>
         </div>
       </div>
     </div>

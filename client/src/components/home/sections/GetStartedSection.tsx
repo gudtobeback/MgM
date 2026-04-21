@@ -59,6 +59,7 @@ export default function GetStartedSection() {
 
   return (
     <div
+      id="how"
       className="flex flex-col items-center gap-10 px-5
       lg:flex-row lg:justify-between lg:gap-6 lg:px-10 xl:px-25"
     >

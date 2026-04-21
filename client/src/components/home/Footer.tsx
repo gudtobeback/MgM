@@ -34,7 +34,7 @@ export default function Footer() {
     },
     {
       name: "FAQ",
-      hash: "",
+      hash: "FAQ",
     },
   ];
 
@@ -45,11 +45,11 @@ export default function Footer() {
     },
     {
       name: "Contact",
-      to: "#",
+      to: "/contact_us",
     },
     {
       name: "Support",
-      to: "#",
+      to: "/support",
     },
     {
       name: "Privacy Policy",

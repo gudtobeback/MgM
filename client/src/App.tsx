@@ -57,6 +57,8 @@ import Footer from "./components/home/Footer";
 import SubscriptionPage from "./pages/private/SubscriptionPage";
 import TestUI from "./pages/public/TestUI";
 import AboutUs from "./pages/public/AboutUs";
+import Support from "./pages/public/Support";
+import ContactUs from "./pages/public/ContactUs";
 
 function ProtectedRouteWrapper() {
   const { orgsLoading, organizations } = useOrganization();
@@ -149,6 +151,8 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/about_us" element={<AboutUs />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/contact_us" element={<ContactUs />} />
         <Route path="/test" element={<TestUI />} />
       </Route>
 
