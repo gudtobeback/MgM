@@ -21,10 +21,10 @@ export default function QuestionsSection() {
           <p className="text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14">
             Frequently Asked
           </p>
-          <p className="font-bold text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-[#015C95]">
+          <p className="relative w-fit font-bold text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-[#015C95]">
             Questions
+            <span className="absolute -bottom-1 -right-1 border-2 border-[#D7FB71] w-[100px] rounded" />
           </p>
-          <p className="absolute -bottom-1 left-13 sm:left-23 md:left-40 border-2 border-[#D7FB71] w-[100px] rounded" />
         </div>
 
         <p className="text-[13px] sm:text-sm">

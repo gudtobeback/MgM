@@ -76,7 +76,7 @@ export default function PricingSection() {
           </span>
         </div>
 
-        <p className="text-center text-[13px] sm:text-sm">
+        <p className="text-[13px] sm:text-sm mx-auto">
           Transparent pricing with no hidden fees. Start with a 30-day free
           trial.
         </p>

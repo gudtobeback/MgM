@@ -74,10 +74,11 @@ export default function GetStartedSection() {
             <p className="text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14">
               Get Started
             </p>
-            <p className="font-bold text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-[#015C95]">
+
+            <p className="relative w-fit font-bold text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-[#015C95]">
               in Minutes
+              <span className="absolute -bottom-1 -right-1 border-2 border-[#D7FB71] w-[100px] rounded" />
             </p>
-            <p className="absolute -bottom-1 left-13 sm:left-23 md:left-40 border-2 border-[#D7FB71] w-[100px] rounded" />
           </div>
 
           <p className="text-[13px] sm:text-sm">
@@ -89,18 +90,165 @@ export default function GetStartedSection() {
             onClick={() => navigate("/auth")}
             text_prop="text-white"
             bg_prop="bg-[#015C95]"
+            className="text-[13px] sm:text-sm"
           >
             <ArrowUpRight strokeWidth={1} size={20} /> Get Started Free
           </OvalButton>
         </div>
 
-        <video
-          src="/images/Get-started-5.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
+        {/* Migration SVG */}
+        <div className="flex justify-center items-center h-[160px] lg:h-[220px]">
+          <svg viewBox="0 0 400 200" className="w-full max-w-[400px] h-full">
+            {/* LEFT: Devices */}
+            <g>
+              <rect
+                x="20"
+                y="45"
+                width="50"
+                height="30"
+                rx="4"
+                fill="#374151"
+              />
+              <rect
+                x="20"
+                y="85"
+                width="50"
+                height="30"
+                rx="4"
+                fill="#374151"
+              />
+              <rect
+                x="20"
+                y="125"
+                width="50"
+                height="30"
+                rx="4"
+                fill="#374151"
+              />
+
+              {/* small lights */}
+              <circle cx="25" cy="60" r="2" fill="#22c55e" />
+              <circle cx="25" cy="100" r="2" fill="#22c55e" />
+              <circle cx="25" cy="140" r="2" fill="#22c55e" />
+            </g>
+
+            {/* MIDDLE: Automation Gear */}
+            <g className="gear">
+              <circle cx="190" cy="100" r="24" fill="#015C95" />
+
+              {/* Teeth (rectangles rotated around center) */}
+              {[...Array(8)].map((_, i) => (
+                <rect
+                  key={i}
+                  x="184"
+                  y="71"
+                  width="13"
+                  height="10"
+                  rx="2"
+                  fill="#015C95"
+                  transform={`rotate(${i * 45} 190 100)`}
+                />
+              ))}
+
+              {/* Inner ring */}
+              <circle cx="190" cy="100" r="16" fill="#e5e7eb" />
+
+              {/* Inner ring */}
+              <circle cx="190" cy="100" r="13" fill="#0c4a6e" />
+
+              {/* Center hole */}
+              <circle cx="190" cy="100" r="8" fill="#e5e7eb" />
+            </g>
+
+            {/* RIGHT: Destination (organized stack) */}
+            <g>
+              <rect
+                x="300"
+                y="60"
+                width="60"
+                height="20"
+                rx="4"
+                fill="#93c5fd"
+              />
+              <rect
+                x="300"
+                y="90"
+                width="60"
+                height="20"
+                rx="4"
+                fill="#60a5fa"
+              />
+              <rect
+                x="300"
+                y="120"
+                width="60"
+                height="20"
+                rx="4"
+                fill="#3b82f6"
+              />
+            </g>
+
+            {/* FLOW LINES */}
+            <line
+              x1="70"
+              y1="100"
+              x2="168"
+              y2="100"
+              stroke="#9ca3af"
+              strokeWidth="2"
+              strokeDasharray="5 4"
+            />
+
+            <line
+              x1="212"
+              y1="100"
+              x2="300"
+              y2="100"
+              stroke="#9ca3af"
+              strokeWidth="2"
+              strokeDasharray="5 4"
+            />
+
+            {/* PACKETS IN */}
+            <circle
+              className="dot dot1"
+              cx="70"
+              cy="100"
+              r="4"
+              fill="#3b82f6"
+            />
+            <circle
+              className="dot dot2"
+              cx="70"
+              cy="100"
+              r="4"
+              fill="#10b981"
+            />
+            <circle
+              className="dot dot3"
+              cx="70"
+              cy="100"
+              r="4"
+              fill="#f59e0b"
+            />
+
+            {/* PACKETS OUT */}
+            <circle
+              className="dot-out dot4"
+              cx="212"
+              cy="100"
+              r="4"
+              fill="#22c55e"
+            />
+            <circle
+              className="dot-out dot5"
+              cx="212"
+              cy="100"
+              r="4"
+              fill="#38bdf8"
+            />
+          </svg>
+        </div>
       </div>
 
       {/* Left Container */}
@@ -123,7 +271,7 @@ export default function GetStartedSection() {
                 {card?.id}
               </div>
 
-              <div className="flex-1 flex flex-col">
+              <div className="flex-1 space-y-1">
                 <div
                   className={`font-medium sm:text-lg transition-all duration-500
                     ${isActive ? "text-white" : "text-[#015C95]"}`}

@@ -75,17 +75,20 @@ export default function Footer() {
       <div className="flex flex-col gap-10 md:gap-15">
         {/* Start */}
         <div className="flex flex-col items-center justify-center gap-5 p-6 bg-white rounded-2xl">
-          <p className="font-medium text-center text-[30px] sm:text-[34px] leading-tight md:leading-12">
+          <p className="font-medium text-center text-[28px] sm:text-[34px] leading-tight md:leading-12">
             Start Your First Migration Today
           </p>
 
-          <p className="text-center text-sm">
+          <p className="text-center text-[13px] sm:text-sm">
             No downtime. No risk. No manual effort. Just faster, smarter network
             operations.
           </p>
 
           <div className="flex items-center justify-center gap-5">
-            <OvalButton onClick={() => navigate("/auth")}>
+            <OvalButton
+              onClick={() => navigate("/auth")}
+              className="text-[13px] sm:text-sm"
+            >
               <ArrowUpRight strokeWidth={1} size={20} /> Watch Demo
             </OvalButton>
 
@@ -93,6 +96,7 @@ export default function Footer() {
               onClick={() => navigate("/auth")}
               text_prop="text-white"
               bg_prop="bg-[#015C95]"
+              className="text-[13px] sm:text-sm"
             >
               Get a Demo
             </OvalButton>
@@ -103,7 +107,7 @@ export default function Footer() {
         <div className="grid grid-cols-12 gap-6 md:gap-10 text-white">
           <div className="col-span-12 md:col-span-5 flex flex-col gap-1">
             <div className="font-bold text-[20px] mb-1">AurionOne</div>
-            <p className="text-xs text-white/60 text-wrap">
+            <p className="font-light text-xs text-white text-wrap">
               A purpose-built operations platform for Cisco Meraki
               administrators. Scale, modernize, and automate your network
               management without the manual work.
@@ -156,7 +160,7 @@ export default function Footer() {
         </div>
 
         {/* Rights */}
-        <div className="font-light text-xs text-white">
+        <div className="mx-auto sm:mx-0 font-light text-xs text-white">
           © 2026 AurionOne. All rights reserved.
         </div>
       </div>

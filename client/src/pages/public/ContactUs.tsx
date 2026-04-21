@@ -37,6 +37,7 @@ export default function ContactUs() {
       />
 
       <div className="flex flex-col gap-16 mx-5 lg:mx-20">
+        {/* Talk To Us */}
         <div className="flex flex-col gap-10">
           <Heading text="Talk To" underlinetext="Us" />
 
@@ -101,6 +102,28 @@ export default function ContactUs() {
                 {data?.content}
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Request a demo */}
+        <div className="-mx-5 lg:-mx-20 bg-[url('/images/cloud.jpg')] bg-cover rounded-3xl overflow-hidden">
+          <div
+            className="grid grid-cols-1 items-center justify-center gap-10 p-5
+            xl:grid-cols-2 xl:gap-20 xl:px-25 xl:py-0 xl:h-[600px]"
+          >
+            <div className="flex flex-col gap-7 sm:gap-9 py-4 xl:py-0">
+              <div className="w-fit text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
+                Request a <span className="font-semibold">Demo</span>
+              </div>
+
+              <p className="font-light text-sm text-white leading-relaxed">
+                See how you can migrate Cisco Meraki networks in minutes — not
+                weeks. Get a guided walkthrough of AurionOne and discover how
+                automation can eliminate manual effort and downtime.
+              </p>
+            </div>
+
+            <div></div>
           </div>
         </div>
       </div>

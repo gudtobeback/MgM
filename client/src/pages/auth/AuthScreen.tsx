@@ -61,8 +61,9 @@ export const AuthScreen = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row items-center justify-center">
-      <div className="bg-[url('/images/auth_page_image.png')] bg-cover w-full h-full lg:h-screen lg:w-1/2">
-        <div className="flex flex-col gap-10 p-10 lg:p-16">
+      {/* Left Container */}
+      <div className="overlay-bg relative bg-[url('/images/auth_page_image.png')] bg-cover w-full h-full lg:h-screen lg:w-1/2">
+        <div className="relative z-10 flex flex-col gap-10 p-10 lg:p-16">
           <p
             onClick={() => navigate("/home")}
             className="font-semibold text-[18px] text-white cursor-pointer"
@@ -84,6 +85,7 @@ export const AuthScreen = () => {
         </div>
       </div>
 
+      {/* Right Container */}
       <div className="w-full lg:h-screen lg:w-1/2">
         <div className="flex flex-col justify-center gap-8 px-10 py-10 lg:px-30 h-full w-full">
           <div className="font-medium text-xl sm:text-2xl text-[#015C95]">
@@ -175,25 +177,6 @@ export const AuthScreen = () => {
               )}
             </button>
           </form>
-
-          {isLogin && (
-            <div className="flex flex-col gap-5">
-              <div className="flex items-center gap-3">
-                <div className="flex-1 border-b border-[#E7E8E9]"></div>
-                <div className="text-xs text-[#C1C7D1] uppercase">
-                  or continue with
-                </div>
-                <div className="flex-1 border-b border-[#E7E8E9]"></div>
-              </div>
-
-              <div className="flex items-center justify-center gap-6 lg:gap-8">
-                <button className="px-7 py-2.5 flex items-center gap-2 font-medium text-[16px] hover:bg-gray-100 border border-gray-100 hover:border-gray-200 rounded-full cursor-pointer transition-all">
-                  <img src="/images/google.svg" alt="" className="size-4" />
-                  Google
-                </button>
-              </div>
-            </div>
-          )}
 
           {isLogin ? (
             <p className="font-semibold text-xs mx-auto">

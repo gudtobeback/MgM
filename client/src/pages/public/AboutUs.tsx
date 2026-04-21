@@ -113,6 +113,7 @@ export default function AboutUs() {
                 <p className="font-medium text-sm text-[#D0F059]">
                   {data?.title}
                 </p>
+
                 <p className="text-[18px] text-white">{data?.desc}</p>
               </div>
             ))}
@@ -153,7 +154,7 @@ export default function AboutUs() {
 
                   <div className="space-y-3 text-white">
                     <p className="font-semibold text-md">{data?.title}</p>
-                    <p className="text-xs">{data?.desc}</p>
+                    <p className="font-light text-xs leading-relaxed">{data?.desc}</p>
                   </div>
                 </div>
               ))}

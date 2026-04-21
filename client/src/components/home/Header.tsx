@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 import OvalButton from "./OvalButton";
@@ -44,25 +44,58 @@ export default function Header() {
         </div>
 
         {/* Desktop Menu */}
-        <div className={`hidden md:flex items-center gap-8 ${textColor}`}>
-          <a
-            onClick={() => navigateToSection("features")}
-            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
-          >
-            Features
-          </a>
+        <div className={`hidden md:flex items-stretch gap-6 ${textColor}`}>
           <a
             onClick={() => navigateToSection("how")}
             className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
           >
             How it works
           </a>
+
+          <a
+            onClick={() => navigateToSection("features")}
+            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
+          >
+            Features
+          </a>
+
           <a
             onClick={() => navigateToSection("pricing")}
             className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
           >
             Pricing
           </a>
+
+          <p
+            className={`border-r ${isHome ? "border-white" : "border-black"}`}
+          />
+
+          <NavLink
+            to="/about_us"
+            className={({ isActive }) =>
+              `${isActive && "font-semibold"} text-[13px] sm:text-sm hover:text-black cursor-pointer`
+            }
+          >
+            About
+          </NavLink>
+
+          <NavLink
+            to="/contact_us"
+            className={({ isActive }) =>
+              `${isActive && "font-semibold"} text-[13px] sm:text-sm hover:text-black cursor-pointer`
+            }
+          >
+            Contact
+          </NavLink>
+
+          <NavLink
+            to="/support"
+            className={({ isActive }) =>
+              `${isActive && "font-semibold"} text-[13px] sm:text-sm hover:text-black cursor-pointer`
+            }
+          >
+            Support
+          </NavLink>
         </div>
 
         {/* Desktop Right */}

@@ -13,11 +13,10 @@ export default function StatsSection() {
       <div className="flex flex-col items-center justify-center gap-10 p-5 lg:h-[650px] lg:p-0">
         {/* Heading */}
         <div className="relative py-4 lg:py-0">
-          <p className="font-medium text-center text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
+          <p className="relative w-fit font-medium text-center text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
             Trusted by Teams That Scale Fast
+            <span className="absolute -bottom-1 -right-1 border-2 border-[#D7FB71] w-[100px] rounded" />
           </p>
-
-          <p className="absolute bottonm-1 lg:-bottom-1 right-23 sm:right-0 border-2 border-[#D7FB71] w-[100px] rounded" />
         </div>
 
         {/* Grid */}

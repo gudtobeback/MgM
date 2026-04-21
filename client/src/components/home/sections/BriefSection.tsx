@@ -108,22 +108,21 @@ export default function BriefSection() {
         className="flex flex-col items-center justify-between gap-10 p-5
         xl:flex-row xl:gap-20 xl:h-[600px] xl:px-25 xl:py-0"
       >
-        {/* Right Container */}
+        {/* left Container */}
         <div className="flex flex-col gap-5 sm:gap-7 py-4 xl:py-0">
           <div className="relative">
             <p className="text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
               Automation that
             </p>
-            <p className="font-bold text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
+            <p className="relative w-fit font-bold text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
               just works
+              <span className="absolute -bottom-1 -right-1 border-2 border-[#D7FB71] w-[100px] rounded" />
             </p>
-            <p className="absolute -bottom-1 left-13 sm:left-23 md:left-40 border-2 border-[#D7FB71] w-[100px] rounded" />
           </div>
 
-          <p className="text-[13px] sm:text-sm text-white">
-            Simplify network operations with intelligent automation,
-            <br />
-            real-time control, and zero manual overhead.
+          <p className="max-w-[400px] font-light text-[13px] sm:text-sm text-white">
+            Simplify network operations with intelligent automation, real-time
+            control, and zero manual overhead.
           </p>
 
           <div className="grid grid-cols-4 gap-5">
@@ -139,7 +138,9 @@ export default function BriefSection() {
                   {card.suffix}
                 </p>
 
-                <p className="text-xs text-white">{card.description}</p>
+                <p className="font-light text-xs text-white">
+                  {card.description}
+                </p>
 
                 <p
                   className="h-0.5 mt-4 rounded"
@@ -152,7 +153,7 @@ export default function BriefSection() {
           </div>
         </div>
 
-        {/* Left Container */}
+        {/* Right Container */}
         <div className="relative p-0.5 flex-1 border-[3px] border-[#B9B9B9] rounded-2xl w-full">
           <div className="px-6 py-4 flex items-center gap-2 text-[12px] text-white bg-[#033657] rounded-t-xl">
             <div className="p-1.5 bg-[#D7FB71] rounded-full"></div>
