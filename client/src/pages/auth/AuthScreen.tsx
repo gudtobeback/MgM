@@ -78,7 +78,7 @@ export const AuthScreen = () => {
             for the Next Generation
           </p>
 
-          <p className="font-light text-[13px] sm:text-sm text-[#9BCBFF]">
+          <p className="font-light text-[13px] sm:text-sm text-white">
             Automate network migrations with zero downtime, real-time
             validation, and intelligent execution—without manual effort.
           </p>
@@ -95,10 +95,14 @@ export const AuthScreen = () => {
           {/* Inputs */}
           <form
             onSubmit={handleSubmit(loginRegister)}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-6"
           >
             {!isLogin && (
-              <FormField id="fullname" label="Full Name">
+              <FormField
+                id="fullname"
+                label="Full Name"
+                className="text-[13px] uppercase"
+              >
                 <CustomInput
                   id="fullname"
                   icon={User}
@@ -116,7 +120,11 @@ export const AuthScreen = () => {
               </FormField>
             )}
 
-            <FormField id="email" label="Email Address">
+            <FormField
+              id="email"
+              label="Company Email"
+              className="text-[13px] uppercase"
+            >
               <CustomInput
                 id="email"
                 type="email"
@@ -124,6 +132,10 @@ export const AuthScreen = () => {
                 placeholder="e.g. name@company.com"
                 {...register("email", {
                   required: "Email is required!",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                  },
                 })}
                 error={errors?.email}
               />
@@ -138,6 +150,7 @@ export const AuthScreen = () => {
             <FormField
               id="password"
               label="Password"
+              className="text-[13px] uppercase"
               attachment={
                 isLogin && (
                   <div className="font-medium text-xs text-[#015C95] cursor-pointer">

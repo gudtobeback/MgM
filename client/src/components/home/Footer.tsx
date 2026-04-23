@@ -120,7 +120,7 @@ export default function Footer() {
               <a
                 key={idx}
                 onClick={() => navigateToSection(product?.hash)}
-                className="font-light text-xs hover:text-black cursor-pointer"
+                className="font-light text-xs hover:text-[#D0F059] cursor-pointer"
               >
                 {product?.name}
               </a>
@@ -133,7 +133,7 @@ export default function Footer() {
               <NavLink
                 key={idx}
                 to={company?.to}
-                className="font-light text-xs hover:text-black"
+                className="font-light text-xs hover:text-[#D0F059]"
               >
                 {company?.name}
               </NavLink>
@@ -152,7 +152,7 @@ export default function Footer() {
                 />
               </div>
 
-              <OvalButton onClick={() => navigate("/auth")}>
+              <OvalButton>
                 <ArrowUpRight strokeWidth={1} size={20} /> Submit
               </OvalButton>
             </div>

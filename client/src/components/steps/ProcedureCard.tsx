@@ -4,8 +4,8 @@ import { ArrowRightLeft } from "lucide-react";
 
 type ProcedureCardProps = {
   icon?: React.ReactNode;
-  heading?: string | null;
-  subHeading?: string;
+  heading?: string | null | any;
+  subHeading?: string | any;
   variant?: string;
   className?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
@@ -22,7 +22,7 @@ export default function ProcedureCard({
       {icon && icon}
 
       <div className="flex flex-col gap-1">
-        <p className="font-semibold text-[16px]">{heading}</p>
+        <p className="font-semibold text-[16px] text-[#003E68]">{heading}</p>
 
         {subHeading && (
           <p className="text-[12px] text-black/60">{subHeading}</p>

@@ -48,14 +48,17 @@ export default function GetStartedSection() {
   const navigate = useNavigate();
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
+    if (isHovered) return; // 🔥 pause when hovering
+
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % cards.length);
     }, 2000); // change every 2 sec
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isHovered]);
 
   return (
     <div
@@ -63,7 +66,7 @@ export default function GetStartedSection() {
       className="flex flex-col items-center gap-10 px-5
       lg:flex-row lg:justify-between lg:gap-6 lg:px-10 xl:px-25"
     >
-      {/* Right Container */}
+      {/* Left Container */}
       <div className="flex flex-wrap gap-5 items-center justify-center lg:justify-between w-full lg:w-[400px]">
         <div className="flex flex-col gap-5 items-start max-w-[550px]">
           <div className="text-[11px] sm:text-[12px] px-2.5 py-1 bg-[#D7FB71] rounded-full">
@@ -251,7 +254,7 @@ export default function GetStartedSection() {
         </div>
       </div>
 
-      {/* Left Container */}
+      {/* Right Container */}
       <div className="relative flex flex-col items-stretch gap-6">
         <div className=" absolute left-10 sm:left-12 h-full border-r border-[#015C95]"></div>
 
@@ -261,12 +264,19 @@ export default function GetStartedSection() {
           return (
             <div
               key={card?.id || idx}
-              className={`flex items-center gap-3 px-5 py-5 sm:px-7 sm:py-5 rounded-xl transition-all duration-500 z-10
-                ${isActive ? "bg-[#015C95]" : "bg-[#F5F5F5]"}`}
+              onMouseEnter={() => {
+                setIsHovered(true);
+                setActiveIndex(idx); // 🔥 lock to hovered card
+              }}
+              onMouseLeave={() => {
+                setIsHovered(false); // 🔥 resume from same card
+              }}
+              className={`group flex items-center gap-3 px-5 py-5 sm:px-7 sm:py-5 rounded-xl transition-all duration-500 z-10
+                ${isActive ? "bg-[#015C95]" : "bg-[#F5F5F5] hover:bg-[#015C95]"}`}
             >
               <div
                 className={`h-10 w-10 flex items-center justify-center font-bold rounded-lg transition-all duration-500
-                  ${isActive ? "text-[#015C95] bg-[#D7FB71]" : "text-black bg-white"}`}
+                  ${isActive ? "text-[#015C95] bg-[#D7FB71]" : "text-black group-hover:text-[#015C95] bg-white group-hover:bg-[#D7FB71]"}`}
               >
                 {card?.id}
               </div>
@@ -274,14 +284,14 @@ export default function GetStartedSection() {
               <div className="flex-1 space-y-1">
                 <div
                   className={`font-medium sm:text-lg transition-all duration-500
-                    ${isActive ? "text-white" : "text-[#015C95]"}`}
+                    ${isActive ? "text-white" : "text-[#015C95] group-hover:text-white"}`}
                 >
                   {card?.title}
                 </div>
 
                 <div
                   className={`text-xs transition-all duration-500
-                    ${isActive ? "text-[#D7FB71]" : "text-[#434140]"}`}
+                    ${isActive ? "text-[#D7FB71]" : "text-[#434140] group-hover:text-[#D7FB71]"}`}
                 >
                   {card?.description}
                 </div>

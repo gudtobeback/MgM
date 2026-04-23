@@ -187,7 +187,7 @@ export function BackupDeviceSelectionStep({
           <p className="mt-4 text-muted-foreground">Loading devices...</p>
         </div>
       ) : error ? (
-        <AlertCard variant="error">{error}</AlertCard>
+        <AlertCard variant="red">{error}</AlertCard>
       ) : (
         <>
           <div className="flex items-center justify-between gap-4">

@@ -2,8 +2,6 @@ import React, { useState } from "react";
 
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import { Toaster } from "../ui/sonner";
-
 import { TopBar } from "./TopBar";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/src/context/AuthContext";
@@ -45,8 +43,6 @@ export const AppShell = () => {
           </div>
         </main>
       </div>
-
-      <Toaster />
     </div>
   );
 };

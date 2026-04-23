@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 
 import { Input } from "antd";
-import { Plus, Trash2, Loader2, Terminal } from "lucide-react";
+import { Plus, Trash2, Loader2, Terminal, CirclePlus } from "lucide-react";
 
 import StepHeadingCard from "../StepHeadingCard";
 
@@ -15,6 +15,10 @@ import {
 } from "../../../services/merakiService";
 
 import { Cat9KData } from "../../../types/types";
+import OvalButton from "../../home/OvalButton";
+import FormField from "../../ui/FormField";
+import { CustomInput } from "../../ui/CustomInput";
+import LogsCard from "../LogsCard";
 
 interface ClaimStepProps {
   data: Cat9KData;
@@ -35,18 +39,11 @@ export function ClaimStep({ data, onUpdate, onComplete }: ClaimStepProps) {
   const [claimState, setClaimState] = useState<ClaimState>("idle");
   const [log, setLog] = useState<string[]>([]);
   const [errorMsg, setErrorMsg] = useState("");
-  const logRef = useRef<HTMLDivElement>(null);
+
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const addLog = (msg: string) => {
-    setLog((prev) => {
-      const next = [...prev, msg];
-      setTimeout(() => {
-        if (logRef.current)
-          logRef.current.scrollTop = logRef.current.scrollHeight;
-      }, 0);
-      return next;
-    });
+    setLog((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
   };
 
   const validIds = cloudIds.filter((id) => CLOUD_ID_REGEX.test(id.trim()));
@@ -167,99 +164,87 @@ export function ClaimStep({ data, onUpdate, onComplete }: ClaimStepProps) {
   };
 
   return (
-    <div className="step-card-inner-layout">
-      {/* CLI Box */}
-      <div className="bg-slate-900 border border-slate-800 rounded-md px-5 py-4">
-        <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-3">
-          Run on your Catalyst 9K switch (IOS-XE CLI)
-        </div>
-
-        {[
-          {
-            label: "Step 1 — Validate compatibility",
-            cmd: "show meraki compatibility",
-          },
-          {
-            label: "Step 2 — Register & get Cloud ID",
-            cmd: "service meraki register",
-          },
-          {
-            label: "Step 3 — Start Meraki migration",
-            cmd: "service meraki start",
-          },
-        ].map(({ label, cmd }) => (
-          <div key={cmd} className="mb-2.5">
-            <div className="text-[11px] text-slate-500 mb-1">{label}</div>
-            <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded text-[13px] font-mono text-green-400">
-              <Terminal size={12} className="shrink-0 text-green-400" />
-              {cmd}
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* CLI Box */}
+        <LogsCard logName="Run on your Catalyst 9K switch (IOS-XE CLI)">
+          {[
+            {
+              label: "Step 1 — Validate compatibility",
+              cmd: "show meraki compatibility",
+            },
+            {
+              label: "Step 2 — Register & get Cloud ID",
+              cmd: "service meraki register",
+            },
+            {
+              label: "Step 3 — Start Meraki migration",
+              cmd: "service meraki start",
+            },
+          ].map(({ label, cmd }) => (
+            <div key={cmd} className="mb-2.5">
+              <div className="text-[11px] text-slate-500 mb-1">{label}</div>
+              <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded text-[13px] font-mono text-green-400">
+                <Terminal size={12} className="shrink-0 text-green-400" />
+                {cmd}
+              </div>
             </div>
+          ))}
+        </LogsCard>
+
+        {/* Cloud ID Input */}
+        {(claimState === "idle" || claimState === "error") && (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <FormField
+                label="Cloud ID(s) — one per switch / stack member"
+                className="text-[13px] uppercase"
+              >
+                {cloudIds.map((id, i) => (
+                  <div key={i} className="w-full flex items-center gap-2">
+                    <CustomInput
+                      placeholder="XXZZ-XXZZ-XXZZ"
+                      className="w-full font-mono tracking-widest"
+                      maxLength={14}
+                      value={id}
+                      onChange={(e: any) => handleChange(i, e.target.value)}
+                      error={id && !CLOUD_ID_REGEX.test(id)}
+                    />
+
+                    {cloudIds.length > 1 && (
+                      <button
+                        onClick={() => handleRemoveRow(i)}
+                        className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded cursor-pointer"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </FormField>
+
+              <button
+                onClick={handleAddRow}
+                className="flex items-center gap-1.5 w-fit text-[12px] font-semibold text-[#003E68] cursor-pointer"
+              >
+                <CirclePlus size={14} /> Add another switch
+              </button>
+
+              {claimState === "error" && errorMsg && (
+                <AlertCard variant="red">{errorMsg}</AlertCard>
+              )}
+            </div>
+
+            <OvalButton onClick={handleClaim} disabled={!canClaim}>
+              Claim & Wait for Device
+            </OvalButton>
           </div>
-        ))}
+        )}
       </div>
-
-      {/* Cloud ID Input */}
-      {(claimState === "idle" || claimState === "error") && (
-        <>
-          <div className="flex flex-col gap-2">
-            <LabelInput
-              id="cloud-id"
-              label="Cloud ID(s) — one per switch / stack member"
-              required
-            >
-              {cloudIds.map((id, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Input
-                    id="cloud-id"
-                    maxLength={14}
-                    className={`font-mono tracking-widest ${
-                      id && !CLOUD_ID_REGEX.test(id) && "select-warning"
-                    }`}
-                    placeholder="XXZZ-XXZZ-XXZZ"
-                    value={id}
-                    onChange={(e) => handleChange(i, e.target.value)}
-                  />
-
-                  {cloudIds.length > 1 && (
-                    <button
-                      onClick={() => handleRemoveRow(i)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </LabelInput>
-
-            <button
-              onClick={handleAddRow}
-              className="flex items-center gap-1.5 w-fit text-[12px] font-semibold text-blue-600"
-            >
-              <Plus size={13} /> Add another switch
-            </button>
-
-            {claimState === "error" && errorMsg && (
-              <AlertCard variant="error">{errorMsg}</AlertCard>
-            )}
-          </div>
-
-          <CustomButton
-            onClick={handleClaim}
-            className="w-fit"
-            disabled={!canClaim}
-          >
-            Claim & Wait for Device
-          </CustomButton>
-        </>
-      )}
 
       {/* Log */}
       {log.length > 0 && (
-        <div
-          ref={logRef}
-          className="h-[220px] overflow-y-auto bg-slate-900 border border-gray-300 rounded-md px-4 py-3 font-mono text-[12px] leading-relaxed text-slate-200 mb-4"
-        >
+        <div className="h-[220px] overflow-y-auto bg-slate-900 border border-gray-300 rounded-md px-4 py-3 font-mono text-[12px] leading-relaxed text-slate-200 mb-4">
           {log.map((line, i) => (
             <div
               key={i}
@@ -291,16 +276,17 @@ export function ClaimStep({ data, onUpdate, onComplete }: ClaimStepProps) {
       {/* Done State */}
       {claimState === "done" && (
         <>
-          <AlertCard variant="success">
-            <div className="font-bold">
+          <AlertCard variant="green">
+            <div className="font-semibold">
               {data.claimedDevices?.length} device(s) claimed successfully
             </div>
+
             <div>Click Next to push the translated IOS-XE configuration.</div>
           </AlertCard>
 
-          <CustomButton onClick={onComplete}>
+          <OvalButton onClick={onComplete}>
             Next — Push Configuration
-          </CustomButton>
+          </OvalButton>
         </>
       )}
     </div>

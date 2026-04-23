@@ -12,6 +12,9 @@ import CustomButton from "../../ui/CustomButton";
 import { parseCat9KConfig } from "../../../services/cat9kParser";
 
 import { Cat9KData } from "../../../types/types";
+import OvalButton from "../../home/OvalButton";
+import FormField from "../../ui/FormField";
+import { CustomTextarea } from "../../ui/CustomTextarea";
 
 const { TextArea } = Input;
 
@@ -64,87 +67,95 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
   const parsed = data.parsedConfig;
 
   return (
-    <div className="step-card-inner-layout">
-      {/* Drop zone */}
-      <div
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragging(true);
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
-        className={`mb-4 p-7 border-2 border-gray-300 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-150 ${
-          dragging
-            ? "border-blue-600 bg-green-50"
-            : "border-border bg-secondary"
-        }`}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".txt,.cfg,.conf"
-          className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFile(f);
+    <div className="flex flex-col gap-6">
+      <div className="flex gap-6">
+        {/* Drop zone */}
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
           }}
-        />
+          onDragLeave={() => setDragging(false)}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`sm:min-w-[400px] p-7 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150
+          ${
+            dragging
+              ? "bg-green-50 border-green-300"
+              : "bg-[#F3F4F5] border-gray-300"
+          }`}
+        >
+          {/* Hidden */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt,.cfg,.conf"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
+          />
 
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className={`w-10 h-10 rounded-lg border flex items-center justify-center ${
-              dragging
-                ? "bg-green-100 border-border"
-                : "bg-background border-border"
-            }`}
+          <div className="h-full flex flex-col items-center justify-center gap-3">
+            <div
+              className={`p-4 ${
+                dragging ? "bg-green-100" : "bg-[#003E680D]"
+              } rounded-full`}
+            >
+              <Upload
+                size={20}
+                className={dragging ? "text-blue-600" : "text-[#003E68]"}
+              />
+            </div>
+
+            <div className="font-semibold text-sm text-[#003E68]">
+              {data.rawConfig
+                ? "File loaded — click to replace"
+                : "Drop file here or click to browse"}
+            </div>
+
+            <div className="text-xs text-[#94A3B8]">
+              Supports .txt, .cfg, .conf — or paste below
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-6 w-full">
+          {/* Textarea */}
+          <FormField
+            id="text"
+            label="Paste configuration"
+            className="text-[13px] uppercase"
           >
-            <Upload
-              size={18}
-              className={dragging ? "text-blue-600" : "text-muted-foreground"}
+            <CustomTextarea
+              id="text"
+              rows={10}
+              style={{ fontFamily: "var(--font-mono)" }}
+              placeholder="Paste IOS-XE running-config here..."
+              value={data.rawConfig}
+              onChange={(e) =>
+                onUpdate({ rawConfig: e.target.value, parsedConfig: null })
+              }
             />
-          </div>
+          </FormField>
 
-          <div className="text-[13px] font-semibold text-foreground">
-            {data.rawConfig
-              ? "File loaded — click to replace"
-              : "Drop file here or click to browse"}
-          </div>
-
-          <div className="text-xs text-muted-foreground">
-            Accepts .txt, .cfg, .conf — or paste below
-          </div>
+          {/* Parse button */}
+          <OvalButton
+            onClick={handleParse}
+            className="w-fit"
+            disabled={!data.rawConfig.trim()}
+          >
+            <FileText size={16} />
+            Parse configuration
+          </OvalButton>
         </div>
       </div>
 
-      {/* Textarea */}
-      <LabelInput id="text" label="Paste configuration">
-        <TextArea
-          id="text"
-          rows={10}
-          style={{ fontFamily: "var(--font-mono)" }}
-          placeholder="Paste IOS-XE running-config here..."
-          value={data.rawConfig}
-          onChange={(e) =>
-            onUpdate({ rawConfig: e.target.value, parsedConfig: null })
-          }
-        />
-      </LabelInput>
-
-      {/* Parse button */}
-      <CustomButton
-        onClick={handleParse}
-        className="w-fit"
-        disabled={!data.rawConfig.trim()}
-      >
-        <FileText size={16} />
-        Parse configuration
-      </CustomButton>
-
-      {parseError && <AlertCard variant="error">{parseError}</AlertCard>}
+      {parseError && <AlertCard variant="red">{parseError}</AlertCard>}
 
       {parsed && (
-        <AlertCard variant="success">
+        <AlertCard variant="green">
           <div className="flex items-center gap-1">
             <p className="font-semibold">Configuration parsed successfully!</p>
             {parsed?.hostname && <span> - {parsed?.hostname}</span>}

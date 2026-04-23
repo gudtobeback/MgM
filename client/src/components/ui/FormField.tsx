@@ -5,7 +5,7 @@ export default function FormField({
   children,
   attachment,
 }: {
-  id: any;
+  id?: any;
   label: any;
   className?: any;
   children?: any;
@@ -14,10 +14,7 @@ export default function FormField({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-3">
-        <label
-          htmlFor={id}
-          className={`${className} font-bold text-xs text-[#015C95]`}
-        >
+        <label htmlFor={id} className={`${className} font-bold text-[#015C95]`}>
           {label}
         </label>
 

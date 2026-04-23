@@ -3,7 +3,6 @@ import React from "react";
 import { Checkbox } from "antd";
 
 import { Cat9KData } from "../../../types/types";
-import StepHeadingCard from "../StepHeadingCard";
 
 interface ReviewStepProps {
   data: Cat9KData;
@@ -45,7 +44,7 @@ function Toggle({ checked, disabled, onChange, label, subtitle }: ToggleProps) {
 
 function PanelHeader({ title, count }: { title: string; count: number }) {
   return (
-    <div className="px-4 py-2.5 bg-secondary border-b border-border flex items-center justify-between">
+    <div className="px-4 py-2.5 bg-secondary border-b border-gray-300 flex items-center justify-between">
       <span className="text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
         {title}
       </span>
@@ -84,7 +83,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
   return (
     <div className="step-card-inner-layout">
       {/* Apply toggles */}
-      <div className="flex items-center gap-6 p-5 border rounded-md">
+      <div className="flex items-center gap-6 p-5 rounded-md">
         <Toggle
           checked={data.applyPorts}
           onChange={(val) => onUpdate({ applyPorts: val })}
@@ -116,7 +115,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
       </div>
 
       {/* VLANs */}
-      <div className="border border-border rounded-md overflow-hidden mb-4">
+      <div className="border border-gray-300 rounded-md overflow-hidden mb-4">
         <PanelHeader title="VLANs" count={parsed.vlans.length} />
 
         {parsed.vlans.length === 0 ? (
@@ -148,7 +147,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
       </div>
 
       {/* Interfaces */}
-      <div className="border border-border rounded-md overflow-hidden mb-4">
+      <div className="border border-gray-200 rounded-md overflow-hidden mb-4">
         <PanelHeader
           title="Switch Interfaces"
           count={parsed.interfaces.length}

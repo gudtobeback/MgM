@@ -1,8 +1,9 @@
 import React from "react";
 
-import { Rocket, Headset, Handshake, ArrowRight } from "lucide-react";
+import { Rocket, Headset, Handshake, ArrowRight, MapPin } from "lucide-react";
 
 import HeroSection from "@/src/components/public_pages/HeroSection";
+import RequestDemoForm from "@/src/components/contact_us/RequestDemoForm";
 
 const Heading = ({
   text,
@@ -109,21 +110,52 @@ export default function ContactUs() {
         <div className="-mx-5 lg:-mx-20 bg-[url('/images/cloud.jpg')] bg-cover rounded-3xl overflow-hidden">
           <div
             className="grid grid-cols-1 items-center justify-center gap-10 p-5
-            xl:grid-cols-2 xl:gap-20 xl:px-25 xl:py-0 xl:h-[600px]"
+            xl:grid-cols-2 xl:gap-20 xl:px-25 xl:py-0 xl:min-h-[600px]"
           >
-            <div className="flex flex-col gap-7 sm:gap-9 py-4 xl:py-0">
+            <div className="col-span-1 flex flex-col gap-7 sm:gap-9 py-4 xl:py-0">
               <div className="w-fit text-[28px] sm:text-[36px] md:text-[48px] leading-tight md:leading-14 text-white">
                 Request a <span className="font-semibold">Demo</span>
               </div>
 
-              <p className="font-light text-sm text-white leading-relaxed">
+              <p className="font-light text-[13px] sm:text-sm text-white leading-relaxed">
                 See how you can migrate Cisco Meraki networks in minutes — not
                 weeks. Get a guided walkthrough of AurionOne and discover how
                 automation can eliminate manual effort and downtime.
               </p>
+
+              <div className="space-y-3 p-6 bg-[#003E68] rounded-2xl">
+                <p className="text-md text-white">
+                  Let’s Build Smarter Networks Together.
+                </p>
+
+                <p className="font-light text-xs text-white leading-relaxed">
+                  Whether you're an enterprise, MSP, or network
+                  engineer—AurionOne is designed to make your operations faster,
+                  simpler, and more reliable.
+                </p>
+              </div>
+
+              <div className="border-b border-white " />
+
+              <div className="space-y-3">
+                <p className="font-semibold text-sm text-[#D0F059]">
+                  OUR OFFICE
+                </p>
+
+                <div className="flex items-start gap-3">
+                  <MapPin className="text-[#D0F059]" />
+
+                  <p className="font-light text-[13px] sm:text-sm text-white leading-relaxed">
+                    Dealmytime Services Pvt Ltd, Unit 115, InspireHub, DN Nagar,
+                    JP Road, Andheri West Mumbai, India.
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div></div>
+            <div className="col-span-1">
+              <RequestDemoForm />
+            </div>
           </div>
         </div>
       </div>

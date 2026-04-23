@@ -47,21 +47,21 @@ export default function Header() {
         <div className={`hidden md:flex items-stretch gap-6 ${textColor}`}>
           <a
             onClick={() => navigateToSection("how")}
-            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
+            className="font-light text-[13px] hover:text-[#D0F059] cursor-pointer"
           >
             How it works
           </a>
 
           <a
             onClick={() => navigateToSection("features")}
-            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
+            className="font-light text-[13px] hover:text-[#D0F059] cursor-pointer"
           >
             Features
           </a>
 
           <a
             onClick={() => navigateToSection("pricing")}
-            className="text-[13px] sm:text-sm hover:text-black cursor-pointer"
+            className="font-light text-[13px] hover:text-[#D0F059] cursor-pointer"
           >
             Pricing
           </a>
@@ -73,7 +73,7 @@ export default function Header() {
           <NavLink
             to="/about_us"
             className={({ isActive }) =>
-              `${isActive && "font-semibold"} text-[13px] sm:text-sm hover:text-black cursor-pointer`
+              `${isActive && "font-medium"} font-light text-[13px] hover:text-[#D0F059] cursor-pointer`
             }
           >
             About
@@ -82,7 +82,7 @@ export default function Header() {
           <NavLink
             to="/contact_us"
             className={({ isActive }) =>
-              `${isActive && "font-semibold"} text-[13px] sm:text-sm hover:text-black cursor-pointer`
+              `${isActive && "font-medium"} font-light text-[13px] hover:text-[#D0F059] cursor-pointer`
             }
           >
             Contact
@@ -91,7 +91,7 @@ export default function Header() {
           <NavLink
             to="/support"
             className={({ isActive }) =>
-              `${isActive && "font-semibold"} text-[13px] sm:text-sm hover:text-black cursor-pointer`
+              `${isActive && "font-medium"} font-light text-[13px] hover:text-[#D0F059] cursor-pointer`
             }
           >
             Support
@@ -102,10 +102,11 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-5">
           <button
             onClick={() => navigate("/auth")}
-            className={`text-[13px] sm:text-sm ${textColor} cursor-pointer`}
+            className={`font-light text-[13px] ${textColor} cursor-pointer`}
           >
             Login
           </button>
+
           <OvalButton onClick={() => navigate("/auth")}>Get a Demo</OvalButton>
         </div>
 
@@ -141,7 +142,7 @@ export default function Header() {
         </div>
 
         {/* Links (same spacing style as your dropdown) */}
-        <div className="flex flex-col gap-6 px-6 py-6 text-[13px] sm:text-sm">
+        <div className="flex flex-col gap-6 px-6 py-6 font-light text-[13px]">
           <a onClick={() => navigateToSection("features")}>Features</a>
           <a onClick={() => navigateToSection("how")}>How it works</a>
           <a onClick={() => navigateToSection("pricing")}>Pricing</a>

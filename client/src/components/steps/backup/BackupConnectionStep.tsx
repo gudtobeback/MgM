@@ -103,7 +103,7 @@ export function BackupConnectionStep({
         />
       </LabelInput>
 
-      <AlertCard variant="note">
+      <AlertCard variant="blue">
         <p>
           <strong>Note:</strong> Your API key is only used for this session and
           is never stored. Make sure you have read access to the organization

@@ -15,8 +15,8 @@ import { Button } from "../../ui/button";
 interface BackupMethodSelectionProps {
   data: any;
   handleNext: () => void;
-  setBackupType: (type) => void;
-  setCurrentStep: (step: Number) => void;
+  setBackupType: (type: any) => void;
+  setCurrentStep: any;
 }
 
 export default function BackupMethodSelection({

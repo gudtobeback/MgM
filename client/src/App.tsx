@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import {
@@ -61,12 +61,15 @@ import Support from "./pages/public/Support";
 import ContactUs from "./pages/public/ContactUs";
 
 function ProtectedRouteWrapper() {
-  const { orgsLoading, organizations } = useOrganization();
+  const { orgsLoading, organizations, selectedOrgId } = useOrganization();
 
   const location = useLocation();
   const toolMode = ROUTE_TO_TOOL_MODE[location.pathname] as ToolMode;
 
-  if (ORG_REQUIRED_ROUTES.includes(toolMode) && organizations.length === 0) {
+  if (
+    ORG_REQUIRED_ROUTES.includes(toolMode) &&
+    (organizations.length === 0 || selectedOrgId === null)
+  ) {
     return (
       <div className="p-6">
         <div className="flex flex-col items-center justify-center h-100 gap-3 p-5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
@@ -110,6 +113,14 @@ function UserProtectedRoute() {
 }
 
 function PublicLayout() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+    });
+  }, [pathname]);
+
   return (
     <div className="relative text-black/80 px-2">
       <Header />
@@ -159,7 +170,6 @@ function App() {
       {/* Private routes */}
       <Route element={<AppShell />}>
         <Route element={<UserProtectedRoute />}>
-          {/* Non-protected routes */}
           <Route
             path={TOOL_MODE_ROUTES.selection}
             element={<ModeSelectionScreen />}

@@ -628,6 +628,8 @@ export function SelectStep({ data, onUpdate }: SelectStepProps) {
   const networkIds = Object.keys(backup.networkConfigs);
   const counts = getCounts(data);
 
+  console.log("network ids: ", data);
+
   const toggleGroup = (groupId: string) => {
     const next = new Set(expandedGroups);
     if (next.has(groupId)) {

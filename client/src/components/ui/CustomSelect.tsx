@@ -9,8 +9,8 @@ type Option = {
 
 type CustomSelectProps = {
   options?: Option[];
-  error?: boolean;
-  value: Option["value"] | null;
+  error?: boolean | null | undefined;
+  value: Option["value"] | null | undefined;
   onChange: (value: Option["value"] | null) => void;
   placeholder?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">; // 👈 enable props
@@ -18,7 +18,7 @@ type CustomSelectProps = {
 const commonInputClass =
   "w-full p-3 outline-none text-sm placeholder:text-[#C1C7D1] bg-[#C1C7D133] border border-gray-200 rounded-3xl";
 
-const errorClass = (error?: boolean) =>
+const errorClass = (error?: boolean | null | undefined) =>
   error
     ? "border-2 border-red-400"
     : "border-gray-200 focus:border-transparent focus:ring ring-[#015C95]";

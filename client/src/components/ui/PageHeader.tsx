@@ -2,7 +2,7 @@ import React from "react";
 
 type PageHeaderProps = {
   heading?: string;
-  subHeading?: string;
+  subHeading?: React.ReactNode;
   className?: string;
   children?: React.ReactNode;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;

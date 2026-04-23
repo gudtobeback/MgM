@@ -356,7 +356,7 @@ export function ApplyStep({
   const isDone = !running && !data.wasStopped;
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <ProcedureCard
         icon={
           running ? (

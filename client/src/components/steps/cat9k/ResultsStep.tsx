@@ -1,6 +1,13 @@
 import React from "react";
 
-import { CheckCircle2, RotateCcw } from "lucide-react";
+import {
+  CheckCircle2,
+  RotateCcw,
+  Router,
+  CircleAlert,
+  ShieldCheck,
+  Shield,
+} from "lucide-react";
 
 import LogsCard from "../LogsCard";
 import StepHeadingCard from "../StepHeadingCard";
@@ -9,6 +16,7 @@ import CustomButton from "../../ui/CustomButton";
 
 import { Cat9KData } from "../../../types/types";
 import ProcedureCard from "../ProcedureCard";
+import OvalButton from "../../home/OvalButton";
 
 interface ResultsStepProps {
   data: Cat9KData;
@@ -27,14 +35,50 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
   }
 
   const stats = [
-    { value: results.portsPushed, label: "Ports configured" },
-    { value: results.portsFailed, label: "Ports skipped" },
-    { value: results.policiesCreated, label: "RADIUS policies" },
-    { value: results.aclRulesPushed, label: "ACL rules pushed" },
+    {
+      value: results.portsPushed,
+      label: "Ports configured",
+      icon: (
+        <div className="p-2 bg-[#D0E4FF4D] rounded-full">
+          <Router size={20} className="text-[#003E68]" />
+        </div>
+      ),
+      badge: "SYNCED",
+    },
+    {
+      value: results.portsFailed,
+      label: "Ports skipped",
+      icon: (
+        <div className="p-2 bg-[#FEF3C7] rounded-full">
+          <CircleAlert size={20} className="text-[#D97706]" />
+        </div>
+      ),
+      badge: "BYPASSED",
+    },
+    {
+      value: results.policiesCreated,
+      label: "RADIUS policies",
+      icon: (
+        <div className="p-2 bg-[#D0F05933] rounded-full">
+          <ShieldCheck size={20} className="text-[#536600]" />
+        </div>
+      ),
+      badge: "ACTIVE",
+    },
+    {
+      value: results.aclRulesPushed,
+      label: "ACL rules pushed",
+      icon: (
+        <div className="p-2 bg-[#E0F2FE] rounded-full">
+          <Shield size={20} className="text-[#0284C7]" />
+        </div>
+      ),
+      badge: "PUSHED",
+    },
   ];
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       <ProcedureCard
         icon={<CheckCircle2 size={30} className="text-green-600" />}
         heading="Configuration Applied"
@@ -46,21 +90,20 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="border border-[#87D2ED] rounded-md px-4 py-4 bg-white text-center"
+            className="p-6 flex flex-col gap-1 bg-white rounded-2xl"
           >
-            <div
-              className={`text-[26px] font-bold tracking-tight leading-tight mb-1 ${
-                s.label === "Ports skipped" && s.value > 0
-                  ? "text-amber-600"
-                  : "text-gray-900"
-              }`}
-            >
+            <div className="flex items-center justify-between gap-3">
+              {s?.icon}{" "}
+              <p className="font-semibold text-xs text-[#41474F99]">
+                {s?.badge}
+              </p>
+            </div>
+
+            <div className="mt-3 font-semibold text-4xl text-[#003E68] leading-tight">
               {s.value}
             </div>
 
-            <div className="text-[11px] text-gray-500 leading-snug">
-              {s.label}
-            </div>
+            <div className="font-medium text-sm text-[#41474F]">{s.label}</div>
           </div>
         ))}
       </div>
@@ -85,10 +128,10 @@ export function ResultsStep({ data, onReset }: ResultsStepProps) {
         ))}
       </LogsCard>
 
-      <CustomButton onClick={onReset} className="w-fit">
+      <OvalButton onClick={onReset} className="w-fit">
         <RotateCcw size={14} />
         Start new migration
-      </CustomButton>
+      </OvalButton>
     </div>
   );
 }

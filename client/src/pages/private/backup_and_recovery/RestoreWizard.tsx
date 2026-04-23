@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ArrowLeft, ArrowRight, HardDriveDownload } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
-import CustomButton from "../../../components/ui/CustomButton";
+import PageHeader from "@/src/components/ui/PageHeader";
+import OvalButton from "@/src/components/home/OvalButton";
 
 import StepBar from "../../../components/steps/StepBar";
 import { UploadStep } from "../../../components/steps/restore/UploadStep";
@@ -11,7 +12,6 @@ import { DestinationStep } from "../../../components/steps/restore/DestinationSt
 import { RestoreExecStep } from "../../../components/steps/restore/RestoreExecStep";
 
 import { RestoreData } from "../../../types/types";
-import StepHeadingCard from "@/src/components/steps/StepHeadingCard";
 
 const steps = [
   {
@@ -224,48 +224,35 @@ export function RestoreWizard() {
   )?.description;
 
   return (
-    <div className="px-16 py-8">
-      <div className="flex flex-col gap-4">
-        {/* Step content */}
-        <div className="border border-[#87D2ED] rounded-lg overflow-hidden">
-          <div className="step-card-layout">
-            <StepHeadingCard
-              icon={HardDriveDownload}
-              heading={heading}
-              subHeading={description}
-            />
+    <div className="p-8">
+      <div className="flex flex-col gap-8">
+        {/* Step indicator */}
+        <StepBar steps={steps} currentStep={currentStep} />
 
-            {/* Step indicator */}
-            <StepBar steps={steps} currentStep={currentStep} />
+        {/* Heading */}
+        <PageHeader heading={heading} subHeading={description} />
 
-            {renderStep()}
+        {renderStep()}
+
+        {/* Navigation */}
+        {!isAutoStep && (
+          <div className="flex items-center justify-between border-t border-gray-200 px-10 py-6">
+            <OvalButton
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              text_prop="text-black"
+              bg_prop="bg-gray-100 enabled:hover:bg-gray-200"
+            >
+              <ArrowLeft size={16} />
+              Back
+            </OvalButton>
+
+            <OvalButton onClick={handleNext} disabled={!canProceedToNext()}>
+              Next
+              <ArrowRight size={16} />
+            </OvalButton>
           </div>
-
-          {/* Navigation */}
-          {!isAutoStep && (
-            <div className="flex items-center justify-between bg-white border-t-2 border-gray-200 px-10 py-6">
-              <CustomButton
-                onClick={handleBack}
-                text_prop="text-black"
-                bg_prop="bg-white"
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-                disabled={currentStep === 1}
-              >
-                <ArrowLeft size={16} />
-                Back
-              </CustomButton>
-
-              <CustomButton
-                onClick={handleNext}
-                disabled={!canProceedToNext()}
-                className="ring-1 ring-[#049FD9] enabled:hover:ring-2"
-              >
-                Next
-                <ArrowRight size={16} />
-              </CustomButton>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

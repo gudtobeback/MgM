@@ -16,7 +16,7 @@ export default function OvalButton({
 }: OvalButtonProps) {
   return (
     <button
-      className={`${text_prop} ${bg_prop} ${className} px-4 py-2.5 w-fit flex items-center gap-1 font-medium text-[13px] sm:text-sm rounded-full cursor-pointer disabled:opacity-60`}
+      className={`${text_prop} ${bg_prop} ${className} px-4 py-2.5 w-fit flex items-center gap-1 font-medium text-[13px] sm:text-sm rounded-full enabled:cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
       {...props}
     >
       {children}

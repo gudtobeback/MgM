@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { SnapshotTimeline } from './SnapshotTimeline';
-import { SnapshotDiffViewer } from './SnapshotDiffViewer';
-import { SnapshotDetailViewer } from './SnapshotDetailViewer';
+import React, { useState } from "react";
+import { SnapshotTimeline } from "./SnapshotTimeline";
+import { SnapshotDiffViewer } from "./SnapshotDiffViewer";
+import { SnapshotDetailViewer } from "./SnapshotDetailViewer";
 
 interface Snapshot {
   id: string;
   organizationId: string;
-  snapshotType: 'manual' | 'scheduled' | 'pre-change' | 'post-change';
+  snapshotType: "manual" | "scheduled" | "pre-change" | "post-change";
   snapshotData: any;
   snapshotMetadata?: any;
   sizeBytes: number;
@@ -19,8 +19,13 @@ interface VersionControlPageProps {
   organizationId: string;
 }
 
-export const VersionControlPage: React.FC<VersionControlPageProps> = ({ organizationId }) => {
-  const [compareMode, setCompareMode] = useState<{ snapshot1: string; snapshot2: string } | null>(null);
+export const VersionControlPage: React.FC<VersionControlPageProps> = ({
+  organizationId,
+}) => {
+  const [compareMode, setCompareMode] = useState<{
+    snapshot1: string;
+    snapshot2: string;
+  } | null>(null);
   const [viewedSnapshot, setViewedSnapshot] = useState<Snapshot | null>(null);
 
   const handleCompare = (snapshot1Id: string, snapshot2Id: string) => {

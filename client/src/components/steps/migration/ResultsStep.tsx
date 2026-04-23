@@ -122,10 +122,12 @@ export function ResultsStep({ data, onReset, logDuration }: ResultsStepProps) {
                 </p>
 
                 <p className="flex items-center gap-2">
-                  {migrationSuccess.length > 0 && (
+                  {migrationErrors.length > 0 && (
                     <>
                       <div className="p-0.5 bg-red-500 rounded-full"></div>
-                      <p className="text-red-500">{6} Failed</p>
+                      <p className="text-red-500">
+                        {migrationErrors.length} Failed
+                      </p>
                     </>
                   )}
                 </p>

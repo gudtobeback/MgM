@@ -303,12 +303,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Admin Button */}
         <button
           onClick={() => navigate(TOOL_MODE_ROUTES.profile)}
-          className="p-0.5 flex items-center gap-2 text-white hover:text-black hover:bg-[#F6FCDE] rounded-full cursor-pointer transition-all"
+          className={`${collapsed ? "p-1" : "px-2 py-1"} flex items-center justify-center gap-2 text-white hover:text-black hover:bg-[#F6FCDE] rounded-full cursor-pointer transition-all`}
         >
-          <img src="/images/6596121.png" alt="User Image" className="size-6" />
+          <img src="/images/6596121.png" alt="User Image" className="size-8" />
 
           {!collapsed && (
-            <div className="text-sm font-medium">{displayName}</div>
+            <div className="flex-1 text-start text-sm font-medium">
+              {displayName}
+            </div>
           )}
         </button>
       </div>

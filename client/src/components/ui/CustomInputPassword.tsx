@@ -19,8 +19,8 @@ export const CustomInputPassword = React.forwardRef(
     return (
       <div className="relative">
         <input
-          ref={ref} // ✅ CRITICAL FIX
           {...props}
+          ref={ref} // ✅ CRITICAL FIX
           type={showPassword ? "text" : "password"}
           className={`${className} ${errorClass(error)} ${commonInputClass}`}
         />
