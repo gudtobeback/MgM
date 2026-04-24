@@ -1,0 +1,217 @@
+import bcrypt from "bcrypt";
+import jwt, { SignOptions } from "jsonwebtoken";
+import { query } from "../config/database";
+
+const JWT_TOKEN_SECRET_KEY: jwt.Secret =
+  process.env.JWT_TOKEN_SECRET_KEY || "default-secret-change-in-production";
+const ACCESS_TOKEN_EXPIRY =
+  (process.env.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"]) || "24h";
+const REFRESH_TOKEN_EXPIRY =
+  (process.env.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"]) || "7d";
+
+export interface UserPayload {
+  id: string;
+  email: string;
+  subscriptionTier: string;
+  role: string;
+  companyId: number | null;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  user: UserPayload;
+}
+
+export class AuthService {
+  /**
+   * Register a new user
+   */
+  static async register(
+    email: string,
+    password: string,
+    fullName?: string,
+  ): Promise<AuthTokens> {
+    // Check if user already exists
+    const existing = await query("SELECT id FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (existing.rows.length > 0) {
+      throw new Error("User with this email already exists");
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Insert user — assign to default company (id=1)
+    const result = await query(
+      `INSERT INTO users (email, password_hash, full_name, subscription_tier, subscription_status, role, company_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, email, subscription_tier, role, company_id`,
+      [email, passwordHash, fullName || null, "free", "active", "user", 1],
+    );
+
+    const user = result.rows[0];
+
+    // Log audit event
+    await query(
+      `INSERT INTO audit_log (user_id, action, details)
+       VALUES ($1, $2, $3)`,
+      [user.id, "user.registered", JSON.stringify({ email })],
+    );
+
+    // Generate tokens
+    return this.generateTokens({
+      id: user.id,
+      email: user.email,
+      subscriptionTier: user.subscription_tier,
+      role: user.role,
+      companyId: user.company_id ?? null,
+    });
+  }
+
+  /**
+   * Login user
+   */
+  static async login(
+    email: string,
+    password: string,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<AuthTokens> {
+    // Get user
+    const result = await query(
+      "SELECT id, email, password_hash, subscription_tier, role, company_id FROM users WHERE email = $1",
+      [email],
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("Invalid email or password");
+    }
+
+    const user = result.rows[0];
+
+    // Verify password
+    const isValid = await bcrypt.compare(password, user.password_hash);
+    if (!isValid) {
+      throw new Error("Invalid email or password");
+    }
+
+    // Log audit event
+    await query(
+      `INSERT INTO audit_log (user_id, action, ip_address, user_agent)
+       VALUES ($1, $2, $3, $4)`,
+      [user.id, "user.login", ipAddress || null, userAgent || null],
+    );
+
+    // Generate tokens
+    return this.generateTokens({
+      id: user.id,
+      email: user.email,
+      subscriptionTier: user.subscription_tier,
+      role: user.role ?? "user",
+      companyId: user.company_id ?? null,
+    });
+  }
+
+  /**
+   * Generate JWT tokens
+   */
+  static generateTokens(payload: UserPayload): AuthTokens {
+    const accessToken = jwt.sign(payload, JWT_TOKEN_SECRET_KEY, {
+      expiresIn: ACCESS_TOKEN_EXPIRY,
+    });
+    const refreshToken = jwt.sign(payload, JWT_TOKEN_SECRET_KEY, {
+      expiresIn: REFRESH_TOKEN_EXPIRY,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      user: payload,
+    };
+  }
+
+  /**
+   * Verify JWT token
+   */
+  static verifyToken(token: string): UserPayload & Record<string, any> {
+    try {
+      const decoded = jwt.verify(token, JWT_TOKEN_SECRET_KEY) as UserPayload &
+        Record<string, any>;
+      return decoded;
+    } catch (error) {
+      throw new Error("Invalid or expired token");
+    }
+  }
+
+  /**
+   * Refresh access token
+   */
+  static refreshAccessToken(refreshToken: string): AuthTokens {
+    const decoded = this.verifyToken(refreshToken);
+    // Strip JWT standard claims (exp, iat, nbf, etc.) so jwt.sign can apply
+    // fresh expiresIn without hitting the "payload already has exp" error.
+    const payload: UserPayload = {
+      id: decoded.id,
+      email: decoded.email,
+      subscriptionTier: decoded.subscriptionTier,
+      role: decoded.role ?? "user",
+      companyId: decoded.companyId ?? null,
+    };
+    return this.generateTokens(payload);
+  }
+
+  /**
+   * Get user by ID
+   */
+  static async getUserById(userId: string) {
+    const result = await query(
+      `SELECT id, role, company_id, email, full_name, subscription_tier, subscription_status, created_at
+       FROM users WHERE id = $1`,
+      [userId],
+    );
+
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    const user = result.rows[0];
+
+    console.log("User: ", user);
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role ?? "user",
+      full_name: user.full_name,
+      company_id: user.company_id ?? null,
+      subscription_tier: user.subscription_tier,
+      subscription_status: user.subscription_status,
+      created_at: user.created_at,
+    };
+  }
+
+  /**
+   * Update user subscription
+   */
+  static async updateSubscription(
+    userId: string,
+    tier: string,
+    status: string,
+  ) {
+    await query(
+      `UPDATE users
+       SET subscription_tier = $1, subscription_status = $2
+       WHERE id = $3`,
+      [tier, status, userId],
+    );
+
+    // Log audit event
+    await query(
+      `INSERT INTO audit_log (user_id, action, details)
+       VALUES ($1, $2, $3)`,
+      [userId, "user.subscription_updated", JSON.stringify({ tier, status })],
+    );
+  }
+}
