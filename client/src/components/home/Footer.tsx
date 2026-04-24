@@ -53,11 +53,15 @@ export default function Footer() {
     },
     {
       name: "Privacy Policy",
-      to: "/privacy-policy",
+      to: "/privacy_policy",
     },
     {
       name: "Terms Of Service",
       to: "/terms",
+    },
+    {
+      name: "Refund Policy",
+      to: "/refund_policy",
     },
   ];
 

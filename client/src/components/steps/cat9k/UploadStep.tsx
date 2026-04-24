@@ -3,11 +3,7 @@ import React, { useRef, useState } from "react";
 import { Input } from "antd";
 import { Upload, FileText } from "lucide-react";
 
-import StepHeadingCard from "../StepHeadingCard";
-
 import AlertCard from "../../ui/AlertCard";
-import LabelInput from "../../ui/LabelInput";
-import CustomButton from "../../ui/CustomButton";
 
 import { parseCat9KConfig } from "../../../services/cat9kParser";
 
@@ -116,7 +112,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
             </div>
 
             <div className="text-xs text-[#94A3B8]">
-              Supports .txt, .cfg, .conf — or paste below
+              Supports .txt, .cfg, .conf — or paste configuration
             </div>
           </div>
         </div>
@@ -134,7 +130,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
               style={{ fontFamily: "var(--font-mono)" }}
               placeholder="Paste IOS-XE running-config here..."
               value={data.rawConfig}
-              onChange={(e) =>
+              onChange={(e: any) =>
                 onUpdate({ rawConfig: e.target.value, parsedConfig: null })
               }
             />

@@ -92,19 +92,19 @@ export const OrganizationProvider = ({
   }, [organizations]);
 
   // Test
-  const getJokes = async () => {
-    try {
-      const res = axios.get("http://192.168.0.188:8788/api/jokes");
+  // const getJokes = async () => {
+  //   try {
+  //     const res = axios.get("http://192.168.0.188:8788/api/jokes");
 
-      console.log("Jokes: ", res);
-    } catch (error) {
-      console.error("Error Getting Jokes: ", error);
-    }
-  };
+  //     console.log("Jokes: ", res);
+  //   } catch (error) {
+  //     console.error("Error Getting Jokes: ", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    getJokes();
-  }, []);
+  // useEffect(() => {
+  //   getJokes();
+  // }, []);
 
   return (
     <OrganizationContext.Provider

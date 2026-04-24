@@ -59,6 +59,7 @@ import TestUI from "./pages/public/TestUI";
 import AboutUs from "./pages/public/AboutUs";
 import Support from "./pages/public/Support";
 import ContactUs from "./pages/public/ContactUs";
+import RefundPolicy from "./pages/public/RefundPolicy";
 
 function ProtectedRouteWrapper() {
   const { orgsLoading, organizations, selectedOrgId } = useOrganization();
@@ -159,7 +160,8 @@ function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/privacy_policy" element={<PrivacyPolicy />} />
+        <Route path="/refund_policy" element={<RefundPolicy />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/about_us" element={<AboutUs />} />
         <Route path="/support" element={<Support />} />

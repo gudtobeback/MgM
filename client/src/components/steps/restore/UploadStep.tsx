@@ -3,6 +3,7 @@ import React, { useState, useRef } from "react";
 import JSZip from "jszip";
 import {
   UploadCloud,
+  Upload,
   FileJson,
   Archive,
   CheckCircle2,
@@ -229,18 +230,14 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`mb-6 cursor-pointer rounded-[10px] border-2 border-gray-300 border-dashed px-8 py-[60px] text-center transition-colors duration-150 ${
-          dragging || data.parsedBackup
-            ? "border-blue-600"
-            : "border-border bg-secondary"
-        } ${
-          dragging
-            ? "bg-green-50"
-            : data.parsedBackup
-              ? "bg-emerald-50"
-              : "border-border bg-secondary"
-        }`}
+        className={`p-7 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150
+          ${
+            dragging
+              ? "bg-green-50 border-green-300"
+              : "bg-[#F3F4F5] border-gray-300"
+          }`}
       >
+        {/* Hidden */}
         <input
           ref={fileInputRef}
           type="file"
@@ -249,45 +246,32 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
           onChange={handleFileChange}
         />
 
-        {parsing ? (
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-blue-600 border-t-transparent" />
-            <span className="text-sm text-[var(--color-text-secondary)]">
-              Parsing backup file…
-            </span>
-          </div>
-        ) : data.parsedBackup ? (
-          <div className="flex flex-col items-center gap-2">
-            <CheckCircle2 size={36} className="text-blue-600" />
-            <span className="text-sm font-semibold text-green-800">
-              {data.fileName}
-            </span>
-            <span className="text-xs text-[var(--color-text-secondary)]">
-              Click to replace
-            </span>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-3">
-            <UploadCloud
-              size={40}
-              className="text-[var(--color-text-tertiary)]"
+        <div className="h-full flex flex-col items-center justify-center gap-3">
+          <div
+            className={`p-4 ${
+              dragging ? "bg-green-100" : "bg-[#003E680D]"
+            } rounded-full`}
+          >
+            <Upload
+              size={20}
+              className={dragging ? "text-blue-600" : "text-[#003E68]"}
             />
-            <div>
-              <div className="mb-1 text-sm font-semibold text-[var(--color-text-primary)]">
-                Drop your backup file here
-              </div>
-              <div className="text-[13px] text-[var(--color-text-secondary)]">
-                or click to browse · accepts{" "}
-                <code className="font-mono text-xs">.json</code> and{" "}
-                <code className="font-mono text-xs">.zip</code>
-              </div>
-            </div>
           </div>
-        )}
+
+          <div className="font-semibold text-sm text-[#003E68]">
+            {parsing
+              ? "Parsing backup file"
+              : data.parsedBackup
+                ? "File loaded — click to replace"
+                : "Drop file here or click to browse"}
+          </div>
+
+          <div className="text-xs text-[#94A3B8]">Supports .json, .zip</div>
+        </div>
       </div>
 
       {/* Parse error */}
-      {parseError && <AlertCard variant="error">{parseError}</AlertCard>}
+      {parseError && <AlertCard variant="red">{parseError}</AlertCard>}
 
       {/* Backup summary */}
       {data.parsedBackup && (
