@@ -19,7 +19,7 @@ import OvalButton from "../home/OvalButton";
 import CustomSelect from "../ui/CustomSelect";
 import { CustomDatepicker } from "../ui/CustomDatepicker";
 import { CustomTextarea } from "../ui/CustomTextarea";
-import { CustomTimepicker } from "../ui/CustomTimePicker";
+import { CustomTimepicker } from "../ui/CustomTimepicker";
 
 export default function RequestDemoForm() {
   const [currentStep, setCurrentStep] = useState(1);

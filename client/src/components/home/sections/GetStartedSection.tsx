@@ -60,15 +60,6 @@ export default function GetStartedSection() {
     return () => clearInterval(interval);
   }, [isHovered]);
 
-  const handleEnter = (idx: number) => {
-    setIsHovered(true);
-    setActiveIndex(idx);
-  };
-
-  const handleLeave = () => {
-    setIsHovered(false);
-  };
-``
   return (
     <div
       id="how"
@@ -273,11 +264,13 @@ export default function GetStartedSection() {
           return (
             <div
               key={card?.id || idx}
-              onMouseEnter={() => handleEnter(idx)}
-              onMouseLeave={handleLeave}
-              // Touch events (mobile / tablet)
-              onTouchStart={() => handleEnter(idx)}
-              onTouchEnd={handleLeave}
+              onMouseEnter={() => {
+                setIsHovered(true);
+                setActiveIndex(idx); // 🔥 lock to hovered card
+              }}
+              onMouseLeave={() => {
+                setIsHovered(false); // 🔥 resume from same card
+              }}
               className={`group flex items-center gap-3 px-5 py-5 sm:px-7 sm:py-5 rounded-xl transition-all duration-500 z-10
                 ${isActive ? "bg-[#015C95]" : "bg-[#F5F5F5] hover:bg-[#015C95]"}`}
             >
