@@ -14,8 +14,10 @@ import {
     BackupFile, DeviceConfigBackup, NetworkConfigBackup, OrgConfigBackup, RestoreCategories
 } from '../types';
 
+const BACKEND_URL = import.meta.env.VITE_BASE_URL;
+const LOCAL_PROXY_URL = `${BACKEND_URL}/proxy`;
 // The proxy endpoint is now explicitly set for local development.
-const LOCAL_PROXY_URL = 'http://127.0.0.1:8787/api/proxy';
+//onst LOCAL_PROXY_URL = 'http://127.0.0.1:8787/api/proxy';
 
 // --- Proactive Rate Limiter & Request Queue ---
 const MAX_CONCURRENT_REQUESTS = 9; // Meraki allows 10/sec. We'll use 9 to be safe.
