@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
 import { Input, Select } from "antd";
-import { HardDriveDownload } from "lucide-react";
+import {
+  HardDriveDownload,
+  ClipboardList,
+  LockKeyholeOpen,
+} from "lucide-react";
 
 import StepHeadingCard from "../StepHeadingCard";
 
@@ -22,6 +26,12 @@ import {
   getOrgNetworks,
   getNetworkDevices,
 } from "../../../services/merakiService";
+import InformationCard from "../InformationCard";
+import FormField from "../../ui/FormField";
+import CustomSelect from "../../ui/CustomSelect";
+import { CustomInput } from "../../ui/CustomInput";
+import { CustomInputPassword } from "../../ui/CustomInputPassword";
+import OvalButton from "../../home/OvalButton";
 
 interface DestinationStepProps {
   data: RestoreData;
@@ -115,113 +125,142 @@ export function DestinationStep({ data, onUpdate }: DestinationStepProps) {
   };
 
   return (
-    <div className="step-card-inner-layout">
-      {/* Region */}
-      <LabelInput id="region" label="Region" required>
-        <Select
-          id="region"
-          placeholder="Select Region"
-          value={data.destinationRegion || null}
-          options={MERAKI_REGIONS?.map((r) => ({
-            value: r?.code,
-            label: r?.name,
-          }))}
-          onChange={(value) => handleRegionChange(value)}
-        />
-
-        {selectedRegion.code !== "custom" && (
-          <div className="mt-1 text-xs">{selectedRegion.dashboard}</div>
-        )}
-      </LabelInput>
-
-      {/* API Key */}
-      <LabelInput id="api-key" label="API Key" required>
-        <Input
-          id="api-key"
-          type="password"
-          placeholder="Enter Meraki API key"
-          value={data.destinationApiKey}
-          onChange={(e) => {
-            onUpdate({
-              destinationApiKey: e.target.value,
-              destinationOrg: null,
-              destinationNetwork: null,
-              destinationDevices: [],
-            });
-            setOrgs([]);
-            setNetworks([]);
-            setOrgState("idle");
-            setNetworkState("idle");
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleFetchOrgs();
-          }}
-        />
-      </LabelInput>
-
-      <CustomButton
-        onClick={handleFetchOrgs}
-        disabled={!data.destinationApiKey.trim() || orgState === "loading"}
-        className="w-fit"
-      >
-        {orgState === "loading"
-          ? "Connecting..."
-          : orgState === "success"
-            ? "Connected"
-            : "Connect"}
-      </CustomButton>
-
-      {/* Error */}
-      {error && <AlertCard variant="error">{error}</AlertCard>}
-
-      {/* Organization */}
-      {orgs.length > 0 && (
-        <LabelInput id="organization" label="Organization" required>
-          <Select
-            id="organization"
-            placeholder="Select Organization"
-            value={data.destinationOrg?.id ?? null}
-            options={orgs?.map((o) => ({ value: o?.id, label: o?.name }))}
-            onChange={(value) => handleSelectOrg(value)}
-          />
-        </LabelInput>
-      )}
-
-      {/* Network */}
-      {(networks.length > 0 || networkState === "loading") && (
-        <LabelInput id="network" label="Network" required>
-          <Select
-            id="network"
-            value={data.destinationNetwork?.id || null}
-            options={networks?.map((n) => ({
-              value: n?.id,
-              label: n?.name,
+    <div className="flex items-start gap-6">
+      <div className="p-5 w-full flex flex-col gap-6 bg-white border border-[#C1C7D11A] rounded-lg shadow-[0_0_1px_0_rgba(0,0,0,0.25)]">
+        {/* Region */}
+        <FormField id="region" label="Region" className="text-[13px] uppercase">
+          <CustomSelect
+            id="region"
+            placeholder="Select Region"
+            value={data.destinationRegion || null}
+            options={MERAKI_REGIONS?.map((r) => ({
+              value: r?.code,
+              label: r?.name,
             }))}
-            onChange={(value) => handleSelectNetwork(value)}
-            loading={networkState === "loading"}
-            disabled={networkState === "loading"}
+            onChange={(value: any) => handleRegionChange(value)}
           />
-        </LabelInput>
-      )}
+
+          {selectedRegion.code !== "custom" && (
+            <div className="mt-1 text-xs">{selectedRegion.dashboard}</div>
+          )}
+        </FormField>
+
+        {/* API Key */}
+        <FormField
+          id="api-key"
+          label="API Key"
+          className="text-[13px] uppercase"
+        >
+          <CustomInputPassword
+            id="api-key"
+            placeholder="******"
+            icon={LockKeyholeOpen}
+            value={data.destinationApiKey}
+            onChange={(e: any) => {
+              onUpdate({
+                destinationApiKey: e.target.value,
+                destinationOrg: null,
+                destinationNetwork: null,
+                destinationDevices: [],
+              });
+              setOrgs([]);
+              setNetworks([]);
+              setOrgState("idle");
+              setNetworkState("idle");
+            }}
+            onKeyDown={(e: any) => {
+              if (e.key === "Enter") handleFetchOrgs();
+            }}
+          />
+        </FormField>
+
+        <OvalButton
+          onClick={handleFetchOrgs}
+          disabled={!data.destinationApiKey.trim() || orgState === "loading"}
+        >
+          {orgState === "loading"
+            ? "Connecting..."
+            : orgState === "success"
+              ? "Connected"
+              : "Connect"}
+        </OvalButton>
+
+        {/* Error */}
+        {error && <AlertCard variant="red">{error}</AlertCard>}
+
+        {/* Organization */}
+        {orgs.length > 0 && (
+          <FormField
+            id="organization"
+            label="Organization"
+            className="text-[13px] uppercase"
+          >
+            <CustomSelect
+              id="organization"
+              placeholder="Select Organization"
+              value={data.destinationOrg?.id ?? null}
+              options={orgs?.map((o) => ({ value: o?.id, label: o?.name }))}
+              onChange={(value: any) => handleSelectOrg(value)}
+            />
+          </FormField>
+        )}
+
+        {/* Network */}
+        {(networks.length > 0 || networkState === "loading") && (
+          <FormField
+            id="network"
+            label="Network"
+            className="text-[13px] uppercase"
+          >
+            <CustomSelect
+              id="network"
+              value={data.destinationNetwork?.id || null}
+              options={networks?.map((n) => ({
+                value: n?.id,
+                label: n?.name,
+              }))}
+              onChange={(value: any) => handleSelectNetwork(value)}
+              disabled={networkState === "loading"}
+            />
+          </FormField>
+        )}
+      </div>
 
       {/* Selected summary */}
       {data.destinationNetwork && (
-        <AlertCard variant="note">
-          <p>
-            <strong>Organization - </strong>
-            {data.destinationNetwork.name}
-          </p>
-          <p>
-            <strong>Network - </strong>
-            {data.destinationOrg?.name}
-            {data.destinationDevices.length > 0 && (
-              <span>
-                {" "}
-                &middot; {data.destinationDevices.length} device(s) found
-              </span>
-            )}
-          </p>
-        </AlertCard>
+        <InformationCard
+          icon={ClipboardList}
+          label="Selection Summary"
+          className="w-[600px]"
+        >
+          {data.destinationOrg && (
+            <div className="p-3 flex flex-col gap-1 bg-white/10 rounded-lg">
+              <div className="font-medium text-[11px] text-[#D0F059CC]">
+                Selected Organization :{" "}
+              </div>
+              <div className="text-xs text-white">
+                {data.destinationOrg.name}{" "}
+                {data.destinationDevices.length > 0 && (
+                  <span className="text-[#D0F059CC]">
+                    {" "}
+                    &middot; {data.destinationDevices.length} device(s) found
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {data.destinationNetwork && (
+            <div className="p-3 flex flex-col gap-1 bg-white/10 rounded-lg">
+              <div className="font-medium text-[11px] text-[#D0F059CC]">
+                Selected Network :{" "}
+              </div>
+              <div className="text-xs text-white">
+                {data.destinationNetwork.name}
+              </div>
+            </div>
+          )}
+        </InformationCard>
       )}
     </div>
   );

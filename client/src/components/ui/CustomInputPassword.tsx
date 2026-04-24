@@ -35,13 +35,13 @@ export const CustomInputPassword = React.forwardRef(
           {showPassword ? (
             <EyeOff
               size={18}
-              className="absolute top-1/2 -translate-y-1/2 right-4"
+              className="absolute top-1/2 -translate-y-1/2 right-4 cursor-pointer"
               color="#717781"
             />
           ) : (
             <Eye
               size={18}
-              className="absolute top-1/2 -translate-y-1/2 right-4"
+              className="absolute top-1/2 -translate-y-1/2 right-4 cursor-pointer"
               color="#717781"
             />
           )}

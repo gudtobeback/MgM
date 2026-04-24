@@ -220,7 +220,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
     : null;
 
   return (
-    <div className="step-card-inner-layout">
+    <div className="flex flex-col gap-6">
       {/* Drop zone */}
       <div
         onDragOver={(e) => {
@@ -275,40 +275,32 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
 
       {/* Backup summary */}
       {data.parsedBackup && (
-        <div className="overflow-hidden rounded-md border border-gray-300">
-          <div className="px-4 py-2 text-sm font-medium">Backup Summary</div>
+        <div className="overflow-hidden border border-gray-300 rounded-xl">
+          <div className="px-4 py-3 font-medium uppercase text-xs text-[#43474F]">
+            Backup Summary
+          </div>
 
-          <div className="grid grid-cols-4">
+          <div className="grid grid-cols-4 bg-white">
             {[
               {
                 label: "File type",
                 value: data.fileType === "zip" ? "Full ZIP" : "Selective JSON",
-                icon:
-                  data.fileType === "zip" ? (
-                    <Archive size={16} />
-                  ) : (
-                    <FileJson size={16} />
-                  ),
               },
               {
                 label: "Organization",
                 value: data.parsedBackup.sourceOrgName,
-                icon: null,
               },
-              { label: "Networks", value: String(networkCount), icon: null },
-              { label: "Devices", value: String(deviceCount), icon: null },
+              { label: "Networks", value: String(networkCount) },
+              { label: "Devices", value: String(deviceCount) },
             ].map((item, i) => (
               <div
                 key={i}
-                className={`px-5 py-[18px] ${
-                  i < 3 ? "border-r border-[var(--color-border-subtle)]" : ""
-                }`}
+                className="px-5 py-2 my-3 flex flex-col gap-1 items-center border-r last:border-none border-gray-300"
               >
-                <div className="mb-1 flex items-center gap-1 text-[11px] text-[var(--color-text-tertiary)]">
-                  {item.icon}
+                <div className="font-medium uppercase text-xs text-[#43474F]">
                   {item.label}
                 </div>
-                <div className="text-sm font-bold text-[var(--color-text-primary)]">
+                <div className="font-semibold text-sm text-[#003366]">
                   {item.value}
                 </div>
               </div>
@@ -316,7 +308,7 @@ export function UploadStep({ data, onUpdate }: UploadStepProps) {
           </div>
 
           {createdAt && (
-            <div className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] px-4 py-2 text-[11px] text-[var(--color-text-tertiary)]">
+            <div className="px-4 py-3 font-medium text-xs text-[#43474F]">
               Created: {createdAt}
             </div>
           )}

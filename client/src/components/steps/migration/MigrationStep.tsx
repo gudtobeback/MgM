@@ -199,7 +199,7 @@ export function MigrationStep({
     log(
       "⏳ Waiting 10 seconds for destination inventory to register devices...",
     );
-    await wait(10);
+    await wait(300);
 
     // ── Stage 4: Add to destination network ──────────────────────────────
     if (stageReached.current < STAGE.ADDED_TO_DEST_NETWORK) {

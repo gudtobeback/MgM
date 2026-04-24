@@ -420,7 +420,7 @@ export function DestinationStep({
               <div className="text-xs text-white">
                 {data.destinationOrg.name}{" "}
                 {data.destinationDevices.length > 0 && (
-                  <span>
+                  <span className="text-[#D0F059CC]">
                     {" "}
                     &middot;{" "}
                     {
